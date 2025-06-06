@@ -5,11 +5,15 @@ import { Label } from "@radix-ui/react-label";
 import React, { useState } from "react";
 import Image from "next/image";
 import logo from "../Assets/images/logo.png";
+import { signUpSchema } from "@/lib/schemas";
+import axios from "axios";
 
 const signUp = () => {
   const [credentials, setCredentials] = useState({
+    action: "signUp",
     email: "",
     password: "",
+    name: "",
     retypedPassword: "",
   });
 
@@ -22,13 +26,15 @@ const signUp = () => {
     });
   }
 
-  function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(credentials);
     if (credentials.password !== credentials.retypedPassword) {
       alert("mali po hehe");
     } else {
-      alert("to be continued");
+      const parsedData = signUpSchema.safeParse(credentials);
+
+      const res = await axios.post("/api/users", parsedData);
     }
   }
 
@@ -64,6 +70,18 @@ const signUp = () => {
                 onChange={handleChange}
                 type="email"
                 id="email"
+                placeholder="Email"
+              />
+            </div>
+
+            {/* name */}
+            <div className="grid w-full max-w-xs items-center gap-1">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                name="name"
+                onChange={handleChange}
+                type="text"
+                id="name"
                 placeholder="Email"
               />
             </div>
