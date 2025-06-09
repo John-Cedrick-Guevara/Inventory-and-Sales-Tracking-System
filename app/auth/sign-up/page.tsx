@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import React, { useState } from "react";
 import Image from "next/image";
-import logo from "../Assets/images/logo.png";
+import logo from "@/app/Assets/images/logo.png";
 import { signUpSchema } from "@/lib/schemas";
 import axios from "axios";
 
@@ -34,7 +34,7 @@ const signUp = () => {
     } else {
       const parsedData = signUpSchema.safeParse(credentials);
 
-      const res = await axios.post("/api/users", parsedData);
+      const res = await axios.post("/api/users", parsedData.data);
     }
   }
 
@@ -115,7 +115,7 @@ const signUp = () => {
               Sign up
             </Button>
           </section>
-          <a className="text-blue-600 underline mt-22" href="/sign-up">
+          <a className="text-blue-600 underline mt-22" href="/">
             Go to Log In
           </a>
         </form>
