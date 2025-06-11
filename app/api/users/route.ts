@@ -61,6 +61,16 @@ export async function POST(req: NextRequest) {
     const cookieStore = await cookies();
     cookieStore.set("token", token, { httpOnly: true });
 
-    return NextResponse.json({role:user.role}, { status: 201 });
+    return NextResponse.json({ role: user.role }, { status: 201 });
+  }
+}
+
+export async function GET() {
+  try {
+    const data = await prisma.user.findMany();
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 }
