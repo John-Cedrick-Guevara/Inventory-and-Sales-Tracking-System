@@ -33,7 +33,7 @@ const navLinks = [
 
   {
     title: "Settings",
-    url: "#",
+    url: "/",
     icon: Settings,
   },
 ];

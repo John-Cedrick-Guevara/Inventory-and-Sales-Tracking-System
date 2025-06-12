@@ -31,7 +31,6 @@ export default function Home() {
     try {
       const user = await axios.post("/api/users", credentials);
       router.push(`/${user.data.role === "ADMIN" ? "admin" : "staff"}`);
-      console.log(user.data.role);
     } catch (error) {
       console.log(error);
     }
@@ -74,12 +73,12 @@ export default function Home() {
 
           {/* password */}
           <div className="grid w-full max-w-xs items-center gap-1">
-            <Label htmlFor="email">Password</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               name="password"
               onChange={handleChange}
               type="password"
-              id="email"
+              id="passsword"
               placeholder="Password"
             />
           </div>

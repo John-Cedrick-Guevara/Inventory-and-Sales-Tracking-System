@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -30,10 +31,10 @@ export function AppSidebar({ navLinks }: Props) {
               {navLinks.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link prefetch href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
