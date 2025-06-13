@@ -7,6 +7,7 @@ import Image from "next/image";
 import logo from "@/app/Assets/images/logo.png";
 import { signUpSchema } from "@/lib/schemas";
 import axios from "axios";
+import { handleChange } from "@/lib/handleChange";
 
 const signUp = () => {
   const [credentials, setCredentials] = useState({
@@ -17,18 +18,8 @@ const signUp = () => {
     retypedPassword: "",
   });
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
-    setCredentials({
-      ...credentials,
-      [e.target.name]: e.target.value,
-    });
-  }
-
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(credentials);
     if (credentials.password !== credentials.retypedPassword) {
       alert("mali po hehe");
     } else {
@@ -67,7 +58,7 @@ const signUp = () => {
               <Label htmlFor="email">Email</Label>
               <Input
                 name="email"
-                onChange={handleChange}
+                onChange={(e) => handleChange(e, setCredentials)}
                 type="email"
                 id="email"
                 placeholder="Email"
@@ -79,7 +70,7 @@ const signUp = () => {
               <Label htmlFor="name">Name</Label>
               <Input
                 name="name"
-                onChange={handleChange}
+                onChange={(e) => handleChange(e, setCredentials)}
                 type="text"
                 id="name"
                 placeholder="Email"
@@ -91,7 +82,7 @@ const signUp = () => {
               <Label htmlFor="email">Password</Label>
               <Input
                 name="password"
-                onChange={handleChange}
+                onChange={(e) => handleChange(e, setCredentials)}
                 type="password"
                 id="email"
                 placeholder="Password"
@@ -103,7 +94,7 @@ const signUp = () => {
               <Label htmlFor="email">Retype Password</Label>
               <Input
                 name="retypedPassword"
-                onChange={handleChange}
+                onChange={(e) => handleChange(e, setCredentials)}
                 type="password"
                 id="email"
                 placeholder="Repeat password"
