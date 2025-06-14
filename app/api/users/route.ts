@@ -67,8 +67,18 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const data = await prisma.user.findMany();
-
+    console.time("users-fetch");
+    const data = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        sales: true,
+      },
+    });
+    console.timeEnd("users-fetch");
+    
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: error }, { status: 500 });

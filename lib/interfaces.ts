@@ -5,3 +5,10 @@ export interface Users {
   role: string
   sales: number
 }
+
+export interface UserCredentials {
+  action: string;
+  email: string;
+  password: string;
+  name: string;
+}

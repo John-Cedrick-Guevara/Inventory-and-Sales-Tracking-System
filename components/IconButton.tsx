@@ -6,16 +6,30 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
 interface Props {
   IconButton?: LucideIcon;
   tooltip: string;
+  text?: string
+  variant:
+    | "link"
+    | "outline"
+    | "default"
+    | "destructive"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
 }
 
-function IconButton({ tooltip, IconButton }: Props) {
+function IconButton({ tooltip, IconButton, variant, text }: Props) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button size={"lg"} variant="outline">{IconButton ? <IconButton size={50} /> : null}</Button>
+        <Button size={"lg"} variant={variant}>
+          {IconButton ? <IconButton size={50} /> : null}
+          {text}
+        </Button>
       </TooltipTrigger>
       <TooltipContent>
         <p>{tooltip}</p>
