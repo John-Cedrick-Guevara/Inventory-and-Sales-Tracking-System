@@ -12,3 +12,9 @@ export interface UserCredentials {
   password: string;
   name: string;
 }
+export interface editUserCredentials {
+  id: number;
+  email: string;
+  password: string;
+  name: string;
+}

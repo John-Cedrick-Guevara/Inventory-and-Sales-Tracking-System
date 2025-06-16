@@ -68,6 +68,8 @@ export default function Home() {
               type="email"
               id="email"
               placeholder="Email"
+              value={credentials.email}
+
             />
           </div>
 
@@ -79,6 +81,7 @@ export default function Home() {
               onChange={handleChange}
               type="password"
               id="passsword"
+              value={credentials.password}
               placeholder="Password"
             />
           </div>
