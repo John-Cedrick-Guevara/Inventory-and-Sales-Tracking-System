@@ -78,8 +78,48 @@ export async function GET() {
       },
     });
     console.timeEnd("users-fetch");
-    
+
     return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  const body = await req.json();
+  const { email, name, password, id } = body;
+  console.log(body);
+  try {
+    const newEncryptedPass = await bcrypt.hash(password, 10);
+
+    const data = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        password: newEncryptedPass,
+        email: email,
+      },
+    });
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: error }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const data = await req.json();
+
+  try {
+    const deleteUser = await prisma.user.delete({
+      where: {
+        id: data,
+      },
+    });
+
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     return NextResponse.json({ message: error }, { status: 500 });
   }

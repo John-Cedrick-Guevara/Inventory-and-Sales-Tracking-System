@@ -9,23 +9,23 @@ import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
 import { editUserCredentials, UserCredentials } from "@/lib/interfaces";
 
-interface FormProps {
+interface FormProps<T extends UserCredentials | editUserCredentials> {
   handleSignUp: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
-  credentials: UserCredentials | editUserCredentials;
-  setCredentials: React.Dispatch<React.SetStateAction<UserCredentials | editUserCredentials>>;
+  credentials: T;
+  setCredentials: React.Dispatch<React.SetStateAction<T>>;
   showForm: boolean;
   setShowForm: (val: boolean) => void;
   title: string;
 }
 
-const UserForm = ({
+function UserForm<T extends UserCredentials | editUserCredentials>({
   handleSignUp,
   credentials,
   setCredentials,
   showForm,
   setShowForm,
   title,
-}: FormProps) => {
+}: FormProps<T>) {
   return (
     <div
       className={`w-full scale-0 h-full absolute top-0 right-0 flex items-center justify-center mx-auto transition-all  z-30 ${
@@ -62,11 +62,10 @@ const UserForm = ({
                 onChange={(e) => handleChange(e, setCredentials)}
                 type="text"
                 id="name"
-                value={credentials?.name}
+                value={credentials?.name ?? ""}
                 placeholder="Name"
               />
             </div>
-
             {/* email */}
             <div className="grid w-full max-w-xs items-center gap-1">
               <Label htmlFor="email">Email</Label>
@@ -75,11 +74,10 @@ const UserForm = ({
                 onChange={(e) => handleChange(e, setCredentials)}
                 type="email"
                 id="email"
-                value={credentials.email}
+                value={credentials.email ?? ""}
                 placeholder="Email"
               />
             </div>
-
             {/* password */}
             <div className="grid w-full max-w-xs items-center gap-1">
               <Label htmlFor="password">Password</Label>
@@ -88,22 +86,20 @@ const UserForm = ({
                 onChange={(e) => handleChange(e, setCredentials)}
                 type="password"
                 id="password"
-                value={credentials?.password}
+                value={credentials?.password ?? ""}
                 placeholder="Password"
               />
             </div>
-
             {/* retype password */}
-
             <Button size={"sm"} variant={"outline"}>
-              {" "}
-              Sign up
+              
+              {title}
             </Button>
           </section>
         </form>
       </div>
     </div>
   );
-};
+}
 
 export default UserForm;

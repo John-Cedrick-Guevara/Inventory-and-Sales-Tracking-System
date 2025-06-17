@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { UserRoundPlus } from "lucide-react";
 import UserForm from "@/components/UserForm";
-import { signUpSchema } from "@/lib/schemas";
+import { UserCredentialsSchema } from "@/lib/schemas";
 import axios from "axios";
 import IconButton from "@/components/IconButton";
 
@@ -16,6 +16,8 @@ const staffsTable = () => {
     fetcher
   );
   const [showForm, setShowForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+
   const [credentials, setCredentials] = useState<UserCredentials>({
     action: "signUp",
     email: "",
@@ -32,13 +34,44 @@ const staffsTable = () => {
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const parsedData = signUpSchema.safeParse(credentials);
+      const parsedData = UserCredentialsSchema.safeParse(credentials);
 
       const res = await axios.post("/api/users", parsedData.data);
 
       mutate();
 
       setShowForm(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleEditUser(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      const parsedData = UserCredentialsSchema.safeParse(editCredentials);
+
+      console.log(parsedData);
+      const res = await axios.put("/api/users", parsedData.data);
+
+      mutate();
+      setShowEditForm(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleDeleteUser(id: number) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmed) return true;
+
+    try {
+      const res = await axios.delete("/api/users", { data: id });
+
+      mutate();
     } catch (error) {
       console.log(error);
     }
@@ -51,8 +84,11 @@ const staffsTable = () => {
         tableHead={["userId", "name", "email", "role", "sales"]}
         tableItems={["id", "name", "email", "role", "sales"] as (keyof Users)[]}
         data={data ?? []}
-        credentials={credentials}
-        setCredentials={setCredentials}
+        credentials={editCredentials}
+        setCredentials={setEditCredentials}
+        setShowForm={setShowEditForm}
+        showForm={showEditForm}
+        deleteItem={handleDeleteUser}
       ></TableComponent>
 
       {/* add form and icon */}
@@ -68,24 +104,28 @@ const staffsTable = () => {
       </div>
 
       {/* Form component for creating new users */}
-      <UserForm
-        handleSignUp={handleSignUp}
-        title={"Log In"}
-        showForm={showForm}
-        setShowForm={setShowForm}
-        credentials={credentials}
-        setCredentials={setCredentials}
-      />
+      {showForm && !showEditForm && (
+        <UserForm
+          handleSignUp={handleSignUp}
+          title={"Log In"}
+          showForm={showForm}
+          setShowForm={setShowForm}
+          credentials={credentials}
+          setCredentials={setCredentials}
+        />
+      )}
 
       {/* Form component for editing user's credentials */}
-      <UserForm
-        handleSignUp={handleSignUp}
-        title={"Log In"}
-        showForm={showForm}
-        setShowForm={setShowForm}
-        credentials={editCredentials}
-        setCredentials={setEditCredentials}
-      />
+      {showEditForm && !showForm && (
+        <UserForm
+          handleSignUp={handleEditUser}
+          title={"Edit User"}
+          showForm={showEditForm}
+          setShowForm={setShowEditForm}
+          credentials={editCredentials}
+          setCredentials={setEditCredentials}
+        />
+      )}
     </main>
   );
 };

@@ -12,7 +12,7 @@ import {
 import { PencilLine, Trash } from "lucide-react";
 import IconButton from "./IconButton";
 
-import { editUserCredentials, UserCredentials } from "@/lib/interfaces";
+import { editUserCredentials, UserCredentials, Users } from "@/lib/interfaces";
 
 interface Props<T> {
   // table head, datas, and title
@@ -22,18 +22,33 @@ interface Props<T> {
   title: string;
 
   // item credentials
-  credentials: UserCredentials;
-  setCredentials: React.Dispatch<React.SetStateAction<UserCredentials>>;
+  credentials: editUserCredentials;
+  setCredentials: React.Dispatch<React.SetStateAction<editUserCredentials>>;
+
+  // edit form state
+  showForm: boolean;
+  setShowForm: (val: boolean) => void;
+
+  // delete item function
+  deleteItem: (id: number) => Promise<true | undefined>;
 }
 
-const TableComponent = <T,>({
+const TableComponent = <T extends Users>({
   title,
   tableHead,
   tableItems,
   data,
   credentials,
   setCredentials,
+  showForm,
+  setShowForm,
+  deleteItem,
 }: Props<T>) => {
+  function getToEditUser(user: editUserCredentials) {
+    setCredentials(user);
+    setShowForm(true);
+  }
+
   return (
     <main>
       <Table>
@@ -54,15 +69,16 @@ const TableComponent = <T,>({
               ))}
               <TableCell className=" flex items-center gap-2">
                 {/* edit icon */}
-                <div>
+                <div onClick={() => getToEditUser(item)}>
                   <IconButton
                     IconButton={PencilLine}
                     tooltip={"Edit Credentials"}
                     variant={"default"}
                   />
                 </div>
-                <div>
-                  {/* delete icon */}
+
+                {/* delete icon */}
+                <div onClick={() => deleteItem(item.id)}>
                   <IconButton
                     IconButton={Trash}
                     tooltip={"Delete User"}
