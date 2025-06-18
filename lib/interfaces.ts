@@ -4,7 +4,7 @@ export interface Users {
   email: string;
   role: string;
   sales: number;
-  password:string
+  password: string;
 }
 
 export interface UserCredentials {
@@ -19,5 +19,10 @@ export interface editUserCredentials {
   id: number;
   email: string;
   password: string;
+  name: string;
+}
+
+export interface Cathegories {
+  id?: number;
   name: string;
 }

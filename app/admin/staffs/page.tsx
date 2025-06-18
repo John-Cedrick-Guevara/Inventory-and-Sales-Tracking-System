@@ -1,10 +1,15 @@
 "use client";
 import TableComponent from "@/components/Table";
-import { editUserCredentials, UserCredentials, Users } from "@/lib/interfaces";
+import {
+  Cathegories,
+  editUserCredentials,
+  UserCredentials,
+  Users,
+} from "@/lib/interfaces";
 import useSWR from "swr";
 import React, { useState } from "react";
 import { fetcher } from "@/lib/fetcher";
-import { UserRoundPlus } from "lucide-react";
+import { PencilLine, Trash, UserRoundPlus } from "lucide-react";
 import UserForm from "@/components/UserForm";
 import { UserCredentialsSchema } from "@/lib/schemas";
 import axios from "axios";
@@ -77,6 +82,11 @@ const staffsTable = () => {
     }
   }
 
+  function getToEditUser(user: editUserCredentials) {
+    setEditCredentials(user);
+    setShowEditForm(true);
+  }
+
   return (
     <main className="w-full">
       <TableComponent
@@ -84,11 +94,28 @@ const staffsTable = () => {
         tableHead={["userId", "name", "email", "role", "sales"]}
         tableItems={["id", "name", "email", "role", "sales"] as (keyof Users)[]}
         data={data ?? []}
-        credentials={editCredentials}
-        setCredentials={setEditCredentials}
-        setShowForm={setShowEditForm}
-        showForm={showEditForm}
-        deleteItem={handleDeleteUser}
+        renderActions={(item) => (
+          <>
+            {" "}
+            <div onClick={() => getToEditUser(item)}>
+              {" "}
+              <IconButton
+                IconButton={PencilLine}
+                tooltip={"Edit Credentials"}
+                variant={"default"}
+              />{" "}
+            </div>{" "}
+            {/* delete icon */}{" "}
+            <div onClick={() => handleDeleteUser(item.id)}>
+              {" "}
+              <IconButton
+                IconButton={Trash}
+                tooltip={"Delete User"}
+                variant={"destructive"}
+              />{" "}
+            </div>{" "}
+          </>
+        )}
       ></TableComponent>
 
       {/* add form and icon */}
@@ -107,7 +134,7 @@ const staffsTable = () => {
       {showForm && !showEditForm && (
         <UserForm
           handleSignUp={handleSignUp}
-          title={"Log In"}
+          title={"Add user"}
           showForm={showForm}
           setShowForm={setShowForm}
           credentials={credentials}

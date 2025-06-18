@@ -4,13 +4,17 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { handleChange } from "@/lib/handleChange";
-
+import { DiamondPlus } from 'lucide-react';
 import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
-import { editUserCredentials, UserCredentials } from "@/lib/interfaces";
+import {
+  Cathegories,
+  editUserCredentials,
+  UserCredentials,
+} from "@/lib/interfaces";
 
-interface FormProps<T extends UserCredentials | editUserCredentials> {
-  handleSignUp: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+interface FormProps<T extends UserCredentials | Cathegories> {
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   credentials: T;
   setCredentials: React.Dispatch<React.SetStateAction<T>>;
   showForm: boolean;
@@ -18,8 +22,8 @@ interface FormProps<T extends UserCredentials | editUserCredentials> {
   title: string;
 }
 
-function UserForm<T extends UserCredentials | editUserCredentials>({
-  handleSignUp,
+function CathegoryForm<T extends UserCredentials | Cathegories>({
+  handleSubmit,
   credentials,
   setCredentials,
   showForm,
@@ -47,7 +51,7 @@ function UserForm<T extends UserCredentials | editUserCredentials>({
         </div>
         <form
           action=""
-          onSubmit={handleSignUp}
+          onSubmit={handleSubmit}
           className=" flex flex-col gap-10 items-center justify-start bg-white shadow-2xl h-fit p-10 w-full max-w-lg rounded-lg"
         >
           <h1 className="font-bold text-3xl mb-12 mt-7">{title}</h1>
@@ -66,32 +70,8 @@ function UserForm<T extends UserCredentials | editUserCredentials>({
                 placeholder="Name"
               />
             </div>
-            {/* email */}
-            <div className="grid w-full max-w-xs items-center gap-1">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                name="email"
-                onChange={(e) => handleChange(e, setCredentials)}
-                type="email"
-                id="email"
-                value={credentials.email ?? ""}
-                placeholder="Email"
-              />
-            </div>
-            {/* password */}
-            <div className="grid w-full max-w-xs items-center gap-1">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                name="password"
-                onChange={(e) => handleChange(e, setCredentials)}
-                type="password"
-                id="password"
-                value={credentials?.password ?? ""}
-                placeholder="Password"
-              />
-            </div>
-            {/* retype password */}
-            <Button size={"sm"} variant={"outline"}>
+
+            <Button size={"lg"} variant={"outline"}>
               {title}
             </Button>
           </section>
@@ -101,4 +81,4 @@ function UserForm<T extends UserCredentials | editUserCredentials>({
   );
 }
 
-export default UserForm;
+export default CathegoryForm;

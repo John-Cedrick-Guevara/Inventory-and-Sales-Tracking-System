@@ -12,7 +12,12 @@ import {
 import { PencilLine, Trash } from "lucide-react";
 import IconButton from "./IconButton";
 
-import { editUserCredentials, UserCredentials, Users } from "@/lib/interfaces";
+import {
+  Cathegories,
+  editUserCredentials,
+  UserCredentials,
+  Users,
+} from "@/lib/interfaces";
 
 interface Props<T> {
   // table head, datas, and title
@@ -21,34 +26,18 @@ interface Props<T> {
   data: T[];
   title: string;
 
-  // item credentials
-  credentials: editUserCredentials;
-  setCredentials: React.Dispatch<React.SetStateAction<editUserCredentials>>;
+  // handles delete and edit of user
+  renderActions?: (row: T) => React.ReactNode;
 
-  // edit form state
-  showForm: boolean;
-  setShowForm: (val: boolean) => void;
-
-  // delete item function
-  deleteItem: (id: number) => Promise<true | undefined>;
 }
 
-const TableComponent = <T extends Users>({
+const TableComponent = <T,>({
   title,
   tableHead,
   tableItems,
   data,
-  credentials,
-  setCredentials,
-  showForm,
-  setShowForm,
-  deleteItem,
+  renderActions,
 }: Props<T>) => {
-  function getToEditUser(user: editUserCredentials) {
-    setCredentials(user);
-    setShowForm(true);
-  }
-
   return (
     <main>
       <Table>
@@ -67,25 +56,11 @@ const TableComponent = <T extends Users>({
               {tableItems.map((key, colIndex) => (
                 <TableCell key={colIndex}>{String(item[key])}</TableCell>
               ))}
-              <TableCell className=" flex items-center gap-2">
-                {/* edit icon */}
-                <div onClick={() => getToEditUser(item)}>
-                  <IconButton
-                    IconButton={PencilLine}
-                    tooltip={"Edit Credentials"}
-                    variant={"default"}
-                  />
-                </div>
-
-                {/* delete icon */}
-                <div onClick={() => deleteItem(item.id)}>
-                  <IconButton
-                    IconButton={Trash}
-                    tooltip={"Delete User"}
-                    variant={"destructive"}
-                  />
-                </div>
-              </TableCell>
+              {renderActions && (
+                <TableCell className="flex items-center gap-2">
+                  {renderActions(item)}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

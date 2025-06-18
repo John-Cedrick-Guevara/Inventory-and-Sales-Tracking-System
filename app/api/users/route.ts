@@ -67,7 +67,6 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    console.time("users-fetch");
     const data = await prisma.user.findMany({
       select: {
         id: true,
@@ -77,7 +76,6 @@ export async function GET() {
         sales: true,
       },
     });
-    console.timeEnd("users-fetch");
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {

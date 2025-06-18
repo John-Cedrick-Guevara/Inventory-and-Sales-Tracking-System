@@ -17,7 +17,7 @@ const navLinks = [
   },
   {
     title: "Category",
-    url: "#",
+    url: "/admin/cathegories",
     icon: Shapes,
   },
   {
