@@ -17,12 +17,12 @@ const navLinks = [
   },
   {
     title: "Category",
-    url: "/admin/cathegories",
+    url: "/admin/categories",
     icon: Shapes,
   },
   {
     title: "Products",
-    url: "#",
+    url: "/admin/products",
     icon: Box,
   },
   {

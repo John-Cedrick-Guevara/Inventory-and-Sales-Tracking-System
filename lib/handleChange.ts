@@ -1,4 +1,4 @@
-export function handleChange<T extends HTMLInputElement>(
+export function handleChange<T extends HTMLInputElement | HTMLTextAreaElement>(
   e: React.ChangeEvent<T>,
   setter: React.Dispatch<React.SetStateAction<any>>
 ) {

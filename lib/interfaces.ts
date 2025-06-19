@@ -22,7 +22,18 @@ export interface editUserCredentials {
   name: string;
 }
 
-export interface Cathegories {
+export interface Categories {
   id?: number;
   name: string;
+}
+
+export interface Product {
+  id?: number;
+  name: string;
+  description: string;
+  price: number;
+  stock?: number; 
+  image: string;
+  cathegory: string;
+  createdAt: string;
 }

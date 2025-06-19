@@ -1,51 +1,49 @@
 "use client";
-import CathegoryForm from "@/components/CathegoryForm";
+import CathegoryForm from "@/components/CategoryForm";
 import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
 import {
-  Cathegories,
+  Categories,
   editUserCredentials,
   UserCredentials,
   Users,
 } from "@/lib/interfaces";
-import { CathegoriesSchema } from "@/lib/schemas";
+import { CategoriesSchema } from "@/lib/schemas";
 import axios from "axios";
 import { Diamond, DiamondPlus, PencilLine, Trash } from "lucide-react";
 import React, { useState } from "react";
 import useSWR from "swr";
 
-const cathegoriesPage = () => {
-  const { data, error, isLoading, mutate } = useSWR<Cathegories[]>(
-    "/api/cathegories/",
+const categoriesPage = () => {
+  const { data, error, isLoading, mutate } = useSWR<Categories[]>(
+    "/api/categories/",
     fetcher
   );
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [cathegoryCredentials, setCathegoryCredentials] = useState<Cathegories>(
-    {
-      name: "",
-    }
-  );
+  const [cathegoryCredentials, setCathegoryCredentials] = useState<Categories>({
+    name: "",
+  });
   const [editCathegoryCredentials, setEditCathegoryCredentials] =
-    useState<Cathegories>({
+    useState<Categories>({
       name: "",
       id: 0,
     });
 
-  function getToEditCathegory(item: Cathegories) {
+  function getToEditCathegory(item: Categories) {
     setShowEditForm(true);
     setEditCathegoryCredentials(item);
   }
   async function handleEditCathegory(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const parsedcathegory = CathegoriesSchema.safeParse(
+    const parsedcathegory = CategoriesSchema.safeParse(
       editCathegoryCredentials
     );
 
     try {
       const editcathegory = await axios.put(
-        "/api/cathegories/",
+        "/api/categories/",
         parsedcathegory
       );
 
@@ -58,7 +56,7 @@ const cathegoriesPage = () => {
 
   async function handletoDeleteCathegory(item: number | undefined) {
     try {
-      const editcathegory = await axios.delete("/api/cathegories/", {
+      const editcathegory = await axios.delete("/api/categories/", {
         data: item,
       });
 
@@ -71,15 +69,16 @@ const cathegoriesPage = () => {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(cathegoryCredentials);
-    const parsedcathegory = CathegoriesSchema.safeParse(cathegoryCredentials);
+    const parsedcathegory = CategoriesSchema.safeParse(cathegoryCredentials);
     try {
       const addcathegory = await axios.post(
-        "/api/cathegories/",
+        "/api/categories/",
         parsedcathegory
       );
 
       mutate();
       setShowForm(false);
+      setCathegoryCredentials({ name: "" });
     } catch (error) {
       console.log(error);
     }
@@ -89,9 +88,9 @@ const cathegoriesPage = () => {
     <div>
       {" "}
       <TableComponent
-        title={isLoading ? "fetching cathegories" : "Cathegories"}
-        tableHead={["Cathegory Id", "name"]}
-        tableItems={["id", "name"] as (keyof Cathegories)[]}
+        title={isLoading ? "fetching categories" : "Categories"}
+        tableHead={["Category Id", "name"]}
+        tableItems={["id", "name"] as (keyof Categories)[]}
         data={data ?? []}
         renderActions={(item) => (
           <>
@@ -100,7 +99,7 @@ const cathegoriesPage = () => {
               {" "}
               <IconButton
                 IconButton={PencilLine}
-                tooltip={"Edit Cathegory"}
+                tooltip={"Edit Category"}
                 variant={"default"}
               />{" "}
             </div>{" "}
@@ -151,4 +150,4 @@ const cathegoriesPage = () => {
   );
 };
 
-export default cathegoriesPage;
+export default categoriesPage;

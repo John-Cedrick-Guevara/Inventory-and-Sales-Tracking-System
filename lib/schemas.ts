@@ -8,7 +8,15 @@ export const UserCredentialsSchema = z.object({
   name: string().nonempty(),
 });
 
-export const CathegoriesSchema = z.object({
+export const CategoriesSchema = z.object({
   id: number().optional(),
   name: string().min(1, "Please enter a valid name").nonempty(),
+});
+
+export const ProductSchema = z.object({
+  id: number().optional(),
+  name: string().min(1, "Please enter a valid name").nonempty(),
+  description: string().min(1, "Please enter a valid name").nonempty(),
+  price: number().min(1, "Please enter a valid name").nonempty(),
+  stock: number().min(1, "Please enter a valid name").nonempty(),
 });

@@ -13,7 +13,7 @@ import { PencilLine, Trash } from "lucide-react";
 import IconButton from "./IconButton";
 
 import {
-  Cathegories,
+  Categories,
   editUserCredentials,
   UserCredentials,
   Users,
