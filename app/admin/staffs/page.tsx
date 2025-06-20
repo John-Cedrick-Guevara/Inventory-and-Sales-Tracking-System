@@ -1,7 +1,7 @@
 "use client";
 import TableComponent from "@/components/Table";
 import {
-  Cathegories,
+  Categories,
   editUserCredentials,
   UserCredentials,
   Users,

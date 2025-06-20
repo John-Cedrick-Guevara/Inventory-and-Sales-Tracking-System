@@ -4,32 +4,23 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { handleChange } from "@/lib/handleChange";
-
-import { Check, ChevronsUpDown, CircleArrowLeft } from "lucide-react";
-import IconButton from "./IconButton";
 import {
-  Categories,
-  editUserCredentials,
-  UserCredentials,
-} from "@/lib/interfaces";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CircleArrowLeft } from "lucide-react";
+import IconButton from "./IconButton";
+import { Categories } from "@/lib/interfaces";
 import { Textarea } from "./ui/textarea";
 import { Product } from "@/lib/interfaces";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import { cn } from "@/lib/utils";
 
 interface FormProps<T extends Product> {
   handleAddProduct: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -119,7 +110,7 @@ function ProductForm<T extends Product>({
                   onChange={(e) => handleChange(e, setCredentials)}
                   type="number"
                   id="price"
-                  value={credentials?.price ?? ""}
+                  value={credentials?.price ?? 0}
                   placeholder="Price"
                 />
               </div>
@@ -132,72 +123,61 @@ function ProductForm<T extends Product>({
                   onChange={(e) => handleChange(e, setCredentials)}
                   type="number"
                   id="stock"
-                  value={credentials?.price ?? ""}
+                  value={credentials?.stock ?? 0}
                   placeholder="Stock Quantity"
                 />
               </div>
             </div>
 
             <div className=" flex items-end gap-2">
-            {/* image */}
+              {/* image */}
               <div className="grid w-full max-w-sm items-center gap-3">
                 <Label htmlFor="picture">Picture</Label>
-                <Input id="picture" type="file" />
-              </div>
+                <Input
+                  id="picture"
+                  type="file"
+                  accept="image/"
+                  onChange={(e) => {
+                    const image = e.target.files?.[0];
 
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-[200px] justify-between"
-                  >
-                    {value
-                      ? category?.find((category) => category.name === value)
-                          ?.name
-                      : "Select Category..."}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput
-                      placeholder="Search category..."
-                      className="h-9"
-                    />
-                    <CommandList>
-                      <CommandEmpty>No category found.</CommandEmpty>
-                      <CommandGroup>
-                        {category?.map((category) => (
-                          <CommandItem
-                            key={category.name}
-                            value={category.name}
-                            onSelect={(currentValue) => {
-                              setValue(
-                                currentValue === value
-                                  ? "Select category"
-                                  : currentValue
-                              );
-                              setOpen(false);
-                            }}
-                          >
-                            {category.name}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                value === category.name
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                    if (image) {
+                      setCredentials((prev) => ({
+                        ...prev,
+                        image: image,
+                      }));
+                    }
+                  }}
+                />
+              </div>
+              <div className="grid w-full max-w-sm items-center gap-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">Choose Category</Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>Choose Category</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioGroup
+                      value={credentials.cathegory}
+                      onValueChange={(currCategory) => {
+                        setCredentials((prev) => ({
+                          ...prev,
+                          category: currCategory,
+                        }));
+                      }}
+                    >
+                      {category?.map((category) => (
+                        <DropdownMenuRadioItem
+                          key={category.id}
+                          value={category.id?.toString() ?? ""}
+                        >
+                          {category.name}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
 
             {/* retype password */}

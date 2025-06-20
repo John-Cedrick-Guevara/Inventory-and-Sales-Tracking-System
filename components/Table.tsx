@@ -28,7 +28,6 @@ interface Props<T> {
 
   // handles delete and edit of user
   renderActions?: (row: T) => React.ReactNode;
-
 }
 
 const TableComponent = <T,>({

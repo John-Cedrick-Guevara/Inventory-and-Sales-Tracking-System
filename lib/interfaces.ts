@@ -1,3 +1,4 @@
+
 export interface Users {
   id: number;
   name: string;
@@ -33,7 +34,7 @@ export interface Product {
   description: string;
   price: number;
   stock?: number; 
-  image: string;
-  cathegory: string;
-  createdAt: string;
+  image: any ;
+  cathegory?: string;
+  createdAt?: string;
 }

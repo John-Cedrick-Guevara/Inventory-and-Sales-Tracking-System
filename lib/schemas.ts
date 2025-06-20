@@ -17,6 +17,8 @@ export const ProductSchema = z.object({
   id: number().optional(),
   name: string().min(1, "Please enter a valid name").nonempty(),
   description: string().min(1, "Please enter a valid name").nonempty(),
-  price: number().min(1, "Please enter a valid name").nonempty(),
-  stock: number().min(1, "Please enter a valid name").nonempty(),
+  price: string().or(z.number()),
+  stock: string().or(z.number()),
+  image: string(),
+  category: string().nonempty(),
 });

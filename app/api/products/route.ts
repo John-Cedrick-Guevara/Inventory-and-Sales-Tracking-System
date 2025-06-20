@@ -1,9 +1,14 @@
+import { Category } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: {
+        category: true,
+      },
+    });
 
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
@@ -11,5 +16,78 @@ export async function GET() {
       { message: "Error fetching products" },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { name, description, stock, price, image, category } = body;
+  console.log(body);
+  try {
+    const productAdded = await prisma.product.create({
+      data: {
+        name: name,
+        description: description,
+        price: Number(price),
+        stock: Number(stock),
+        image: image,
+        category: {
+          connect: { id: Number(category) },
+        },
+      },
+    });
+
+    return NextResponse.json({ message: "Product uploaded" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Error uploading product" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  const body = await req.json();
+  const { id, name, description, stock, price, image, category } = body;
+  console.log(body);
+  try {
+    const productEdited = await prisma.product.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        description: description,
+        price: Number(price),
+        stock: Number(stock),
+        image: image,
+        category: {
+          connect: { id: Number(category) },
+        },
+      },
+    });
+
+    return NextResponse.json({ message: "Product Edited" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Error editing product" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const id = await req.json();
+
+  try {
+    const deletedProduct = await prisma.product.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return NextResponse.json({ message: "Product Deleted" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json("failed to delete cathegory", { status: 500 });
   }
 }

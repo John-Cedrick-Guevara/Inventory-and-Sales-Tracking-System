@@ -34,6 +34,7 @@ const categoriesPage = () => {
   function getToEditCathegory(item: Categories) {
     setShowEditForm(true);
     setEditCathegoryCredentials(item);
+    console.log(item);
   }
   async function handleEditCathegory(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -56,7 +57,7 @@ const categoriesPage = () => {
 
   async function handletoDeleteCathegory(item: number | undefined) {
     try {
-      const editcathegory = await axios.delete("/api/categories/", {
+      const deleteCathegory = await axios.delete("/api/categories/", {
         data: item,
       });
 
@@ -108,7 +109,7 @@ const categoriesPage = () => {
               {" "}
               <IconButton
                 IconButton={Trash}
-                tooltip={"Delete User"}
+                tooltip={"Delete Category"}
                 variant={"destructive"}
               />{" "}
             </div>{" "}
