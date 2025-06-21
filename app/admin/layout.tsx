@@ -1,8 +1,9 @@
+"use client"
 import AuthProvider from "../Context/AuthContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
-  Settings,
+
   Users,
   Box,
   Shapes,
@@ -31,11 +32,6 @@ const navLinks = [
     icon: Users,
   },
 
-  {
-    title: "Settings",
-    url: "/",
-    icon: Settings,
-  },
 ];
 
 export default function AdminLayout({

@@ -85,23 +85,41 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   const body = await req.json();
-  const { email, name, password, id } = body;
+  const { email, name, password, id, action, newPassword } = body;
   console.log(body);
   try {
-    const newEncryptedPass = await bcrypt.hash(password, 10);
+    if (!action)
+      return NextResponse.json({ message: "No action" }, { status: 500 });
 
-    const data = await prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        name: name,
-        password: newEncryptedPass,
-        email: email,
-      },
-    });
+    if (action === "editCredentials") {
+      const newEncryptedPass = await bcrypt.hash(password, 10);
 
-    return NextResponse.json(data, { status: 200 });
+      const data = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name: name,
+          password: newEncryptedPass,
+          email: email,
+        },
+      });
+    } else if (action === "editPass") {
+      const newEncryptedPass = await bcrypt.hash(newPassword, 10);
+
+      const data = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          password: newEncryptedPass,
+        },
+      });
+    }
+    return NextResponse.json(
+      { message: "User credentials edited" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json({ message: error }, { status: 500 });
   }

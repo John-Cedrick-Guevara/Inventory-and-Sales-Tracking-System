@@ -17,10 +17,18 @@ export interface UserCredentials {
 }
 
 export interface editUserCredentials {
+  action?:string
   id: number;
   email: string;
   password: string;
   name: string;
+}
+
+export interface ChangePassword {
+  action? : string 
+  id: number 
+  password: string
+  newPassword: string
 }
 
 export interface Categories {

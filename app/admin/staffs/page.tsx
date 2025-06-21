@@ -29,7 +29,9 @@ const staffsTable = () => {
     password: "",
     name: "",
   });
+
   const [editCredentials, setEditCredentials] = useState<editUserCredentials>({
+    action: "editCredentials",
     id: 0,
     email: "",
     password: "",
@@ -56,7 +58,7 @@ const staffsTable = () => {
     try {
       const parsedData = UserCredentialsSchema.safeParse(editCredentials);
 
-      console.log(parsedData);
+      console.log(editCredentials);
       const res = await axios.put("/api/users", parsedData.data);
 
       mutate();
@@ -83,7 +85,7 @@ const staffsTable = () => {
   }
 
   function getToEditUser(user: editUserCredentials) {
-    setEditCredentials(user);
+    setEditCredentials((prev) => ({ ...prev, ...user }));
     setShowEditForm(true);
   }
 

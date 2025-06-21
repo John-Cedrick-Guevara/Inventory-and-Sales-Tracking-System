@@ -1,7 +1,7 @@
 import { number, string, z } from "zod/v4";
 
 export const UserCredentialsSchema = z.object({
-  action: string().optional(),
+  action: string().nonempty(),
   id: number().optional(),
   email: string().nonempty(),
   password: string().nonempty().min(6, "Minimum password length is 6. "),
@@ -21,4 +21,11 @@ export const ProductSchema = z.object({
   stock: string().or(z.number()),
   image: string(),
   category: string().nonempty(),
+});
+
+export const ChangePasswordSchema = z.object({
+  action: string().nonempty(),
+  id: number().optional(),
+  password: string().min(1, "Please enter your password").nonempty(),
+  newPassword: string().min(1, "Please enter your password").nonempty(),
 });

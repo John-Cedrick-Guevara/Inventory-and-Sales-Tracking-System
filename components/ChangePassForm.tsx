@@ -4,17 +4,13 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { handleChange } from "@/lib/handleChange";
-import { DiamondPlus } from 'lucide-react';
+
 import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
-import {
-  Categories,
-  editUserCredentials,
-  UserCredentials,
-} from "@/lib/interfaces";
+import { ChangePassword, editUserCredentials, UserCredentials } from "@/lib/interfaces";
 
-interface FormProps<T extends UserCredentials | Categories> {
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+interface FormProps<T extends ChangePassword> {
+  handleSignUp: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   credentials: T;
   setCredentials: React.Dispatch<React.SetStateAction<T>>;
   showForm: boolean;
@@ -22,8 +18,8 @@ interface FormProps<T extends UserCredentials | Categories> {
   title: string;
 }
 
-function CathegoryForm<T extends UserCredentials | Categories>({
-  handleSubmit,
+function ChangePassForm<T extends ChangePassword>({
+  handleSignUp,
   credentials,
   setCredentials,
   showForm,
@@ -51,27 +47,38 @@ function CathegoryForm<T extends UserCredentials | Categories>({
         </div>
         <form
           action=""
-          onSubmit={handleSubmit}
+          onSubmit={handleSignUp}
           className=" flex flex-col gap-10 items-center justify-start bg-white shadow-2xl h-fit p-10 w-full max-w-lg rounded-lg"
         >
           <h1 className="font-bold text-3xl mb-12 mt-7">{title}</h1>
 
           {/* input fields */}
           <section className="w-full max-w-xs flex flex-col gap-4 items-center">
-            {/* name */}
+            {/* password */}
             <div className="grid w-full max-w-xs items-center gap-1">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
-                name="name"
+                name="password"
                 onChange={(e) => handleChange(e, setCredentials)}
-                type="text"
-                id="name"
-                value={credentials?.name ?? ""}
-                placeholder="Name"
+                type="password"
+                id="password"
+                value={credentials?.password ?? ""}
+                placeholder="Password"
               />
             </div>
-
-            <Button size={"lg"} variant={"outline"}>
+            {/* new password password */}
+            <div className="grid w-full max-w-xs items-center gap-1">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                name="newPassword"
+                onChange={(e) => handleChange(e, setCredentials)}
+                type="password"
+                id="newPassword"
+                value={credentials?.newPassword ?? ""}
+                placeholder="Enter your new password"
+              />
+            </div>
+            <Button size={"sm"} variant={"outline"}>
               {title}
             </Button>
           </section>
@@ -81,4 +88,4 @@ function CathegoryForm<T extends UserCredentials | Categories>({
   );
 }
 
-export default CathegoryForm;
+export default ChangePassForm;
