@@ -21,6 +21,7 @@ import { Product } from "@/lib/interfaces";
 
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
+import FormError from "./FormError";
 
 interface FormProps<T extends Product> {
   handleAddProduct: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -29,6 +30,8 @@ interface FormProps<T extends Product> {
   showForm: boolean;
   setShowForm: (val: boolean) => void;
   title: string;
+  formError: string;
+  setFormError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function ProductForm<T extends Product>({
@@ -38,6 +41,8 @@ function ProductForm<T extends Product>({
   showForm,
   setShowForm,
   title,
+  formError,
+  setFormError,
 }: FormProps<T>) {
   const {
     data: category,
@@ -73,6 +78,8 @@ function ProductForm<T extends Product>({
           className=" flex flex-col gap-10 items-center justify-start bg-white shadow-2xl h-fit p-10 w-full max-w-lg rounded-lg"
         >
           <h1 className="font-bold text-3xl mb-12 mt-7">{title}</h1>
+
+          <FormError error={formError} setError={setFormError} />
 
           {/* input fields */}
           <section className="w-full max-w-lg flex flex-col gap-4 items-center">

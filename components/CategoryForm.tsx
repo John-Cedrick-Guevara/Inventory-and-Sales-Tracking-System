@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { handleChange } from "@/lib/handleChange";
-import { DiamondPlus } from 'lucide-react';
+import { DiamondPlus } from "lucide-react";
 import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
 import {
@@ -12,6 +12,7 @@ import {
   editUserCredentials,
   UserCredentials,
 } from "@/lib/interfaces";
+import FormError from "./FormError";
 
 interface FormProps<T extends UserCredentials | Categories> {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -20,6 +21,8 @@ interface FormProps<T extends UserCredentials | Categories> {
   showForm: boolean;
   setShowForm: (val: boolean) => void;
   title: string;
+  error: string;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function CathegoryForm<T extends UserCredentials | Categories>({
@@ -29,6 +32,8 @@ function CathegoryForm<T extends UserCredentials | Categories>({
   showForm,
   setShowForm,
   title,
+  error,
+  setError,
 }: FormProps<T>) {
   return (
     <div
@@ -55,6 +60,8 @@ function CathegoryForm<T extends UserCredentials | Categories>({
           className=" flex flex-col gap-10 items-center justify-start bg-white shadow-2xl h-fit p-10 w-full max-w-lg rounded-lg"
         >
           <h1 className="font-bold text-3xl mb-12 mt-7">{title}</h1>
+
+          <FormError error={error} setError={setError} />
 
           {/* input fields */}
           <section className="w-full max-w-xs flex flex-col gap-4 items-center">

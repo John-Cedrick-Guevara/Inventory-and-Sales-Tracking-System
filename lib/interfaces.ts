@@ -11,18 +11,14 @@ export interface Users {
 export interface UserCredentials {
   action: string;
   id?: number;
+  role?: string;
+  sales?: number;
   email: string;
   password: string;
   name: string;
 }
 
-export interface editUserCredentials {
-  action?:string
-  id: number;
-  email: string;
-  password: string;
-  name: string;
-}
+
 
 export interface ChangePassword {
   action? : string 

@@ -1,11 +1,6 @@
 "use client";
 import TableComponent from "@/components/Table";
-import {
-  Categories,
-  editUserCredentials,
-  UserCredentials,
-  Users,
-} from "@/lib/interfaces";
+import { UserCredentials, Users } from "@/lib/interfaces";
 import useSWR from "swr";
 import React, { useState } from "react";
 import { fetcher } from "@/lib/fetcher";
@@ -16,12 +11,13 @@ import axios from "axios";
 import IconButton from "@/components/IconButton";
 
 const staffsTable = () => {
-  const { data, error, isLoading, mutate } = useSWR<Users[]>(
+  const { data, error, isLoading, mutate } = useSWR<UserCredentials[]>(
     "/api/users/",
     fetcher
   );
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [credentials, setCredentials] = useState<UserCredentials>({
     action: "signUp",
@@ -30,7 +26,7 @@ const staffsTable = () => {
     name: "",
   });
 
-  const [editCredentials, setEditCredentials] = useState<editUserCredentials>({
+  const [editCredentials, setEditCredentials] = useState<UserCredentials>({
     action: "editCredentials",
     id: 0,
     email: "",
@@ -40,35 +36,53 @@ const staffsTable = () => {
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    try {
-      const parsedData = UserCredentialsSchema.safeParse(credentials);
+    const parsedData = UserCredentialsSchema.safeParse(credentials);
+    if (parsedData.success) {
+      try {
+        const res = await axios.post("/api/users", parsedData.data);
 
-      const res = await axios.post("/api/users", parsedData.data);
+        mutate();
 
-      mutate();
-
-      setShowForm(false);
-    } catch (error) {
-      console.log(error);
+        setShowForm(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
+          setFormError(message);
+        } else {
+          setFormError("An unexpected error occured");
+        }
+      }
+    } else {
+      setFormError(parsedData.error.issues[0].message);
     }
   }
 
   async function handleEditUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    try {
-      const parsedData = UserCredentialsSchema.safeParse(editCredentials);
-
-      console.log(editCredentials);
-      const res = await axios.put("/api/users", parsedData.data);
-
-      mutate();
-      setShowEditForm(false);
-    } catch (error) {
-      console.log(error);
+    const parsedData = UserCredentialsSchema.safeParse(editCredentials);
+    if (parsedData.success) {
+      try {
+        const res = await axios.put("/api/users", parsedData.data);
+        mutate();
+        setShowEditForm(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
+          setFormError(message);
+        } else {
+          setFormError("An unexpected error occured");
+        }
+      }
+    } else {
+      setFormError(parsedData.error.issues[0].message);
     }
   }
 
-  async function handleDeleteUser(id: number) {
+  async function handleDeleteUser(id: number | undefined) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this user?"
     );
@@ -84,7 +98,7 @@ const staffsTable = () => {
     }
   }
 
-  function getToEditUser(user: editUserCredentials) {
+  function getToEditUser(user: UserCredentials) {
     setEditCredentials((prev) => ({ ...prev, ...user }));
     setShowEditForm(true);
   }
@@ -135,6 +149,8 @@ const staffsTable = () => {
       {/* Form component for creating new users */}
       {showForm && !showEditForm && (
         <UserForm
+          formError={formError}
+          setFormError={setFormError}
           handleSignUp={handleSignUp}
           title={"Add user"}
           showForm={showForm}
@@ -147,6 +163,8 @@ const staffsTable = () => {
       {/* Form component for editing user's credentials */}
       {showEditForm && !showForm && (
         <UserForm
+          formError={formError}
+          setFormError={setFormError}
           handleSignUp={handleEditUser}
           title={"Edit User"}
           showForm={showEditForm}

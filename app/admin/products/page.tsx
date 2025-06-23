@@ -11,6 +11,7 @@ import ProductForm from "@/components/ProductForm";
 import { unknown } from "zod/v4";
 import { ProductSchema } from "@/lib/schemas";
 import axios from "axios";
+import FormError from "@/components/FormError";
 
 const productPage = () => {
   const { data, error, isLoading, mutate } = useSWR<Product[]>(
@@ -19,6 +20,7 @@ const productPage = () => {
   );
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [productCredentials, setProductCredentials] = useState<Product>({
     name: "",
@@ -84,31 +86,40 @@ const productPage = () => {
     e.preventDefault();
     // image
     const image: File = editProductCredentials.image;
+    console.log(editProductCredentials.image);
+    if (image) {
+      setFormError("Please provide an image for the product");
+    } else {
+      // converted image
+      const base64 = await toBase64(image);
 
-    // converted image
-    const base64 = await toBase64(image);
+      const editedProductData = {
+        ...editProductCredentials,
+        image: base64.split(",")[1],
+      };
 
-    const editedProductData = {
-      ...editProductCredentials,
-      image: base64.split(",")[1],
-    };
-
-    const parsedData = ProductSchema.safeParse(editedProductData);
-    console.log(parsedData);
-
-    try {
-      const uploadProduct = await axios.put("/api/products", parsedData.data);
-      setShowEditForm(false);
-      setEditProductCredentials({
-        name: "",
-        description: "",
-        price: 0 as number,
-        stock: 0 as number,
-        image: "",
-      });
-      mutate();
-    } catch (error) {
-      console.log(error);
+      const parsedData = ProductSchema.safeParse(editedProductData);
+      if (parsedData.success) {
+        try {
+          const uploadProduct = await axios.put(
+            "/api/products",
+            parsedData.data
+          );
+          setShowEditForm(false);
+          setEditProductCredentials({
+            name: "",
+            description: "",
+            price: 0 as number,
+            stock: 0 as number,
+            image: "",
+          });
+          mutate();
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        setFormError(parsedData.error.issues[0].message);
+      }
     }
   }
 
@@ -190,6 +201,8 @@ const productPage = () => {
       </div>
       {showForm && !showEditForm && (
         <ProductForm
+          formError={formError}
+          setFormError={setFormError}
           handleAddProduct={handleSubmit}
           credentials={productCredentials}
           setCredentials={setProductCredentials}
@@ -200,6 +213,8 @@ const productPage = () => {
       )}
       {showEditForm && !showForm && (
         <ProductForm
+          formError={formError}
+          setFormError={setFormError}
           handleAddProduct={handleEditProduct}
           credentials={editProductCredentials}
           setCredentials={setEditProductCredentials}

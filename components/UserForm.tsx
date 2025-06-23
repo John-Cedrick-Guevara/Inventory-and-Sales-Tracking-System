@@ -7,24 +7,29 @@ import { handleChange } from "@/lib/handleChange";
 
 import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
-import { editUserCredentials, UserCredentials } from "@/lib/interfaces";
+import { UserCredentials } from "@/lib/interfaces";
+import FormError from "./FormError";
 
-interface FormProps<T extends UserCredentials | editUserCredentials> {
+interface FormProps<T extends UserCredentials> {
   handleSignUp: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   credentials: T;
   setCredentials: React.Dispatch<React.SetStateAction<T>>;
   showForm: boolean;
   setShowForm: (val: boolean) => void;
   title: string;
+  formError: string;
+  setFormError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function UserForm<T extends UserCredentials | editUserCredentials>({
+function UserForm<T extends UserCredentials>({
   handleSignUp,
   credentials,
   setCredentials,
   showForm,
   setShowForm,
   title,
+  formError,
+  setFormError,
 }: FormProps<T>) {
   return (
     <div
@@ -51,6 +56,8 @@ function UserForm<T extends UserCredentials | editUserCredentials>({
           className=" flex flex-col gap-10 items-center justify-start bg-white shadow-2xl h-fit p-10 w-full max-w-lg rounded-lg"
         >
           <h1 className="font-bold text-3xl mb-12 mt-7">{title}</h1>
+
+          <FormError error={formError} setError={setFormError} />
 
           {/* input fields */}
           <section className="w-full max-w-xs flex flex-col gap-4 items-center">

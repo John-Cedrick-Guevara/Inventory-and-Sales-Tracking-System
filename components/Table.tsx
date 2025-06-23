@@ -12,12 +12,7 @@ import {
 import { PencilLine, Trash } from "lucide-react";
 import IconButton from "./IconButton";
 
-import {
-  Categories,
-  editUserCredentials,
-  UserCredentials,
-  Users,
-} from "@/lib/interfaces";
+
 
 interface Props<T> {
   // table head, datas, and title

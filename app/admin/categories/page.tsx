@@ -5,9 +5,7 @@ import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
 import {
   Categories,
-  editUserCredentials,
-  UserCredentials,
-  Users,
+
 } from "@/lib/interfaces";
 import { CategoriesSchema } from "@/lib/schemas";
 import axios from "axios";
@@ -20,6 +18,7 @@ const categoriesPage = () => {
     "/api/categories/",
     fetcher
   );
+  const [formError, setFormError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [cathegoryCredentials, setCathegoryCredentials] = useState<Categories>({
@@ -36,24 +35,6 @@ const categoriesPage = () => {
     setEditCathegoryCredentials(item);
     console.log(item);
   }
-  async function handleEditCathegory(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const parsedcathegory = CategoriesSchema.safeParse(
-      editCathegoryCredentials
-    );
-
-    try {
-      const editcathegory = await axios.put(
-        "/api/categories/",
-        parsedcathegory
-      );
-
-      mutate();
-      setShowEditForm(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function handletoDeleteCathegory(item: number | undefined) {
     try {
@@ -67,21 +48,63 @@ const categoriesPage = () => {
     }
   }
 
+  async function handleEditCathegory(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const parsedcathegory = CategoriesSchema.safeParse(
+      editCathegoryCredentials
+    );
+
+    if (parsedcathegory.success) {
+      try {
+        const editcathegory = await axios.put(
+          "/api/categories/",
+          parsedcathegory
+        );
+
+        mutate();
+        setShowEditForm(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
+          setFormError(message);
+        } else {
+          setFormError("An unexpected error occured");
+        }
+      }
+    } else {
+      setFormError(parsedcathegory.error.issues[0].message);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(cathegoryCredentials);
     const parsedcathegory = CategoriesSchema.safeParse(cathegoryCredentials);
-    try {
-      const addcathegory = await axios.post(
-        "/api/categories/",
-        parsedcathegory
-      );
 
-      mutate();
-      setShowForm(false);
-      setCathegoryCredentials({ name: "" });
-    } catch (error) {
-      console.log(error);
+    if (parsedcathegory.success) {
+      try {
+        const addcathegory = await axios.post(
+          "/api/categories/",
+          parsedcathegory
+        );
+
+        mutate();
+        setShowForm(false);
+        setCathegoryCredentials({ name: "" });
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
+          setFormError(message);
+        } else {
+          setFormError("An unexpected error occured");
+        }
+      }
+    } else {
+      setFormError(parsedcathegory.error.issues[0].message);
     }
   }
 
@@ -129,6 +152,8 @@ const categoriesPage = () => {
       </div>
       {showForm && !showEditForm && (
         <CathegoryForm
+          error={formError}
+          setError={setFormError}
           handleSubmit={handleSubmit}
           credentials={cathegoryCredentials}
           setCredentials={setCathegoryCredentials}
@@ -139,6 +164,8 @@ const categoriesPage = () => {
       )}
       {showEditForm && !showForm && (
         <CathegoryForm
+          error={formError}
+          setError={setFormError}
           handleSubmit={handleEditCathegory}
           credentials={editCathegoryCredentials}
           setCredentials={setEditCathegoryCredentials}
