@@ -38,7 +38,8 @@ export interface Product {
   description: string;
   price: number;
   stock?: number; 
-  image: any ;
-  cathegory?: string;
+  image?: any ;
+  category?:  string | {id: string};
   createdAt?: string;
 }
+

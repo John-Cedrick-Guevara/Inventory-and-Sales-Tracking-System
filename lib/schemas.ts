@@ -3,8 +3,12 @@ import { number, string, z } from "zod/v4";
 export const UserCredentialsSchema = z.object({
   action: string().nonempty(),
   id: number().optional(),
-  email: string().nonempty("Email is required").min(1, "Please enter a valid email"),
-  password: string().nonempty("Password is required").min(6, "Minimum password length is 6. "),
+  email: string()
+    .nonempty("Email is required")
+    .min(1, "Please enter a valid email"),
+  password: string()
+    .nonempty("Password is required")
+    .min(6, "Minimum password length is 6. "),
   name: string().nonempty("Name is required"),
 });
 
@@ -35,8 +39,8 @@ export const ProductSchema = z.object({
     .nonempty("Description field is required"),
   price: string().or(z.number()),
   stock: string().or(z.number()),
-  image: string(),
-  category: string().nonempty("Please select category"),
+  image: string().or(z.object()).optional(),
+  category: number().or(z.string()),
 });
 
 export const ChangePasswordSchema = z.object({

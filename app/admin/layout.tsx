@@ -1,14 +1,8 @@
-"use client"
+"use client";
 import AuthProvider from "../Context/AuthContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-
-  Users,
-  Box,
-  Shapes,
-  ChartNoAxesCombined,
-} from "lucide-react";
+import { Users, Box, Shapes, ChartNoAxesCombined } from "lucide-react";
 
 const navLinks = [
   {
@@ -31,7 +25,6 @@ const navLinks = [
     url: "/admin/staffs",
     icon: Users,
   },
-
 ];
 
 export default function AdminLayout({

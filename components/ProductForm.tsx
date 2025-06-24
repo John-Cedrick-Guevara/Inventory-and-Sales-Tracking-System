@@ -165,7 +165,7 @@ function ProductForm<T extends Product>({
                     <DropdownMenuLabel>Choose Category</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuRadioGroup
-                      value={credentials.cathegory}
+                      value={credentials.category as string}
                       onValueChange={(currCategory) => {
                         setCredentials((prev) => ({
                           ...prev,

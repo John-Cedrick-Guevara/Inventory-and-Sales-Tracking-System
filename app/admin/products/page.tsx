@@ -8,10 +8,8 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import { PackagePlus, PencilLine, Trash } from "lucide-react";
 import ProductForm from "@/components/ProductForm";
-import { unknown } from "zod/v4";
 import { ProductSchema } from "@/lib/schemas";
 import axios from "axios";
-import FormError from "@/components/FormError";
 
 const productPage = () => {
   const { data, error, isLoading, mutate } = useSWR<Product[]>(
@@ -28,7 +26,7 @@ const productPage = () => {
     price: 0,
     stock: 0,
     image: "",
-    cathegory: "",
+    category: "",
   });
   const [editProductCredentials, setEditProductCredentials] = useState<Product>(
     {
@@ -38,7 +36,7 @@ const productPage = () => {
       price: 0,
       stock: 0,
       image: "",
-      cathegory: "",
+      category: "",
     }
   );
 
@@ -50,72 +48,65 @@ const productPage = () => {
       reader.onerror = reject;
     });
 
+  function objectToBase64(byteObject: Record<number, number>): Promise<string> {
+    const byteArray = new Uint8Array(Object.values(byteObject)); // convert object to Uint8Array
+    const blob = new Blob([byteArray], { type: "image/png" }); // or image/jpeg if needed
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result && typeof reader.result === "string") {
+          resolve(reader.result); // ✅ base64 string (data:image/png;base64,...)
+        } else {
+          reject("Failed to convert blob to Base64");
+        }
+      };
+      reader.onerror = () => reject("FileReader error");
+      reader.readAsDataURL(blob);
+    });
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // image
     const image: File = productCredentials.image;
-
-    // converted image
-    const base64 = await toBase64(image);
-
-    const productData = {
-      ...productCredentials,
-      image: base64.split(",")[1],
-    };
-
-    const parsedData = ProductSchema.safeParse(productData);
-    console.log(parsedData);
-    try {
-      const uploadProduct = await axios.post("/api/products", parsedData.data);
-
-      setShowForm(false);
-      setProductCredentials({
-        name: "",
-        description: "",
-        price: 0,
-        stock: 0,
-        image: "",
-      });
-      mutate();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function handleEditProduct(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    // image
-    const image: File = editProductCredentials.image;
-    console.log(editProductCredentials.image);
-    if (image) {
-      setFormError("Please provide an image for the product");
+    if (!image) {
+      setFormError("Please provide an image for the product.");
     } else {
       // converted image
       const base64 = await toBase64(image);
 
-      const editedProductData = {
-        ...editProductCredentials,
+      const productData = {
+        ...productCredentials,
         image: base64.split(",")[1],
       };
 
-      const parsedData = ProductSchema.safeParse(editedProductData);
+      const parsedData = ProductSchema.safeParse(productData);
       if (parsedData.success) {
         try {
-          const uploadProduct = await axios.put(
+          const uploadProduct = await axios.post(
             "/api/products",
             parsedData.data
           );
-          setShowEditForm(false);
-          setEditProductCredentials({
+
+          setShowForm(false);
+          setProductCredentials({
             name: "",
             description: "",
-            price: 0 as number,
-            stock: 0 as number,
+            price: 0,
+            stock: 0,
             image: "",
           });
           mutate();
         } catch (error) {
-          console.log(error);
+          if (axios.isAxiosError(error)) {
+            const message =
+              (error.response?.data.message as string) ||
+              "Something went wrong. Please wait";
+            setFormError(message);
+          } else {
+            setFormError("An unexpected error occured");
+          }
         }
       } else {
         setFormError(parsedData.error.issues[0].message);
@@ -123,11 +114,79 @@ const productPage = () => {
     }
   }
 
+  async function handleEditProduct(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // image
+    const image: File | any = editProductCredentials.image;
+
+    console.log(image.name);
+    console.log(editProductCredentials.image);
+
+    let editedProductData = editProductCredentials;
+
+    if (image.name === undefined) {
+      const base64 = await objectToBase64(image);
+
+      editedProductData = {
+        ...editProductCredentials,
+
+        image: base64.split(",")[1],
+      };
+    } else {
+      // converted image
+      const base64 = await toBase64(image);
+
+      editedProductData = {
+        ...editProductCredentials,
+        image: base64.split(",")[1],
+      };
+      console.log(base64.split(",")[1]);
+    }
+
+    console.log(editedProductData);
+
+    const parsedData = ProductSchema.safeParse(editedProductData);
+    if (parsedData.success) {
+      try {
+        const uploadProduct = await axios.put("/api/products", parsedData.data);
+        setShowEditForm(false);
+        setEditProductCredentials({
+          name: "",
+          description: "",
+          price: 0 as number,
+          stock: 0 as number,
+          image: "",
+        });
+        mutate();
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
+
+          setFormError(message);
+        } else {
+          setFormError("An unexpected error occured");
+        }
+      }
+    } else {
+      console.log(parsedData);
+      setFormError(parsedData.error.issues[0].message);
+    }
+  }
+
   function getToEditProduct(product: Product) {
     setShowEditForm(true);
 
-    setEditProductCredentials(product);
+    setEditProductCredentials((prev) => ({
+      ...product,
+      category:
+        typeof product.category === "object" && product.category !== null
+          ? product.category.id 
+          : product.category,
+    }));
   }
+  console.log(editProductCredentials);
 
   async function handleDeleteProduct(item: number | undefined) {
     try {
@@ -159,7 +218,7 @@ const productPage = () => {
             "description",
             "price",
             "stock",
-            "cathegory",
+            "category",
           ] as (keyof Product)[]
         }
         data={data ?? []}

@@ -45,12 +45,12 @@ const TableComponent = <T,>({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item, rowIndex) => (
+          {data.map((item: any, rowIndex) => (
             <TableRow key={rowIndex}>
               {tableItems.map((key, colIndex) => (
-                <TableCell key={colIndex}>{String(item[key])}</TableCell>
+                <TableCell key={colIndex}>{key === "category" ? String(item['category']['name']) :String(item[key])}</TableCell>
               ))}
-              {renderActions && (
+              {renderActions && ( 
                 <TableCell className="flex items-center gap-2">
                   {renderActions(item)}
                 </TableCell>

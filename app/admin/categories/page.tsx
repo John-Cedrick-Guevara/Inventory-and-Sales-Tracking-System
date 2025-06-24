@@ -3,10 +3,7 @@ import CathegoryForm from "@/components/CategoryForm";
 import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
-import {
-  Categories,
-
-} from "@/lib/interfaces";
+import { Categories } from "@/lib/interfaces";
 import { CategoriesSchema } from "@/lib/schemas";
 import axios from "axios";
 import { Diamond, DiamondPlus, PencilLine, Trash } from "lucide-react";
@@ -35,6 +32,8 @@ const categoriesPage = () => {
     setEditCathegoryCredentials(item);
     console.log(item);
   }
+
+
 
   async function handletoDeleteCathegory(item: number | undefined) {
     try {

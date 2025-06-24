@@ -37,25 +37,28 @@ const staffsTable = () => {
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsedData = UserCredentialsSchema.safeParse(credentials);
-    if (parsedData.success) {
+    if(parsedData.success) {
+
       try {
+        
         const res = await axios.post("/api/users", parsedData.data);
-
+        
         mutate();
-
+        
         setShowForm(false);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const message =
-            (error.response?.data.message as string) ||
-            "Something went wrong. Please wait";
+          (error.response?.data.message as string) ||
+          "Something went wrong. Please wait";
           setFormError(message);
         } else {
           setFormError("An unexpected error occured");
         }
       }
-    } else {
+    }else {
       setFormError(parsedData.error.issues[0].message);
+
     }
   }
 
@@ -78,6 +81,7 @@ const staffsTable = () => {
         }
       }
     } else {
+      
       setFormError(parsedData.error.issues[0].message);
     }
   }
