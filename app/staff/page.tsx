@@ -1,5 +1,5 @@
 "use client";
-import { ReceiptText } from "lucide-react";
+import { ReceiptText, CirclePlus, CircleMinus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,7 +22,8 @@ const staffPage = () => {
     fetcher
   );
   const [itemsWithBase64, setItemsWithBase64] = useState<Product[]>([]);
-  const [itemToAddSale, setItemToAddSale] = useState<Product>();
+  const [showCart, setShowCart] = useState(false);
+  const [saleItems, setSaleItems] = useState<Product[]>([]);
 
   function byteObjectToBase64(
     obj: Record<number, number>,
@@ -65,7 +66,36 @@ const staffPage = () => {
   }, [data]);
 
   function getItem(item: Product) {
-    setItemToAddSale(item);
+    if (!saleItems.find((product) => product.id === item.id)) {
+      setSaleItems([...saleItems, { ...item, quantity: 0 }]);
+    }
+    console.log(saleItems);
+  }
+
+  function editQuantity(id: number | undefined, operation: string) {
+    if (operation === "add") {
+      setSaleItems((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, quantity: (item.quantity ?? 0) + 1 }
+            : item
+        )
+      );
+
+      console.log(saleItems, id);
+    } else if (operation === "minus") {
+      setSaleItems((prev) =>
+        prev.map((item) =>
+          item.id === id && (item.quantity ?? 0) > 0
+            ? { ...item, quantity: (item.quantity ?? 0) - 1 }
+            : item
+        )
+      );
+    }
+  }
+
+  function removeItem(id: number) {
+    setSaleItems((prev) => prev.filter((item) => item.id !== id));
   }
 
   return (
@@ -98,12 +128,53 @@ const staffPage = () => {
           </CardFooter>
         </Card>
       ))}
-      <div className=" fixed bottom-10 left-0 w-full z-40">
-        <IconButton
-          variant="outline"
-          IconButton={ReceiptText}
-          tooltip={"See sales"}
-        />
+      <div className="sticky bottom-10 left-0 w-full z-40">
+        {showCart && (
+          <div className="absolute bottom-10 bg-white p-2 flex flex-col items-center justify-center gap-2  rounded-lg shadow-2xl">
+            {saleItems.map((item) => (
+              <div
+                key={item.id}
+                className="relative grid gap-2 grid-cols-3 grid-rows-2 py-2 px-4 rounded-lg shadow"
+              >
+                <div
+                  onClick={() => removeItem(item.id)}
+                  className="absolute right-2 top-2 cursor-pointer"
+                >
+                  <X />
+                </div>
+                <img
+                  className="w-20 h-20 object-cover row-span-2"
+                  src={item.image}
+                  alt=""
+                />
+                <h1 className="col-span-2">{item.name}</h1>
+                <p>Total: {(item.quantity ?? 1) * item.price}</p>
+                <p className="flex items-center rounded-lg text-lg gap-2">
+                  <span
+                    onClick={() => editQuantity(item.id, "minus")}
+                    className="bg-black text-white p-1"
+                  >
+                    <CircleMinus height={15} width={15} />
+                  </span>
+                  {item.quantity}
+                  <span
+                    onClick={() => editQuantity(item.id, "add")}
+                    className="bg-black text-white p-1"
+                  >
+                    <CirclePlus height={15} width={15} />
+                  </span>
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+        <div onClick={() => setShowCart((prev) => !prev)}>
+          <IconButton
+            variant="outline"
+            IconButton={ReceiptText}
+            tooltip={"See sales"}
+          />
+        </div>
       </div>
     </div>
   );

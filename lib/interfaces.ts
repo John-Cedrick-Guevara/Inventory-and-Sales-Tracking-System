@@ -41,5 +41,6 @@ export interface Product {
   image?: any ;
   category?:  string | {id: string};
   createdAt?: string;
+  quantity?: number
 }
 
