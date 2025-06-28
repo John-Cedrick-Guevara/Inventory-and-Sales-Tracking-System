@@ -42,5 +42,6 @@ export interface Product {
   category?:  string | {id: string};
   createdAt?: string;
   quantity?: number
+  total?:number
 }
 

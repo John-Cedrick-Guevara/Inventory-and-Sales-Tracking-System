@@ -15,8 +15,12 @@ import { Product } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import IconButton from "@/components/IconButton";
+import { handleChange } from "@/lib/handleChange";
+import axios from "axios";
+import { useAuth } from "../Context/AuthContext";
 
 const staffPage = () => {
+  const user = useAuth();
   const { data, error, isLoading, mutate } = useSWR<Product[]>(
     "/api/products",
     fetcher
@@ -67,35 +71,52 @@ const staffPage = () => {
 
   function getItem(item: Product) {
     if (!saleItems.find((product) => product.id === item.id)) {
-      setSaleItems([...saleItems, { ...item, quantity: 0 }]);
-    }
-    console.log(saleItems);
-  }
-
-  function editQuantity(id: number | undefined, operation: string) {
-    if (operation === "add") {
-      setSaleItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, quantity: (item.quantity ?? 0) + 1 }
-            : item
-        )
-      );
-
-      console.log(saleItems, id);
-    } else if (operation === "minus") {
-      setSaleItems((prev) =>
-        prev.map((item) =>
-          item.id === id && (item.quantity ?? 0) > 0
-            ? { ...item, quantity: (item.quantity ?? 0) - 1 }
-            : item
-        )
-      );
+      setSaleItems([...saleItems, { ...item, quantity: 1 }]);
     }
   }
 
-  function removeItem(id: number) {
+  function handleQuantityChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number | undefined
+  ) {
+    const value = e.target.value;
+    setSaleItems((prev) =>
+      prev.map((item) =>
+        item.id === id && (item.quantity ?? 0) > 0
+          ? { ...item, quantity: value === "" ? 1 : parseInt(e.target.value) }
+          : item
+      )
+    );
+  }
+
+  function removeItem(id: number | undefined) {
     setSaleItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  async function addSale() {
+    let total = 0;
+
+    const itemsToPass = saleItems.map((item) => ({
+      ...item,
+      subtotal: (item.quantity ?? 1) * item.price,
+    }));
+
+    for (const item of itemsToPass) {
+      total += item.subtotal;
+    }
+
+    try {
+      await axios.post("/api/sales", {
+        userId: user?.id,
+        total: total,
+        items: itemsToPass,
+      });
+
+      setSaleItems([]);
+      total = 0;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -128,6 +149,7 @@ const staffPage = () => {
           </CardFooter>
         </Card>
       ))}
+      {/* cart */}
       <div className="sticky bottom-10 left-0 w-full z-40">
         {showCart && (
           <div className="absolute bottom-10 bg-white p-2 flex flex-col items-center justify-center gap-2  rounded-lg shadow-2xl">
@@ -136,6 +158,7 @@ const staffPage = () => {
                 key={item.id}
                 className="relative grid gap-2 grid-cols-3 grid-rows-2 py-2 px-4 rounded-lg shadow"
               >
+                {/* remove button */}
                 <div
                   onClick={() => removeItem(item.id)}
                   className="absolute right-2 top-2 cursor-pointer"
@@ -148,24 +171,26 @@ const staffPage = () => {
                   alt=""
                 />
                 <h1 className="col-span-2">{item.name}</h1>
-                <p>Total: {(item.quantity ?? 1) * item.price}</p>
-                <p className="flex items-center rounded-lg text-lg gap-2">
-                  <span
-                    onClick={() => editQuantity(item.id, "minus")}
-                    className="bg-black text-white p-1"
-                  >
-                    <CircleMinus height={15} width={15} />
-                  </span>
-                  {item.quantity}
-                  <span
-                    onClick={() => editQuantity(item.id, "add")}
-                    className="bg-black text-white p-1"
-                  >
-                    <CirclePlus height={15} width={15} />
-                  </span>
-                </p>
+                <p>Total: {item.total}</p>
+                {/* edit quantity  */}
+                <div className="flex items-center justify-center rounded-lg text-lg  ">
+                  <p className="text-slate-500">Quantity: </p>
+                  <input
+                    className="w-10"
+                    type="number"
+                    min={1}
+                    value={item.quantity === 0 ? "" : item.quantity}
+                    onChange={(e) => handleQuantityChange(e, item.id)}
+                  />
+                </div>
               </div>
             ))}
+
+            {saleItems.length > 0 && (
+              <Button onClick={addSale} variant={"outline"} className="w-full">
+                Add sale
+              </Button>
+            )}
           </div>
         )}
         <div onClick={() => setShowCart((prev) => !prev)}>
