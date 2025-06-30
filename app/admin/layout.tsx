@@ -7,7 +7,7 @@ import { Users, Box, Shapes, ChartNoAxesCombined } from "lucide-react";
 const navLinks = [
   {
     title: "Sales",
-    url: "#",
+    url: "/admin/sales",
     icon: ChartNoAxesCombined,
   },
   {

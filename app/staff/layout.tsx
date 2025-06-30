@@ -11,12 +11,12 @@ export default function AdminLayout({
   const navLinks = [
     {
       title: "Products",
-      url: "/admin/products",
+      url: "/staff",
       icon: Box,
     },
     {
       title: "Sales History",
-      url: "#",
+      url: "/staff/saleHistory",
       icon: History,
     },
   ];

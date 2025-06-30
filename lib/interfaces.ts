@@ -1,4 +1,3 @@
-
 export interface Users {
   id: number;
   name: string;
@@ -18,13 +17,11 @@ export interface UserCredentials {
   name: string;
 }
 
-
-
 export interface ChangePassword {
-  action? : string 
-  id: number 
-  password: string
-  newPassword: string
+  action?: string;
+  id: number;
+  password: string;
+  newPassword: string;
 }
 
 export interface Categories {
@@ -33,15 +30,23 @@ export interface Categories {
 }
 
 export interface Product {
+  product: { image: any };
+
   id?: number;
   name: string;
   description: string;
   price: number;
-  stock?: number; 
-  image?: any ;
-  category?:  string | {id: string};
+  stock?: number;
+  image?: any;
   createdAt?: string;
-  quantity?: number
-  total?:number
+  quantity?: number;
+  total?: number;
 }
 
+export interface Sale {
+  createdAt: string;
+  id: number;
+  userId: number;
+  total: number;
+  saleItems: { product: Product; image: string , quantity: number, subtotal: number}[];
+}

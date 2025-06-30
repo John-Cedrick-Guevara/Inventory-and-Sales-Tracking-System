@@ -22,10 +22,46 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    for (const item of items) {
+      await prisma.product.update({
+        where: { id: item.id },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+    }
+
     return NextResponse.json({ message: "Sales added" }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { message: "Error adding sales" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  const userId = req.nextUrl.searchParams.get("userId");
+  console.log(userId);
+  try {
+    const sale = await prisma.sale.findMany({
+      include: {
+        saleItems: {
+          select: {
+            product: true,
+            quantity: true,
+            subtotal: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(sale, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Error fetching sale history" },
       { status: 500 }
     );
   }

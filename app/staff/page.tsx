@@ -114,6 +114,7 @@ const staffPage = () => {
 
       setSaleItems([]);
       total = 0;
+      mutate();
     } catch (error) {
       console.log(error);
     }
@@ -122,11 +123,7 @@ const staffPage = () => {
   return (
     <div className="relative flex flex-wrap gap-2 items-center justify-center  ">
       {itemsWithBase64.map((item) => (
-        <Card
-          onClick={() => getItem(item)}
-          className="w-full max-w-xs h-fit"
-          key={item.id}
-        >
+        <Card className="w-full max-w-xs h-fit" key={item.id}>
           <CardHeader>
             <CardContent>
               <img className="w-lg h-52 object-cover" src={item.image} alt="" />
@@ -142,7 +139,13 @@ const staffPage = () => {
           </CardHeader>
           <CardFooter>
             <CardAction>
-              <Button variant={"default"} size={"lg"} className="w-full">
+              <Button
+                onClick={() => getItem(item)}
+                variant={"default"}
+                disabled={item.stock === 0}
+                size={"lg"}
+                className="w-full cursor-pointer"
+              >
                 Add sales
               </Button>
             </CardAction>
@@ -150,9 +153,9 @@ const staffPage = () => {
         </Card>
       ))}
       {/* cart */}
-      <div className="sticky bottom-10 left-0 w-full z-40">
+      <div className="sticky bottom-10 left-0 w-full z-10">
         {showCart && (
-          <div className="absolute bottom-10 bg-white p-2 flex flex-col items-center justify-center gap-2  rounded-lg shadow-2xl">
+          <div className="absolute bottom-12 bg-white p-2 flex flex-col items-center justify-center gap-2  rounded-lg shadow-2xl">
             {saleItems.map((item) => (
               <div
                 key={item.id}
@@ -179,6 +182,7 @@ const staffPage = () => {
                     className="w-10"
                     type="number"
                     min={1}
+                    max={item.stock}
                     value={item.quantity === 0 ? "" : item.quantity}
                     onChange={(e) => handleQuantityChange(e, item.id)}
                   />
@@ -193,7 +197,10 @@ const staffPage = () => {
             )}
           </div>
         )}
-        <div onClick={() => setShowCart((prev) => !prev)}>
+        <div className="relative" onClick={() => setShowCart((prev) => !prev)}>
+          <span className="absolute -top-6 -left-2 p-2 rounded-full bg-slate-100 z-30">
+            {saleItems.length}
+          </span>
           <IconButton
             variant="outline"
             IconButton={ReceiptText}
