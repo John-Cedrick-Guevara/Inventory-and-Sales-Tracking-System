@@ -48,5 +48,18 @@ export interface Sale {
   id: number;
   userId: number;
   total: number;
-  saleItems: { product: Product; image: string , quantity: number, subtotal: number}[];
+  saleItems: {
+    product: Product;
+    image: string;
+    quantity: number;
+    subtotal: number;
+  }[];
+}
+
+export interface SaleItem {
+  product: { name: string };
+  quantity: number;
+  sale: { createdAt: string };
+  price: number
+  subtotal: number
 }
