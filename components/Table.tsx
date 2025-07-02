@@ -12,8 +12,6 @@ import {
 import { PencilLine, Trash } from "lucide-react";
 import IconButton from "./IconButton";
 
-
-
 interface Props<T> {
   // table head, datas, and title
   tableHead: string[];
@@ -48,9 +46,15 @@ const TableComponent = <T,>({
           {data.map((item: any, rowIndex) => (
             <TableRow key={rowIndex}>
               {tableItems.map((key, colIndex) => (
-                <TableCell key={colIndex}>{key === "category" ? String(item['category']['name']) :String(item[key])}</TableCell>
+                <TableCell key={colIndex}>
+                  {key === "category"
+                    ? String(item["category"]["name"])
+                    : key === "sales"
+                    ? String(item[key].length)
+                    : String(item[key])}
+                </TableCell>
               ))}
-              {renderActions && ( 
+              {renderActions && (
                 <TableCell className="flex items-center gap-2">
                   {renderActions(item)}
                 </TableCell>

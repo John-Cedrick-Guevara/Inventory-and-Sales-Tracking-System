@@ -107,6 +107,8 @@ const staffsTable = () => {
     setShowEditForm(true);
   }
 
+  console.log(data)
+
   return (
     <main className="w-full">
       <TableComponent

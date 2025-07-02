@@ -47,6 +47,9 @@ export async function GET(req: NextRequest) {
   console.log(userId);
   try {
     const sale = await prisma.sale.findMany({
+      where: {
+        userId: Number(userId),
+      },
       include: {
         saleItems: {
           select: {
