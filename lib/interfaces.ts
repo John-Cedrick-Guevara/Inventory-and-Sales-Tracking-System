@@ -30,7 +30,7 @@ export interface Categories {
 }
 
 export interface Product {
-  product: { image: any };
+  product?: { image: any };
 
   id?: number;
   name: string;
@@ -41,6 +41,7 @@ export interface Product {
   createdAt?: string;
   quantity?: number;
   total?: number;
+  category?: number | { id: number } | string;
 }
 
 export interface Sale {
@@ -57,9 +58,9 @@ export interface Sale {
 }
 
 export interface SaleItem {
-  product: { name: string };
+  image: string;
+  product: { name: string; image: string; price: number };
   quantity: number;
-  sale: { createdAt: string };
-  price: number
-  subtotal: number
+  sale: { createdAt: string; user: { name: string } };
+  subtotal: number;
 }

@@ -179,7 +179,7 @@ const productPage = () => {
     setShowEditForm(true);
 
     setEditProductCredentials((prev) => ({
-      ...product,
+      ...prev,
       category:
         typeof product.category === "object" && product.category !== null
           ? product.category.id 

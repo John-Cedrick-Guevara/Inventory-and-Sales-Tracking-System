@@ -46,7 +46,6 @@ const saleHistory = () => {
     });
   }
 
-  console.log(convertedSales);
 
   useEffect(() => {
     async function processSales() {

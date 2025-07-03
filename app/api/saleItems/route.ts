@@ -8,10 +8,17 @@ export async function GET() {
         product: {
           select: {
             name: true,
+            image: true,
+            price:true
           },
         },
         sale: {
           select: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
             createdAt: true,
           },
         },

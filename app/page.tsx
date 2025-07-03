@@ -27,7 +27,7 @@ export default function Home() {
     if (parsedData.success) {
       try {
         const user = await axios.post("/api/users", parsedData.data);
-        router.push(`/${user.data.role === "ADMIN" ? "admin" : "staff"}`);
+        router.push(`/${user.data.role === "ADMIN" ? "admin/sales" : "staff"}`);
       } catch (error: any) {
         if (axios.isAxiosError(error)) {
           const message =

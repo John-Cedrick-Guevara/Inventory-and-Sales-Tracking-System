@@ -51,11 +51,13 @@ export async function GET(req: NextRequest) {
         userId: Number(userId),
       },
       include: {
+        
         saleItems: {
           select: {
             product: true,
             quantity: true,
             subtotal: true,
+            
           },
         },
       },
