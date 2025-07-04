@@ -3,7 +3,7 @@
 import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
-import { Product } from "@/lib/interfaces";
+import { GetProduct, Product } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { PackagePlus, PencilLine, Trash } from "lucide-react";
@@ -11,10 +11,13 @@ import ProductForm from "@/components/ProductForm";
 import { ProductSchema } from "@/lib/schemas";
 import axios from "axios";
 import FilterBar from "@/components/FilterBar";
+import PaginationControls from "@/components/PaginationControls";
 
 const productPage = () => {
-  const { data, error, isLoading, mutate } = useSWR<Product[]>(
-    "/api/products",
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const { data, error, isLoading, mutate } = useSWR<GetProduct>(
+    `/api/products?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
   const [showForm, setShowForm] = useState(false);
@@ -206,7 +209,7 @@ const productPage = () => {
     if (data) {
       setCtegories((prev) => {
         const updated = [...prev];
-        for (const item of data) {
+        for (const item of data.data) {
           if (!updated.includes(item.category?.name as string)) {
             updated.push(item.category?.name as string);
           }
@@ -249,7 +252,7 @@ const productPage = () => {
           ] as (keyof Product)[]
         }
         data={
-          data?.filter((item) =>
+          data?.data.filter((item) =>
             searchItem
               ? item.name.toLowerCase().includes(searchItem.toLowerCase())
               : item && selectedCategory
@@ -282,9 +285,11 @@ const productPage = () => {
         )}
       ></TableComponent>
 
+      <PaginationControls data={data} setPage={setPage} page={page} />
+
       {/* add form and icon */}
       <div
-        className=" fixed bottom-10 w-full"
+        className=" fixed bottom-10 w-fit"
         onClick={() => setShowForm(true)}
       >
         <IconButton
@@ -293,6 +298,7 @@ const productPage = () => {
           tooltip={"Add Product"}
         />
       </div>
+
       {showForm && !showEditForm && (
         <ProductForm
           formError={formError}

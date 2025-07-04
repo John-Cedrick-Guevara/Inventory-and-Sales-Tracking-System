@@ -1,6 +1,6 @@
 "use client";
 import { fetcher } from "@/lib/fetcher";
-import { Sale, SaleItem } from "@/lib/interfaces";
+import { GetSaleItems, Sale, SaleItem } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
 import { Table } from "@/components/ui/table";
+import PaginationControls from "@/components/PaginationControls";
 
 interface filterdata {
   name: string;
@@ -52,11 +53,12 @@ const salesPage = () => {
   const [selectedMonth, setSelectedMonth] = useState("00");
   const [selectedYear, setSelectedYear] = useState("00");
   const [span, setSpan] = useState("Daily");
-
   const { data, error, isLoading, mutate } = useSWR<SaleItem[]>(
-    "/api/saleItems",
+    `/api/saleItems`,
     fetcher
   );
+  const [page, setPage] = useState(1);
+  const pageSize = 2;
 
   const months: { [key: string]: string }[] = [
     { name: "All", value: "00" },
@@ -390,7 +392,7 @@ const salesPage = () => {
       {/* revenue per product */}
       <Card className="shadow-lg rounded-xl w-full min-w-xs p-2 min-h-60">
         <h1 className="text-xl font-semibold">Revenue per product:</h1>
-        <ResponsiveContainer  width="100%" height={250}   >
+        <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
               dataKey="revenue"
@@ -435,11 +437,11 @@ const salesPage = () => {
       </Card>
 
       {/* Sales history*/}
-      <Card className=" shadow-lg rounded-xl w-full p-2 col-span-2">
+      <Card className="relative shadow-lg rounded-xl w-full p-2 col-span-2">
         <h1 className="text-xl font-semibold">Sales History: </h1>
 
-        <div className="flex flex-col gap-2">
-          {convertedSales?.reverse().map((item, index) => {
+        <div className="flex flex-col gap-2 relative pb-20">
+          {convertedSales?.map((item, index) => {
             const date = new Date(item.sale.createdAt);
             const formattedDate = format(date, "yyyy-MM-dd HH:mm");
             return (

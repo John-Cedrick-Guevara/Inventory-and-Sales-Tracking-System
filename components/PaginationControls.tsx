@@ -1,16 +1,17 @@
 "use client";
-import { GetUser } from "@/lib/interfaces";
+import { SaleItem } from "@/lib/generated/prisma";
+import { GetProduct, GetSaleItems, GetSales, GetUser } from "@/lib/interfaces";
 import React from "react";
 
 interface Props {
-  data: GetUser | undefined;
+  data: GetUser | GetSales | GetProduct | any | undefined;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
 }
 
 const PaginationControls = ({ data, setPage, page }: Props) => {
   return (
-    <div className="flex items-center gap-4 absolute mx-auto left-0 right-0 bottom-10 w-fit">
+    <div className="flex items-center gap-4 absolute mx-auto left-0 right-0 bottom-2 w-fit">
       <button
         onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
         disabled={page === 1}

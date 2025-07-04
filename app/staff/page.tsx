@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 
 import { fetcher } from "@/lib/fetcher";
-import { Product } from "@/lib/interfaces";
+import { GetProduct, Product } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import IconButton from "@/components/IconButton";
@@ -20,11 +20,14 @@ import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
 import { Input } from "@/components/ui/input";
 import FilterBar from "@/components/FilterBar";
+import PaginationControls from "@/components/PaginationControls";
 
 const staffPage = () => {
   const user = useAuth();
-  const { data, error, isLoading, mutate } = useSWR<Product[]>(
-    "/api/products",
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const { data, error, isLoading, mutate } = useSWR<GetProduct>(
+    `/api/products?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
   const [itemsWithBase64, setItemsWithBase64] = useState<Product[]>([]);
@@ -56,10 +59,26 @@ const staffPage = () => {
   }
 
   useEffect(() => {
+    async function convertImages() {
+      if (!data) return;
+
+      const result = await Promise.all(
+        data.data.map(async (item) => {
+          const base64Image = await byteObjectToBase64(item.image);
+          return {
+            ...item,
+            image: base64Image,
+          };
+        })
+      );
+
+      setItemsWithBase64(result);
+    }
+    convertImages();
     if (data) {
       setCtegories((prev) => {
         const updated = [...prev];
-        for (const item of data) {
+        for (const item of data.data) {
           if (!updated.includes(item.category?.name as string)) {
             updated.push(item.category?.name as string);
           }
@@ -121,8 +140,10 @@ const staffPage = () => {
     }
   }
 
+  console.log(itemsWithBase64);
+
   return (
-    <div className="relative ">
+    <div className="relative pb-20">
       {/* filters */}
       <FilterBar
         searchItem={searchItem}
@@ -177,7 +198,7 @@ const staffPage = () => {
       </div>
 
       {/* cart */}
-      <div className="sticky bottom-10 left-0 w-full z-10">
+      <div className="sticky bottom-10 left-0 w-fit z-10">
         {showCart && (
           <div className="absolute bottom-12 bg-white p-2 flex flex-col items-center justify-center gap-2  rounded-lg shadow-2xl">
             {saleItems.map((item) => (
@@ -232,6 +253,8 @@ const staffPage = () => {
           />
         </div>
       </div>
+
+      <PaginationControls data={data} setPage={setPage} page={page} />
     </div>
   );
 };

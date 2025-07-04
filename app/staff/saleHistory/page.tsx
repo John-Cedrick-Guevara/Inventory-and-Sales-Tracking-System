@@ -1,25 +1,21 @@
 "use client";
 import { useAuth } from "@/app/Context/AuthContext";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
- 
-  CardContent,
-
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { fetcher } from "@/lib/fetcher";
-import { Sale } from "@/lib/interfaces";
+import { GetSales, Sale } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { format } from "date-fns";
+import PaginationControls from "@/components/PaginationControls";
 
 const saleHistory = () => {
   const user = useAuth();
   const [convertedSales, setConvertedSales] = useState<Sale[]>([]);
-
-  const { data, error, isLoading, mutate } = useSWR<Sale[]>(
-    `/api/sales?userId=${user?.id}`,
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const { data, error, isLoading, mutate } = useSWR<GetSales>(
+    `/api/sales?userId=${user?.id}&page=${page}&pageSize=${pageSize}`,
     fetcher
   );
 
@@ -49,7 +45,7 @@ const saleHistory = () => {
       if (!data) return;
 
       const updatedSales = await Promise.all(
-        data.map(async (sale) => {
+        data.data.map(async (sale) => {
           const updatedItems = await Promise.all(
             sale.saleItems.map(async (item) => ({
               ...item,
@@ -113,6 +109,8 @@ const saleHistory = () => {
             </Card>
           );
         })}
+
+        <PaginationControls data={data} setPage={setPage} page={page} />
       </div>
     </div>
   );
