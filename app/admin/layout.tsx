@@ -36,7 +36,7 @@ export default function AdminLayout({
     <AuthProvider role={"ADMIN"}>
       <SidebarProvider>
         <AppSidebar navLinks={navLinks} />
-        <div className="w-full p-6">
+        <div className="w-full sm:p-6 p-2">
           <SidebarTrigger />
           {children}
         </div>

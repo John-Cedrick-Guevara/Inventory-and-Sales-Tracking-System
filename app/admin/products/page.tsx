@@ -4,12 +4,13 @@ import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
 import { Product } from "@/lib/interfaces";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { PackagePlus, PencilLine, Trash } from "lucide-react";
 import ProductForm from "@/components/ProductForm";
 import { ProductSchema } from "@/lib/schemas";
 import axios from "axios";
+import FilterBar from "@/components/FilterBar";
 
 const productPage = () => {
   const { data, error, isLoading, mutate } = useSWR<Product[]>(
@@ -19,6 +20,9 @@ const productPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [formError, setFormError] = useState("");
+  const [categories, setCtegories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchItem, setSearchItem] = useState<string>("");
 
   const [productCredentials, setProductCredentials] = useState<Product>({
     name: "",
@@ -26,7 +30,10 @@ const productPage = () => {
     price: 0,
     stock: 0,
     image: "",
-    category: "",
+    category: {
+      name: "",
+      id: 0,
+    },
   });
   const [editProductCredentials, setEditProductCredentials] = useState<Product>(
     {
@@ -36,7 +43,10 @@ const productPage = () => {
       price: 0,
       stock: 0,
       image: "",
-      category: "",
+      category: {
+        name: "",
+        id: 0,
+      },
     }
   );
 
@@ -143,8 +153,6 @@ const productPage = () => {
       console.log(base64.split(",")[1]);
     }
 
-    console.log(editedProductData);
-
     const parsedData = ProductSchema.safeParse(editedProductData);
     if (parsedData.success) {
       try {
@@ -177,16 +185,10 @@ const productPage = () => {
 
   function getToEditProduct(product: Product) {
     setShowEditForm(true);
+    console.log(product);
 
-    setEditProductCredentials((prev) => ({
-      ...prev,
-      category:
-        typeof product.category === "object" && product.category !== null
-          ? product.category.id 
-          : product.category,
-    }));
+    setEditProductCredentials(product);
   }
-  console.log(editProductCredentials);
 
   async function handleDeleteProduct(item: number | undefined) {
     try {
@@ -200,8 +202,33 @@ const productPage = () => {
     }
   }
 
+  useEffect(() => {
+    if (data) {
+      setCtegories((prev) => {
+        const updated = [...prev];
+        for (const item of data) {
+          if (!updated.includes(item.category?.name as string)) {
+            updated.push(item.category?.name as string);
+          }
+        }
+
+        return updated;
+      });
+    }
+  }, [data]);
+
+  console.log(categories);
+
   return (
     <div>
+      <FilterBar
+        searchItem={searchItem}
+        setSearchItem={setSearchItem}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+      />
+
       <TableComponent
         tableHead={[
           "Product Id",
@@ -221,7 +248,15 @@ const productPage = () => {
             "category",
           ] as (keyof Product)[]
         }
-        data={data ?? []}
+        data={
+          data?.filter((item) =>
+            searchItem
+              ? item.name.toLowerCase().includes(searchItem.toLowerCase())
+              : item && selectedCategory
+              ? item.category?.name === selectedCategory
+              : item
+          ) ?? []
+        }
         title={"Products Table"}
         renderActions={(item) => (
           <>

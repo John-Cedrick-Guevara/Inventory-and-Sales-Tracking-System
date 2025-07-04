@@ -1,3 +1,5 @@
+import { CategoricalChartFunc } from "recharts/types/chart/types";
+
 export interface Users {
   id: number;
   name: string;
@@ -5,6 +7,35 @@ export interface Users {
   role: string;
   sales: number;
   password: string;
+}
+
+export interface GetUser {
+  data: UserCredentials[];
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+export interface GetProduct {
+  data: Product[];
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+export interface GetSales {
+  data: Sale[];
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+export interface GetSaleItems {
+  data: SaleItem[];
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
 }
 
 export interface UserCredentials {
@@ -30,8 +61,6 @@ export interface Categories {
 }
 
 export interface Product {
-  product?: { image: any };
-
   id?: number;
   name: string;
   description: string;
@@ -41,7 +70,7 @@ export interface Product {
   createdAt?: string;
   quantity?: number;
   total?: number;
-  category?: number | { id: number } | string;
+  category?: Categories;
 }
 
 export interface Sale {

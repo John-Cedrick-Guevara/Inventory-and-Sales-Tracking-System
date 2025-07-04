@@ -44,15 +44,17 @@ export default function Home() {
   }
 
   return (
-    <main className="">
+    <main className="p-6 h-dvh">
+      <h1 className="font-bold text-3xl text-center">Log In</h1>
+
+      {/* main form */}
       <form
         action=""
         onSubmit={handleSignIn}
-        className="h-full flex flex-col gap-10 items-center justify-start"
+        className="h-full flex flex-col gap-32  items-center justify-center"
       >
-        <h1 className="font-bold text-3xl mb-12">Log In</h1>
         {/* logo */}
-        <section className=" flex flex-col w-xs mb-32">
+        <section className=" flex flex-col w-xs ">
           <div className=" flex gap-2 items-center">
             <Image className="w-20 h-20" src={logo} alt={""}></Image>
             <h1 className="font-bold text-2xl">
@@ -100,10 +102,6 @@ export default function Home() {
             Log In
           </Button>
         </section>
-
-        <a className="text-blue-600 underline mt-22" href="/auth/sign-up">
-          Go to Sign Up
-        </a>
       </form>
     </main>
   );

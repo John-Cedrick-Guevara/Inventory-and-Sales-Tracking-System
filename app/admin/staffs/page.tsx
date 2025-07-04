@@ -1,24 +1,30 @@
 "use client";
 import TableComponent from "@/components/Table";
-import { UserCredentials, Users } from "@/lib/interfaces";
+import { GetUser, UserCredentials, Users } from "@/lib/interfaces";
 import useSWR from "swr";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { PencilLine, Trash, UserRoundPlus } from "lucide-react";
 import UserForm from "@/components/UserForm";
 import { UserCredentialsSchema } from "@/lib/schemas";
 import axios from "axios";
 import IconButton from "@/components/IconButton";
+import FilterBar from "@/components/FilterBar";
+import PaginationControls from "@/components/PaginationControls";
 
 const staffsTable = () => {
-  const { data, error, isLoading, mutate } = useSWR<UserCredentials[]>(
-    "/api/users/",
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const { data, error, isLoading, mutate } = useSWR<GetUser>(
+    `/api/users?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [formError, setFormError] = useState("");
-
+  const [roles, setRoles] = useState<string[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [searchUser, setSearchUser] = useState<string>("");
   const [credentials, setCredentials] = useState<UserCredentials>({
     action: "signUp",
     email: "",
@@ -37,28 +43,25 @@ const staffsTable = () => {
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsedData = UserCredentialsSchema.safeParse(credentials);
-    if(parsedData.success) {
-
+    if (parsedData.success) {
       try {
-        
         const res = await axios.post("/api/users", parsedData.data);
-        
+
         mutate();
-        
+
         setShowForm(false);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const message =
-          (error.response?.data.message as string) ||
-          "Something went wrong. Please wait";
+            (error.response?.data.message as string) ||
+            "Something went wrong. Please wait";
           setFormError(message);
         } else {
           setFormError("An unexpected error occured");
         }
       }
-    }else {
+    } else {
       setFormError(parsedData.error.issues[0].message);
-
     }
   }
 
@@ -81,7 +84,6 @@ const staffsTable = () => {
         }
       }
     } else {
-      
       setFormError(parsedData.error.issues[0].message);
     }
   }
@@ -107,15 +109,47 @@ const staffsTable = () => {
     setShowEditForm(true);
   }
 
-  console.log(data)
+  console.log(data);
+
+  useEffect(() => {
+    if (data) {
+      setRoles((prev) => {
+        const updated = [...prev];
+        for (const item of data.data) {
+          if (!updated.includes(item.role as string)) {
+            updated.push(item.role as string);
+          }
+        }
+
+        return updated;
+      });
+    }
+  }, [data]);
+
+  console.log(data);
 
   return (
     <main className="w-full">
+      <FilterBar
+        searchItem={searchUser}
+        setSearchItem={setSearchUser}
+        selectedCategory={selectedRole}
+        setSelectedCategory={setSelectedRole}
+        categories={roles}
+      />
       <TableComponent
         title={isLoading ? "fetching users" : "StaffsTable"}
-        tableHead={["userId", "name", "email", "role", "sales"]}
-        tableItems={["id", "name", "email", "role", "sales"] as (keyof Users)[]}
-        data={data ?? []}
+        tableHead={["userId", "name", "email", "role"]}
+        tableItems={["id", "name", "email", "role"] as (keyof Users)[]}
+        data={
+          data?.data.filter((item) =>
+            searchUser
+              ? item.name.toLowerCase().includes(searchUser.toLowerCase())
+              : item && selectedRole
+              ? item.role === selectedRole
+              : item
+          ) ?? []
+        }
         renderActions={(item) => (
           <>
             {" "}
@@ -139,6 +173,14 @@ const staffsTable = () => {
           </>
         )}
       ></TableComponent>
+
+      {/* pagination shit */}
+      <PaginationControls
+        data={data}
+        setPage={setPage}
+        page={page}
+  
+      />
 
       {/* add form and icon */}
       <div

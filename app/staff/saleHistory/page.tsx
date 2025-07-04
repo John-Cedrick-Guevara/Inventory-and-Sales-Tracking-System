@@ -3,15 +3,13 @@ import { useAuth } from "@/app/Context/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
+ 
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
+
   CardTitle,
 } from "@/components/ui/card";
 import { fetcher } from "@/lib/fetcher";
-import { Product, Sale } from "@/lib/interfaces";
+import { Sale } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { format } from "date-fns";
@@ -46,7 +44,6 @@ const saleHistory = () => {
     });
   }
 
-
   useEffect(() => {
     async function processSales() {
       if (!data) return;
@@ -75,21 +72,21 @@ const saleHistory = () => {
 
   return (
     <div>
-      <h1>Sale history:</h1>
-      <div className="flex flex-col gap-2">
+      <h1 className="text-xl font-semibold">Sale history:</h1>
+      <div className="flex flex-wrap gap-2 items-center justify-center">
         {convertedSales?.map((sale) => {
           const date = new Date(sale.createdAt);
           const formattedDate = format(date, "yyyy-MM-dd HH:mm");
 
           return (
-            <Card className="w-full gap-3 h-fit" key={sale.id}>
+            <Card className="max-w-md min-w-sm gap-3 h-fit" key={sale.id}>
               <CardTitle className="flex items-center justify-between px-4">
                 <h6 className=" text-slate-500">{formattedDate}</h6>
                 <h6 className=" text-slate-500"> Total: {sale.total}</h6>
               </CardTitle>
               <hr />
 
-              <CardContent className=" flex gap-1.5 flex-wrap items-center justify-center">
+              <CardContent className=" flex gap-1.5 flex-col items-center justify-center">
                 {sale.saleItems?.map((item) => {
                   return (
                     <Card

@@ -44,26 +44,41 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get("userId");
-  console.log(userId);
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const skip = (page - 1) * pageSize;
+
   try {
-    const sale = await prisma.sale.findMany({
-      where: {
-        userId: Number(userId),
-      },
-      include: {
-        
-        saleItems: {
-          select: {
-            product: true,
-            quantity: true,
-            subtotal: true,
-            
+    const [data, total] = await Promise.all([
+      prisma.sale.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: "desc" },
+
+        where: {
+          userId: Number(userId),
+        },
+        include: {
+          saleItems: {
+            select: {
+              product: true,
+              quantity: true,
+              subtotal: true,
+            },
           },
         },
-      },
-    });
+      }),
+      prisma.product.count(),
+    ]);
 
-    return NextResponse.json(sale, { status: 200 });
+    return NextResponse.json({
+      data,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
+      pageSize,
+      totalItems: total,
+    });
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching sale history" },

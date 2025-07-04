@@ -10,14 +10,16 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+
 import { fetcher } from "@/lib/fetcher";
 import { Product } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import IconButton from "@/components/IconButton";
-import { handleChange } from "@/lib/handleChange";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
+import { Input } from "@/components/ui/input";
+import FilterBar from "@/components/FilterBar";
 
 const staffPage = () => {
   const user = useAuth();
@@ -28,6 +30,9 @@ const staffPage = () => {
   const [itemsWithBase64, setItemsWithBase64] = useState<Product[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [saleItems, setSaleItems] = useState<Product[]>([]);
+  const [categories, setCtegories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchItem, setSearchItem] = useState<string>("");
 
   function byteObjectToBase64(
     obj: Record<number, number>,
@@ -51,22 +56,18 @@ const staffPage = () => {
   }
 
   useEffect(() => {
-    async function convertImages() {
-      if (!data) return;
+    if (data) {
+      setCtegories((prev) => {
+        const updated = [...prev];
+        for (const item of data) {
+          if (!updated.includes(item.category?.name as string)) {
+            updated.push(item.category?.name as string);
+          }
+        }
 
-      const result = await Promise.all(
-        data.map(async (item) => {
-          const base64Image = await byteObjectToBase64(item.image);
-          return {
-            ...item,
-            image: base64Image,
-          };
-        })
-      );
-
-      setItemsWithBase64(result);
+        return updated;
+      });
     }
-    convertImages();
   }, [data]);
 
   function getItem(item: Product) {
@@ -121,37 +122,60 @@ const staffPage = () => {
   }
 
   return (
-    <div className="relative flex flex-wrap gap-2 items-center justify-center  ">
-      {itemsWithBase64.map((item) => (
-        <Card className="w-full max-w-xs h-fit" key={item.id}>
-          <CardHeader>
-            <CardContent>
-              <img className="w-lg h-52 object-cover" src={item.image} alt="" />
-            </CardContent>
-            <CardTitle className="text-xl">
-              {item.name.slice(0, 1).toUpperCase() + item.name.slice(1, -1)}
-            </CardTitle>
-            <CardDescription>{item.description}</CardDescription>
-            <CardDescription className="flex justify-between w-full">
-              <p>${item.price}</p>
-              <p>Stock :{item.stock}</p>
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <CardAction>
-              <Button
-                onClick={() => getItem(item)}
-                variant={"default"}
-                disabled={item.stock === 0}
-                size={"lg"}
-                className="w-full cursor-pointer"
-              >
-                Add sales
-              </Button>
-            </CardAction>
-          </CardFooter>
-        </Card>
-      ))}
+    <div className="relative ">
+      {/* filters */}
+      <FilterBar
+        searchItem={searchItem}
+        setSearchItem={setSearchItem}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+      />
+
+      {/* items container */}
+      <div className="flex flex-wrap gap-2 items-center justify-center ">
+        {itemsWithBase64
+          .filter((item) =>
+            searchItem
+              ? item.name.toLowerCase().includes(searchItem.toLowerCase())
+              : item && selectedCategory
+              ? item.category?.name === selectedCategory
+              : item
+          )
+          .map((item) => (
+            <Card className="w-full max-w-xs h-fit" key={item.id}>
+              <CardHeader>
+                <img
+                  className="w-full aspect-square object-cover"
+                  src={item.image}
+                  alt=""
+                />
+
+                <CardTitle className="text-xl">
+                  {item.name.slice(0, 1).toUpperCase() + item.name.slice(1)}
+                </CardTitle>
+                <CardDescription>{item.description}</CardDescription>
+                <CardDescription className="flex justify-between w-full">
+                  <p>${item.price}</p>
+                  <p>Stock :{item.stock}</p>
+                  <p>Category:{String(item.category?.name)}</p>
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button
+                  onClick={() => getItem(item)}
+                  variant={"default"}
+                  disabled={item.stock === 0}
+                  size={"lg"}
+                  className="w-full cursor-pointer"
+                >
+                  Add sales
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+      </div>
+
       {/* cart */}
       <div className="sticky bottom-10 left-0 w-full z-10">
         {showCart && (

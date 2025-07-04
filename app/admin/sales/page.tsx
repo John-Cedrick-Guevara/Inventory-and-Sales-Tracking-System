@@ -2,6 +2,8 @@
 import { fetcher } from "@/lib/fetcher";
 import { Sale, SaleItem } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+
 import {
   PieChart,
   Pie,
@@ -83,7 +85,8 @@ const salesPage = () => {
             (item) => item.name === sale.product.name
           );
 
-          const amountToAdd = sale.subtotal ?? sale.product.price * sale.quantity;
+          const amountToAdd =
+            sale.subtotal ?? sale.product.price * sale.quantity;
 
           if (index !== -1) {
             updated[index] = {
@@ -126,7 +129,8 @@ const salesPage = () => {
 
             const index = updated.findIndex((item) => item.name === day);
 
-            const amountToAdd = sale.subtotal ?? sale.product.price * sale.quantity;
+            const amountToAdd =
+              sale.subtotal ?? sale.product.price * sale.quantity;
 
             if (index !== -1) {
               updated[index] = {
@@ -163,7 +167,8 @@ const salesPage = () => {
 
             const index = updated.findIndex((item) => item.name === month);
 
-            const amountToAdd = sale.subtotal ?? sale.product.price * sale.quantity;
+            const amountToAdd =
+              sale.subtotal ?? sale.product.price * sale.quantity;
 
             if (index !== -1) {
               updated[index] = {
@@ -199,7 +204,8 @@ const salesPage = () => {
 
             const index = updated.findIndex((item) => item.name === year);
 
-            const amountToAdd = sale.subtotal ?? sale.product.price * sale.quantity;
+            const amountToAdd =
+              sale.subtotal ?? sale.product.price * sale.quantity;
 
             if (index !== -1) {
               updated[index] = {
@@ -293,7 +299,7 @@ const salesPage = () => {
   console.log(convertedSales);
 
   return (
-    <div className="grid  grid-cols-[fit-content(100%)_1fr] grid-rows-[fit-content(100%)_1fr] gap-4">
+    <div className="grid max-md:flex flex-col  md:grid-cols-[fit-content(100%)_1fr] md:grid-rows-[fit-content(100%)_1fr] gap-4">
       {/* filterable revenue chart */}
       <Card className="grid col-span-2 grid-cols-3 gap-4 shadow-lg rounded-xl w-full p-2">
         <h1 className="text-xl font-semibold">Filterable Revenue: </h1>
@@ -382,22 +388,22 @@ const salesPage = () => {
       </Card>
 
       {/* revenue per product */}
-      <Card className="shadow-lg rounded-xl w-full p-2">
+      <Card className="shadow-lg rounded-xl w-full min-w-xs p-2 min-h-60">
         <h1 className="text-xl font-semibold">Revenue per product:</h1>
-        <PieChart width={300} height={300}>
-          <Pie
-            dataKey="revenue"
-            isAnimationActive={false}
-            data={revenuePerProduct}
-            cx="50%"
-            cy="50%"
-            outerRadius={80}
-            fill="#8884d8"
-            label
-          />
+        <ResponsiveContainer  width="100%" height={250}   >
+          <PieChart>
+            <Pie
+              dataKey="revenue"
+              isAnimationActive={false}
+              data={revenuePerProduct}
+              outerRadius={80}
+              fill="#8884d8"
+              label
+            />
 
-          <Tooltip />
-        </PieChart>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
       </Card>
 
       {/* staff number of sales (bar chart) */}
@@ -433,22 +439,26 @@ const salesPage = () => {
         <h1 className="text-xl font-semibold">Sales History: </h1>
 
         <div className="flex flex-col gap-2">
-          {convertedSales?.reverse().map((item, index) => (
-            <Card
-              key={index}
-              className="grid grid-cols-[fit-content(100%)_1fr_1fr] grid-rows-2 p-2 gap-2"
-            >
-              <img
-                src={item.image}
-                className="object-cover w-20 h-20 row-span-2"
-                alt=""
-              />
-              <h1>Product name: {item.product.name}</h1>
-              <h4>Date: {item.sale.createdAt}</h4>
-              <h4>Staff name: {item.sale.user.name}</h4>
-              <h4>Price: {item.product.price}</h4>
-            </Card>
-          ))}
+          {convertedSales?.reverse().map((item, index) => {
+            const date = new Date(item.sale.createdAt);
+            const formattedDate = format(date, "yyyy-MM-dd HH:mm");
+            return (
+              <Card
+                key={index}
+                className="grid grid-cols-[fit-content(100%)_1fr_1fr] grid-rows-2 p-2 gap-2"
+              >
+                <img
+                  src={item.image}
+                  className="object-cover w-20 h-20 row-span-2"
+                  alt=""
+                />
+                <h1>Product name: {item.product.name}</h1>
+                <h4>Date: {formattedDate}</h4>
+                <h4>Staff name: {item.sale.user.name}</h4>
+                <h4>Price: {item.product.price}</h4>
+              </Card>
+            );
+          })}
         </div>
       </Card>
     </div>

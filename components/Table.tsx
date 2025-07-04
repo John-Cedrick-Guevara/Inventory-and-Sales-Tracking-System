@@ -49,8 +49,6 @@ const TableComponent = <T,>({
                 <TableCell key={colIndex}>
                   {key === "category"
                     ? String(item["category"]["name"])
-                    : key === "sales"
-                    ? String(item[key].length)
                     : String(item[key])}
                 </TableCell>
               ))}
