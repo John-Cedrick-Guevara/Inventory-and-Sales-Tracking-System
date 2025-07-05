@@ -1,6 +1,9 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+// Categories
+
+// gets categories
 export async function GET() {
   try {
     const cathegories = await prisma.category.findMany();
@@ -14,6 +17,7 @@ export async function GET() {
   }
 }
 
+// handles creation of new category
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { name } = body.data;
@@ -29,6 +33,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json("failed to create new cathegory", { status: 500 });
   }
 }
+
+// handles data edit of category
 export async function PUT(req: NextRequest) {
   const body = await req.json();
   const { name, id } = body.data;
@@ -47,6 +53,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json("failed to create new cathegory", { status: 500 });
   }
 }
+// handles deletion of category
 export async function DELETE(req: NextRequest) {
   const id = await req.json();
 

@@ -1,9 +1,13 @@
-import { Category } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+// Products
+
+// handles creation of new product
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+
+  // pagination essentials
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const skip = (page - 1) * pageSize;
@@ -36,10 +40,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// handles creation of new products
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { name, description, stock, price, image, category } = body;
-  console.log(body);
+
   try {
     const productAdded = await prisma.product.create({
       data: {
@@ -48,6 +53,7 @@ export async function POST(req: NextRequest) {
         price: Number(price),
         stock: Number(stock),
         image: image,
+        // reference to the category table
         category: {
           connect: { id: Number(category) },
         },
@@ -63,10 +69,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// handles data edit of product
 export async function PUT(req: NextRequest) {
   const body = await req.json();
   const { id, name, description, stock, price, image, category } = body;
-  console.log(body);
   try {
     const productEdited = await prisma.product.update({
       where: {
@@ -78,6 +84,7 @@ export async function PUT(req: NextRequest) {
         price: Number(price),
         stock: Number(stock),
         image: image,
+        // reference to category table
         category: {
           connect: { id: Number(category) },
         },
@@ -93,6 +100,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+// handles deletion of data
 export async function DELETE(req: NextRequest) {
   const id = await req.json();
 

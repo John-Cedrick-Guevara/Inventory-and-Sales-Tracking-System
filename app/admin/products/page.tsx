@@ -1,5 +1,4 @@
 "use client";
-
 import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
@@ -14,19 +13,27 @@ import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
 
 const productPage = () => {
+  // things for front end pagination
   const [page, setPage] = useState(1);
   const pageSize = 20;
+
+  // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetProduct>(
     `/api/products?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
+
+  // form state handler
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [formError, setFormError] = useState("");
+
+  // data filter essentials
   const [categories, setCtegories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchItem, setSearchItem] = useState<string>("");
 
+  // add and edit data credentials
   const [productCredentials, setProductCredentials] = useState<Product>({
     name: "",
     description: "",
@@ -53,6 +60,7 @@ const productPage = () => {
     }
   );
 
+  // image converter
   const toBase64 = (file: File) =>
     new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -61,6 +69,7 @@ const productPage = () => {
       reader.onerror = reject;
     });
 
+  // object to base 64 file converter
   function objectToBase64(byteObject: Record<number, number>): Promise<string> {
     const byteArray = new Uint8Array(Object.values(byteObject)); // convert object to Uint8Array
     const blob = new Blob([byteArray], { type: "image/png" }); // or image/jpeg if needed
@@ -79,6 +88,7 @@ const productPage = () => {
     });
   }
 
+  // handles submission of new data
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // image
@@ -94,6 +104,7 @@ const productPage = () => {
         image: base64.split(",")[1],
       };
 
+      // post req
       const parsedData = ProductSchema.safeParse(productData);
       if (parsedData.success) {
         try {
@@ -127,13 +138,11 @@ const productPage = () => {
     }
   }
 
+  // handles submission of edited data
   async function handleEditProduct(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // image
     const image: File | any = editProductCredentials.image;
-
-    console.log(image.name);
-    console.log(editProductCredentials.image);
 
     let editedProductData = editProductCredentials;
 
@@ -181,11 +190,11 @@ const productPage = () => {
         }
       }
     } else {
-      console.log(parsedData);
       setFormError(parsedData.error.issues[0].message);
     }
   }
 
+  // gets product to be edited
   function getToEditProduct(product: Product) {
     setShowEditForm(true);
     console.log(product);
@@ -193,6 +202,7 @@ const productPage = () => {
     setEditProductCredentials(product);
   }
 
+  // handles deletion of product
   async function handleDeleteProduct(item: number | undefined) {
     try {
       const deleteProduct = await axios.delete("/api/products/", {
@@ -205,6 +215,7 @@ const productPage = () => {
     }
   }
 
+  // gets existing categories in products array
   useEffect(() => {
     if (data) {
       setCtegories((prev) => {
@@ -220,10 +231,9 @@ const productPage = () => {
     }
   }, [data]);
 
-  console.log(categories);
-
   return (
     <div>
+      {/* search bar and dropdown */}
       <FilterBar
         searchItem={searchItem}
         setSearchItem={setSearchItem}
@@ -232,6 +242,7 @@ const productPage = () => {
         categories={categories}
       />
 
+      {/* table of products */}
       <TableComponent
         tableHead={[
           "Product Id",
@@ -285,13 +296,11 @@ const productPage = () => {
         )}
       ></TableComponent>
 
+      {/* next and prev pagination controls */}
       <PaginationControls data={data} setPage={setPage} page={page} />
 
       {/* add form and icon */}
-      <div
-        className=" fixed bottom-10 w-fit"
-        onClick={() => setShowForm(true)}
-      >
+      <div className=" fixed bottom-10 w-fit" onClick={() => setShowForm(true)}>
         <IconButton
           variant="outline"
           IconButton={PackagePlus}
@@ -299,6 +308,7 @@ const productPage = () => {
         />
       </div>
 
+      {/* add product form */}
       {showForm && !showEditForm && (
         <ProductForm
           formError={formError}
@@ -311,6 +321,8 @@ const productPage = () => {
           title={"Add new product"}
         />
       )}
+
+      {/* edit product form  */}
       {showEditForm && !showForm && (
         <ProductForm
           formError={formError}

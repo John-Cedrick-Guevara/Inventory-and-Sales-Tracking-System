@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { format } from "date-fns";
 import PaginationControls from "@/components/PaginationControls";
+import Image from "next/image";
 
 const saleHistory = () => {
   const user = useAuth();
@@ -67,21 +68,26 @@ const saleHistory = () => {
   }, [data]);
 
   return (
-    <div>
+    <div className="relative pb-20">
       <h1 className="text-xl font-semibold">Sale history:</h1>
-      <div className="flex flex-wrap gap-2 items-center justify-center">
+      <div className="flex flex-wrap gap-2 items-center justify-center p-4">
         {convertedSales?.map((sale) => {
           const date = new Date(sale.createdAt);
           const formattedDate = format(date, "yyyy-MM-dd HH:mm");
 
           return (
-            <Card className="max-w-md min-w-sm gap-3 h-fit" key={sale.id}>
+            // sales
+            <Card
+              className="w-full max-w-md min-w-sm gap-3 h-fit"
+              key={sale.id}
+            >
               <CardTitle className="flex items-center justify-between px-4">
                 <h6 className=" text-slate-500">{formattedDate}</h6>
                 <h6 className=" text-slate-500"> Total: {sale.total}</h6>
               </CardTitle>
               <hr />
 
+              {/* sale items */}
               <CardContent className=" flex gap-1.5 flex-col items-center justify-center">
                 {sale.saleItems?.map((item) => {
                   return (
@@ -89,7 +95,9 @@ const saleHistory = () => {
                       key={item.product.id}
                       className="grid grid-cols-3 grid-rows-2 p-2 w-full max-w-sm"
                     >
-                      <img
+                      <Image
+                        width={1200}
+                        height={500}
                         src={item.image}
                         alt="as "
                         className="object-cover h-20 w-20 row-span-2"
@@ -109,9 +117,9 @@ const saleHistory = () => {
             </Card>
           );
         })}
-
-        <PaginationControls data={data} setPage={setPage} page={page} />
       </div>
+      {/* prev and next pagination controls */}
+      <PaginationControls data={data} setPage={setPage} page={page} />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 import { fetcher } from "@/lib/fetcher";
-import { GetSaleItems, Sale, SaleItem } from "@/lib/interfaces";
+import { SaleItem } from "@/lib/interfaces";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 
@@ -29,8 +29,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
-import { Table } from "@/components/ui/table";
-import PaginationControls from "@/components/PaginationControls";
+import FilterBar from "@/components/FilterBar";
+import Image from "next/image";
 
 interface filterdata {
   name: string;
@@ -39,27 +39,37 @@ interface filterdata {
 }
 
 const salesPage = () => {
+  // fetcher
+  const { data, error, isLoading, mutate } = useSWR<SaleItem[]>(
+    `/api/saleItems`,
+    fetcher
+  );
+
+  // chart data
   const [revenuePerProduct, setRevenuePerProduct] = useState<filterdata[]>([]);
   const [revenuePerStaff, setRevenuePerStaff] = useState<filterdata[]>([]);
   const [filteredData, setFilteredData] = useState<filterdata[]>([]);
+
+  // converted images
   const [convertedSales, setConvertedSales] = useState<SaleItem[]>([]);
 
+  // years of transactions
   const [years, setYears] = useState<{ [key: string]: string }[]>([
     {
       name: "All",
       value: "00",
     },
   ]);
+
+  // filtration of data essentials
+  const [categories, setCtegories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchItem, setSearchItem] = useState<string>("");
+
+  // chart customization of time soan
   const [selectedMonth, setSelectedMonth] = useState("00");
   const [selectedYear, setSelectedYear] = useState("00");
   const [span, setSpan] = useState("Daily");
-  const { data, error, isLoading, mutate } = useSWR<SaleItem[]>(
-    `/api/saleItems`,
-    fetcher
-  );
-  const [page, setPage] = useState(1);
-  const pageSize = 2;
-
   const months: { [key: string]: string }[] = [
     { name: "All", value: "00" },
     { name: "January", value: "01" },
@@ -75,6 +85,10 @@ const salesPage = () => {
     { name: "November", value: "11" },
     { name: "December", value: "12" },
   ];
+
+  //  pagination essentials
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   useEffect(() => {
     if (data) {
@@ -277,10 +291,12 @@ const salesPage = () => {
     });
   }
 
+  // image convertion and categories
   useEffect(() => {
     async function convertImages() {
       if (!data) return;
 
+      // convertion of image format
       const result = await Promise.all(
         data.map(async (item) => {
           const base64Image = await byteObjectToBase64(
@@ -296,9 +312,20 @@ const salesPage = () => {
       setConvertedSales(result);
     }
     convertImages();
-  }, [data]);
 
-  console.log(convertedSales);
+    // categories in datas
+    for (const sale of data ?? []) {
+      setCtegories((prev) => {
+        const updated = [...prev];
+
+        if (!updated.includes(sale.sale.user.name as string)) {
+          updated.push(sale.sale.user.name as string);
+        }
+
+        return updated;
+      });
+    }
+  }, [data]);
 
   return (
     <div className="grid max-md:flex flex-col  md:grid-cols-[fit-content(100%)_1fr] md:grid-rows-[fit-content(100%)_1fr] gap-4">
@@ -440,27 +467,80 @@ const salesPage = () => {
       <Card className="relative shadow-lg rounded-xl w-full p-2 col-span-2">
         <h1 className="text-xl font-semibold">Sales History: </h1>
 
+        {/* filtration of data(search and dropdown) */}
+        <FilterBar
+          searchItem={searchItem}
+          setSearchItem={setSearchItem}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          categories={categories}
+        />
+
+        {/* data (sales history) */}
         <div className="flex flex-col gap-2 relative pb-20">
-          {convertedSales?.map((item, index) => {
-            const date = new Date(item.sale.createdAt);
-            const formattedDate = format(date, "yyyy-MM-dd HH:mm");
-            return (
-              <Card
-                key={index}
-                className="grid grid-cols-[fit-content(100%)_1fr_1fr] grid-rows-2 p-2 gap-2"
-              >
-                <img
-                  src={item.image}
-                  className="object-cover w-20 h-20 row-span-2"
-                  alt=""
-                />
-                <h1>Product name: {item.product.name}</h1>
-                <h4>Date: {formattedDate}</h4>
-                <h4>Staff name: {item.sale.user.name}</h4>
-                <h4>Price: {item.product.price}</h4>
-              </Card>
-            );
-          })}
+          {convertedSales
+            .filter((item) =>
+              searchItem
+                ? item.product.name
+                    .toLowerCase()
+                    .includes(searchItem.toLowerCase())
+                : item && selectedCategory
+                ? item.sale.user?.name === selectedCategory
+                : item
+            )
+            .slice(pageSize * (page - 1), pageSize * page)
+            ?.map((item, index) => {
+              const date = new Date(item.sale.createdAt);
+              const formattedDate = format(date, "yyyy-MM-dd HH:mm");
+              return (
+                <Card
+                  key={index}
+                  className="grid grid-cols-[fit-content(100%)_1fr_1fr] grid-rows-2 p-2 gap-2"
+                >
+                  <Image
+                    width={200}
+                    height={200}
+                    src={item.image}
+                    className="object-cover w-20 h-20 row-span-2"
+                    alt=""
+                  />
+                  <h1>Product name: {item.product.name}</h1>
+                  <h4>Date: {formattedDate}</h4>
+                  <h4>Staff name: {item.sale.user.name}</h4>
+                  <h4>Price: {item.product.price}</h4>
+                </Card>
+              );
+            })}
+        </div>
+
+        <div className="flex items-center gap-4 absolute mx-auto left-0 right-0 bottom-2 w-fit">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span>
+            Page {page} of {data?.length && Math.ceil(data?.length / pageSize)}
+          </span>
+
+          <button
+            onClick={() =>
+              setPage((prev) =>
+                data?.length && Math.ceil(data?.length / pageSize)
+                  ? Math.min(prev + 1)
+                  : prev + 1
+              )
+            }
+            disabled={
+              page === (data?.length && Math.ceil(data?.length / pageSize))
+            }
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </Card>
     </div>

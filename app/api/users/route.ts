@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { date } from "zod/v4";
 
+// Users
+
+// handles creation of new user and logging in of user
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
@@ -17,6 +19,7 @@ export async function POST(req: NextRequest) {
       { status: 501 }
     );
 
+  // creates new user
   if (action === "signUp") {
     const encryptedPass = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
@@ -27,14 +30,19 @@ export async function POST(req: NextRequest) {
       },
     });
     return NextResponse.json({ message: "User Created" }, { status: 201 });
-  } else if (action === "logIn") {
+  }
+
+  // log in user
+  else if (action === "logIn") {
     const user = await prisma.user.findUnique({ where: { email } });
+
     // checks if user exists
     if (!user)
       return NextResponse.json(
         { message: "No user with such email." },
         { status: 404 }
       );
+
     //checking of password
     if (!(await bcrypt.compare(password, user.password)))
       return NextResponse.json(
@@ -66,12 +74,14 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// handles query of users
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+
+  // pagination essentials
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const skip = (page - 1) * pageSize;
-
 
   try {
     const [data, total] = await Promise.all([
@@ -95,15 +105,16 @@ export async function GET(req: NextRequest) {
   }
 }
 
-
+// handles user data edit
 export async function PUT(req: NextRequest) {
   const body = await req.json();
   const { email, name, password, id, action, newPassword } = body;
-  console.log(body);
+
   try {
     if (!action)
       return NextResponse.json({ message: "No action" }, { status: 500 });
 
+    // edits user data
     if (action === "editCredentials") {
       const newEncryptedPass = await bcrypt.hash(password, 10);
 
@@ -117,7 +128,10 @@ export async function PUT(req: NextRequest) {
           email: email,
         },
       });
-    } else if (action === "editPass") {
+    }
+
+    // handles password edit only
+    else if (action === "editPass") {
       const newEncryptedPass = await bcrypt.hash(newPassword, 10);
 
       const data = await prisma.user.update({
@@ -138,6 +152,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+// handles deletion of user
 export async function DELETE(req: NextRequest) {
   const data = await req.json();
 

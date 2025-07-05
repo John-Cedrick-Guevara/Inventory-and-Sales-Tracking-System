@@ -21,22 +21,34 @@ import { useAuth } from "../Context/AuthContext";
 import { Input } from "@/components/ui/input";
 import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
+import Image from "next/image";
 
 const staffPage = () => {
+  // user data
   const user = useAuth();
+
+  // pagination essentials
   const [page, setPage] = useState(1);
   const pageSize = 20;
+
+  // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetProduct>(
     `/api/products?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
+  // data with converted image format
   const [itemsWithBase64, setItemsWithBase64] = useState<Product[]>([]);
+
+  // products to be sold
   const [showCart, setShowCart] = useState(false);
   const [saleItems, setSaleItems] = useState<Product[]>([]);
+
+  // data filtration essentials
   const [categories, setCtegories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchItem, setSearchItem] = useState<string>("");
 
+  // image format conversion
   function byteObjectToBase64(
     obj: Record<number, number>,
     mimeType = "image/png"
@@ -58,6 +70,7 @@ const staffPage = () => {
     });
   }
 
+  // image format convertion and existing categories getter
   useEffect(() => {
     async function convertImages() {
       if (!data) return;
@@ -75,6 +88,7 @@ const staffPage = () => {
       setItemsWithBase64(result);
     }
     convertImages();
+    // existing categories getter
     if (data) {
       setCtegories((prev) => {
         const updated = [...prev];
@@ -89,12 +103,14 @@ const staffPage = () => {
     }
   }, [data]);
 
+  // add items in the cart
   function getItem(item: Product) {
     if (!saleItems.find((product) => product.id === item.id)) {
       setSaleItems([...saleItems, { ...item, quantity: 1 }]);
     }
   }
 
+  // handles addition and subtruction of quantity of product
   function handleQuantityChange(
     e: React.ChangeEvent<HTMLInputElement>,
     id: number | undefined
@@ -109,22 +125,27 @@ const staffPage = () => {
     );
   }
 
+  // removes item
   function removeItem(id: number | undefined) {
     setSaleItems((prev) => prev.filter((item) => item.id !== id));
   }
 
+  // handles submission of data sold
   async function addSale() {
-    let total = 0;
+    let total = 0; // total amount sold
 
+    // subtotal each item
     const itemsToPass = saleItems.map((item) => ({
       ...item,
       subtotal: (item.quantity ?? 1) * item.price,
     }));
 
+    // gets the total of all items
     for (const item of itemsToPass) {
       total += item.subtotal;
     }
 
+    // submission
     try {
       await axios.post("/api/sales", {
         userId: user?.id,
@@ -139,8 +160,6 @@ const staffPage = () => {
       console.log(error);
     }
   }
-
-  console.log(itemsWithBase64);
 
   return (
     <div className="relative pb-20">
@@ -166,7 +185,9 @@ const staffPage = () => {
           .map((item) => (
             <Card className="w-full max-w-xs h-fit" key={item.id}>
               <CardHeader>
-                <img
+                <Image
+                  width={1200}
+                  height={500}
                   className="w-full aspect-square object-cover"
                   src={item.image}
                   alt=""
@@ -175,7 +196,9 @@ const staffPage = () => {
                 <CardTitle className="text-xl">
                   {item.name.slice(0, 1).toUpperCase() + item.name.slice(1)}
                 </CardTitle>
+
                 <CardDescription>{item.description}</CardDescription>
+
                 <CardDescription className="flex justify-between w-full">
                   <p>${item.price}</p>
                   <p>Stock :{item.stock}</p>
@@ -254,6 +277,7 @@ const staffPage = () => {
         </div>
       </div>
 
+      {/* prev and next pagination controls */}
       <PaginationControls data={data} setPage={setPage} page={page} />
     </div>
   );

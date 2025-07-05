@@ -6,15 +6,18 @@ import { fetcher } from "@/lib/fetcher";
 import { Categories } from "@/lib/interfaces";
 import { CategoriesSchema } from "@/lib/schemas";
 import axios from "axios";
-import { Diamond, DiamondPlus, PencilLine, Trash } from "lucide-react";
+import {  DiamondPlus, PencilLine, Trash } from "lucide-react";
 import React, { useState } from "react";
 import useSWR from "swr";
 
 const categoriesPage = () => {
+  // data fetcher
   const { data, error, isLoading, mutate } = useSWR<Categories[]>(
     "/api/categories/",
     fetcher
   );
+
+  // form states handler (edit and add form)
   const [formError, setFormError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -27,14 +30,13 @@ const categoriesPage = () => {
       id: 0,
     });
 
+    // gets item to be edited
   function getToEditCathegory(item: Categories) {
     setShowEditForm(true);
     setEditCathegoryCredentials(item);
-    console.log(item);
   }
 
-
-
+  // Deletes item
   async function handletoDeleteCathegory(item: number | undefined) {
     try {
       const deleteCathegory = await axios.delete("/api/categories/", {
@@ -47,6 +49,7 @@ const categoriesPage = () => {
     }
   }
 
+  // handles submission of edited data
   async function handleEditCathegory(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsedcathegory = CategoriesSchema.safeParse(
@@ -77,9 +80,9 @@ const categoriesPage = () => {
     }
   }
 
+  // handles submission of new data
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(cathegoryCredentials);
     const parsedcathegory = CategoriesSchema.safeParse(cathegoryCredentials);
 
     if (parsedcathegory.success) {
@@ -110,6 +113,7 @@ const categoriesPage = () => {
   return (
     <div>
       {" "}
+      {/* Categories table */}
       <TableComponent
         title={isLoading ? "fetching categories" : "Categories"}
         tableHead={["Category Id", "name"]}
@@ -138,6 +142,7 @@ const categoriesPage = () => {
           </>
         )}
       ></TableComponent>
+
       {/* add form and icon */}
       <div
         className=" fixed bottom-10 w-full z-40"
@@ -149,6 +154,8 @@ const categoriesPage = () => {
           tooltip={"Add cathegory"}
         />
       </div>
+
+      {/* add form */}
       {showForm && !showEditForm && (
         <CathegoryForm
           error={formError}
@@ -161,6 +168,8 @@ const categoriesPage = () => {
           title={"Create new cathegory"}
         />
       )}
+
+      {/* edit form */}
       {showEditForm && !showForm && (
         <CathegoryForm
           error={formError}

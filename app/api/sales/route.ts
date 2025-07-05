@@ -1,17 +1,19 @@
-import { Product } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+// Sales
+
+// handles creation of sale
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { userId, total, items } = body;
-  console.log(items);
 
   try {
     const sale = await prisma.sale.create({
       data: {
         userId: userId,
         total: total,
+        // add the items to saleItems table
         saleItems: {
           create: items.map((item: any) => ({
             productId: item.id,
@@ -22,6 +24,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // updates the stock in product table
     for (const item of items) {
       await prisma.product.update({
         where: { id: item.id },
@@ -43,8 +46,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
   const { searchParams } = new URL(req.url);
+  
+  // user id to reference
+  const userId = req.nextUrl.searchParams.get("userId");
+  
+  // pagination essentials
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const skip = (page - 1) * pageSize;
@@ -59,6 +66,7 @@ export async function GET(req: NextRequest) {
         where: {
           userId: Number(userId),
         },
+        // includes saleItems product, quntity and subtotal
         include: {
           saleItems: {
             select: {

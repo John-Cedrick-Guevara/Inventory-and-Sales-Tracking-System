@@ -13,18 +13,28 @@ import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
 
 const staffsTable = () => {
+  // pagination essentials
   const [page, setPage] = useState(1);
   const pageSize = 20;
+  
+  // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetUser>(
     `/api/users?page=${page}&pageSize=${pageSize}`,
     fetcher
   );
+
+
+  // form state handler
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [formError, setFormError] = useState("");
+
+  // data filtration essensials
   const [roles, setRoles] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [searchUser, setSearchUser] = useState<string>("");
+  
+  // data credentials
   const [credentials, setCredentials] = useState<UserCredentials>({
     action: "signUp",
     email: "",
@@ -40,6 +50,7 @@ const staffsTable = () => {
     name: "",
   });
 
+  // handles creation of new user
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsedData = UserCredentialsSchema.safeParse(credentials);
@@ -65,6 +76,7 @@ const staffsTable = () => {
     }
   }
 
+  // handles edit of user data
   async function handleEditUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsedData = UserCredentialsSchema.safeParse(editCredentials);
@@ -88,6 +100,7 @@ const staffsTable = () => {
     }
   }
 
+  // handles deletion of user
   async function handleDeleteUser(id: number | undefined) {
     const confirmed = window.confirm(
       "Are you sure you want to delete this user?"
@@ -104,14 +117,15 @@ const staffsTable = () => {
     }
   }
 
+  // gets user's data to be edited
   function getToEditUser(user: UserCredentials) {
     setEditCredentials((prev) => ({ ...prev, ...user }));
     setShowEditForm(true);
   }
 
-  console.log(data);
 
   useEffect(() => {
+    // set roles existing in data
     if (data) {
       setRoles((prev) => {
         const updated = [...prev];
@@ -126,10 +140,10 @@ const staffsTable = () => {
     }
   }, [data]);
 
-  console.log(data);
 
   return (
     <main className="w-full">
+      {/* filter bar(search bar and dropdown) */}
       <FilterBar
         searchItem={searchUser}
         setSearchItem={setSearchUser}
@@ -137,6 +151,8 @@ const staffsTable = () => {
         setSelectedCategory={setSelectedRole}
         categories={roles}
       />
+      
+      {/* data table */}
       <TableComponent
         title={isLoading ? "fetching users" : "StaffsTable"}
         tableHead={["userId", "name", "email", "role"]}

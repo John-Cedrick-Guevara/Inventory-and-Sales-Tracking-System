@@ -13,13 +13,17 @@ import FormError from "@/components/FormError";
 
 export default function Home() {
   const router = useRouter();
+  // error handler 
   const [error, setError] = useState<string>("");
+  
+  // user credentials
   const [credentials, setCredentials] = useState({
     action: "logIn",
     email: "",
     password: "",
   });
 
+  // handles signing in of user
   async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 

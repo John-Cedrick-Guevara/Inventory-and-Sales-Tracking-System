@@ -1,11 +1,14 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+// Sale items
+
+// Handles query of sale items
 export async function GET() {
-  
   try {
     const saleItems = await prisma.saleItem.findMany({
       include: {
+        // includes product name, image and price
         product: {
           select: {
             name: true,
@@ -14,6 +17,7 @@ export async function GET() {
           },
         },
         sale: {
+           // includes staff name
           select: {
             user: {
               select: {
