@@ -52,7 +52,7 @@ Efficiently load and navigate large datasets (products, sales, etc.) using serve
 
 bash
 # 1. Clone the repo
-git clone https://github.com/your-username/sales-inventory-tracker.git
+git clone https://github.com/John-Cedrick-Guevara/Inventory-and-Sales-Tracking-System.git
 cd sales-inventory-tracker
 
 # 2. Install dependencies
