@@ -1,31 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useActionState, useState } from "react";
 import { Eye, EyeOff, Loader2, Store } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+import { signInAction } from "./actions/auth";
 
 const page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setIsLoading(true);
-    try {
-      const formData = new FormData(e.currentTarget);
-      const email = formData.get("email");
-      const password = formData.get("password");
-
-      const user = await axios.post("api/auth/signIn", {
-        email: email,
-        password: password,
-      });
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const [data, action, isPending] = useActionState(signInAction, undefined);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
@@ -43,7 +27,7 @@ const page = () => {
         </div>
 
         {/* main form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSignIn}>
+        <form className="mt-8 space-y-6" action={action}>
           {/* email */}
 
           <div>
@@ -64,15 +48,15 @@ const page = () => {
               )} */}
 
           <div>
-            <Label htmlFor="email">Emasdfail</Label>
+            <Label htmlFor="password">Password:</Label>
 
             <div className="mt-1 relative">
               <Input
                 required
                 name="password"
                 type={showPassword ? "text" : "password"}
-                id="email"
-                placeholder="Email"
+                id="password"
+                placeholder="Password"
               />
 
               <button
@@ -107,7 +91,7 @@ const page = () => {
             // disabled={isLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? (
+            {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               "Sign in"

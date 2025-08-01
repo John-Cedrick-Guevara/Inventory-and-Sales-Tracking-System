@@ -3,8 +3,9 @@ import { createToken, verifyPassword } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
 
-export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+export async function POST(prevState: unknown, formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   // checks if credentials has been passed
   if (!email || !password) {
