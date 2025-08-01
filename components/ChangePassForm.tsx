@@ -7,7 +7,7 @@ import { handleChange } from "@/lib/handleChange";
 
 import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
-import { ChangePassword, editUserCredentials, UserCredentials } from "@/lib/interfaces";
+import { ChangePassword,  UserCredentials } from "@/lib/interfaces";
 
 interface FormProps<T extends ChangePassword> {
   handleSignUp: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;

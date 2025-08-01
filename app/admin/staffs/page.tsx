@@ -2,7 +2,7 @@
 import TableComponent from "@/components/Table";
 import { GetUser, UserCredentials, Users } from "@/lib/interfaces";
 import useSWR from "swr";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { PencilLine, Trash, UserRoundPlus } from "lucide-react";
 import UserForm from "@/components/UserForm";
@@ -11,18 +11,19 @@ import axios from "axios";
 import IconButton from "@/components/IconButton";
 import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
+import Loading from "../sales/Loading";
 
 const staffsTable = () => {
   // pagination essentials
   const [page, setPage] = useState(1);
   const pageSize = 20;
-  
+
   // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetUser>(
     `/api/users?page=${page}&pageSize=${pageSize}`,
-    fetcher
+    fetcher,
+    { suspense: true }
   );
-
 
   // form state handler
   const [showForm, setShowForm] = useState(false);
@@ -33,7 +34,7 @@ const staffsTable = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [searchUser, setSearchUser] = useState<string>("");
-  
+
   // data credentials
   const [credentials, setCredentials] = useState<UserCredentials>({
     action: "signUp",
@@ -123,7 +124,6 @@ const staffsTable = () => {
     setShowEditForm(true);
   }
 
-
   useEffect(() => {
     // set roles existing in data
     if (data) {
@@ -140,7 +140,6 @@ const staffsTable = () => {
     }
   }, [data]);
 
-
   return (
     <main className="w-full">
       {/* filter bar(search bar and dropdown) */}
@@ -151,52 +150,48 @@ const staffsTable = () => {
         setSelectedCategory={setSelectedRole}
         categories={roles}
       />
-      
-      {/* data table */}
-      <TableComponent
-        title={isLoading ? "fetching users" : "StaffsTable"}
-        tableHead={["userId", "name", "email", "role"]}
-        tableItems={["id", "name", "email", "role"] as (keyof Users)[]}
-        data={
-          data?.data.filter((item) =>
-            searchUser
-              ? item.name.toLowerCase().includes(searchUser.toLowerCase())
-              : item && selectedRole
-              ? item.role === selectedRole
-              : item
-          ) ?? []
-        }
-        renderActions={(item) => (
-          <>
-            {" "}
-            <div onClick={() => getToEditUser(item)}>
+      <Suspense fallback={<Loading />}>
+        {/* data table */}
+        <TableComponent
+          title={isLoading ? "fetching users" : "StaffsTable"}
+          tableHead={["userId", "name", "email", "role"]}
+          tableItems={["id", "name", "email", "role"] as (keyof Users)[]}
+          data={
+            data?.data.filter((item) =>
+              searchUser
+                ? item.name.toLowerCase().includes(searchUser.toLowerCase())
+                : item && selectedRole
+                ? item.role === selectedRole
+                : item
+            ) ?? []
+          }
+          renderActions={(item) => (
+            <>
               {" "}
-              <IconButton
-                IconButton={PencilLine}
-                tooltip={"Edit Credentials"}
-                variant={"default"}
-              />{" "}
-            </div>{" "}
-            {/* delete icon */}{" "}
-            <div onClick={() => handleDeleteUser(item.id)}>
-              {" "}
-              <IconButton
-                IconButton={Trash}
-                tooltip={"Delete User"}
-                variant={"destructive"}
-              />{" "}
-            </div>{" "}
-          </>
-        )}
-      ></TableComponent>
+              <div onClick={() => getToEditUser(item)}>
+                {" "}
+                <IconButton
+                  IconButton={PencilLine}
+                  tooltip={"Edit Credentials"}
+                  variant={"default"}
+                />{" "}
+              </div>{" "}
+              {/* delete icon */}{" "}
+              <div onClick={() => handleDeleteUser(item.id)}>
+                {" "}
+                <IconButton
+                  IconButton={Trash}
+                  tooltip={"Delete User"}
+                  variant={"destructive"}
+                />{" "}
+              </div>{" "}
+            </>
+          )}
+        ></TableComponent>
+      </Suspense>
 
       {/* pagination shit */}
-      <PaginationControls
-        data={data}
-        setPage={setPage}
-        page={page}
-  
-      />
+      <PaginationControls data={data} setPage={setPage} page={page} />
 
       {/* add form and icon */}
       <div

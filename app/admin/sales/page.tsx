@@ -1,7 +1,7 @@
 "use client";
 import { fetcher } from "@/lib/fetcher";
 import { SaleItem } from "@/lib/interfaces";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { format } from "date-fns";
 
 import {
@@ -31,6 +31,7 @@ import {
 import { Card } from "@/components/ui/card";
 import FilterBar from "@/components/FilterBar";
 import Image from "next/image";
+import Loading from "./Loading";
 
 interface filterdata {
   name: string;
@@ -330,91 +331,97 @@ const salesPage = () => {
   return (
     <div className="grid max-md:flex flex-col  md:grid-cols-[fit-content(100%)_1fr] md:grid-rows-[fit-content(100%)_1fr] gap-4">
       {/* filterable revenue chart */}
-      <Card className="grid col-span-2 grid-cols-3 gap-4 shadow-lg rounded-xl w-full p-2">
-        <h1 className="text-xl font-semibold">Filterable Revenue: </h1>
-        {/* which month if daily. which year if monthly*/}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              {span === "Daily" ? "Select Month" : "Select Year"}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Choose span of time</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={
-                span === "Daily"
-                  ? selectedMonth
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Card className="grid col-span-2 grid-cols-3 gap-4 shadow-lg rounded-xl w-full p-2">
+          <h1 className="text-xl font-semibold">Filterable Revenue: </h1>
+          {/* which month if daily. which year if monthly*/}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                {span === "Daily" ? "Select Month" : "Select Year"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Choose span of time</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                value={
+                  span === "Daily"
+                    ? selectedMonth
+                    : span === "Monthly"
+                    ? selectedYear
+                    : ""
+                }
+                onValueChange={
+                  span === "Daily"
+                    ? setSelectedMonth
+                    : span === "Monthly"
+                    ? setSelectedYear
+                    : setSpan
+                }
+              >
+                {(span === "Daily"
+                  ? months
                   : span === "Monthly"
-                  ? selectedYear
-                  : ""
-              }
-              onValueChange={
-                span === "Daily"
-                  ? setSelectedMonth
-                  : span === "Monthly"
-                  ? setSelectedYear
-                  : setSpan
-              }
-            >
-              {(span === "Daily"
-                ? months
-                : span === "Monthly"
-                ? years
-                : []
-              ).map((item) => (
-                <DropdownMenuRadioItem key={item.name} value={item.value}>
-                  {item.name}
+                  ? years
+                  : []
+                ).map((item) => (
+                  <DropdownMenuRadioItem key={item.name} value={item.value}>
+                    {item.name}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* yearly, monthly, daily */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">{span}</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Choose span of time</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup value={span} onValueChange={setSpan}>
+                <DropdownMenuRadioItem value="Daily">
+                  Daily
                 </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <DropdownMenuRadioItem value="Monthly">
+                  Monthly
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="Yearly">
+                  Yearly
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* yearly, monthly, daily */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{span}</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Choose span of time</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={span} onValueChange={setSpan}>
-              <DropdownMenuRadioItem value="Daily">Daily</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="Monthly">
-                Monthly
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="Yearly">
-                Yearly
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <ResponsiveContainer className="col-span-3" width="100%" height={300}>
-          <BarChart
-            data={filteredData}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar
-              dataKey="revenue"
-              fill="#8884d8"
-              activeBar={<Rectangle fill="pink" stroke="blue" />}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
+          <ResponsiveContainer className="col-span-3" width="100%" height={300}>
+            <BarChart
+              data={filteredData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar
+                dataKey="revenue"
+                fill="#8884d8"
+                activeBar={<Rectangle fill="pink" stroke="blue" />}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
 
       {/* revenue per product */}
       <Card className="shadow-lg rounded-xl w-full min-w-xs p-2 min-h-60">
@@ -464,6 +471,7 @@ const salesPage = () => {
       </Card>
 
       {/* Sales history*/}
+
       <Card className="relative shadow-lg rounded-xl w-full p-2 col-span-2">
         <h1 className="text-xl font-semibold">Sales History: </h1>
 

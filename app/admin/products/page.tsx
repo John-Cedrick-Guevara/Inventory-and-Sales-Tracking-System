@@ -3,7 +3,7 @@ import IconButton from "@/components/IconButton";
 import TableComponent from "@/components/Table";
 import { fetcher } from "@/lib/fetcher";
 import { GetProduct, Product } from "@/lib/interfaces";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import useSWR from "swr";
 import { PackagePlus, PencilLine, Trash } from "lucide-react";
 import ProductForm from "@/components/ProductForm";
@@ -11,6 +11,7 @@ import { ProductSchema } from "@/lib/schemas";
 import axios from "axios";
 import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
+import Loading from "../sales/Loading";
 
 const productPage = () => {
   // things for front end pagination
@@ -20,7 +21,8 @@ const productPage = () => {
   // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetProduct>(
     `/api/products?page=${page}&pageSize=${pageSize}`,
-    fetcher
+    fetcher,
+    { suspense: true }
   );
 
   // form state handler
@@ -242,59 +244,61 @@ const productPage = () => {
         categories={categories}
       />
 
-      {/* table of products */}
-      <TableComponent
-        tableHead={[
-          "Product Id",
-          "Name",
-          "Description",
-          "price",
-          "stock",
-          "Category",
-        ]}
-        tableItems={
-          [
-            "id",
-            "name",
-            "description",
+      <Suspense fallback={<Loading />}>
+        {/* table of products */}
+        <TableComponent
+          tableHead={[
+            "Product Id",
+            "Name",
+            "Description",
             "price",
             "stock",
-            "category",
-          ] as (keyof Product)[]
-        }
-        data={
-          data?.data.filter((item) =>
-            searchItem
-              ? item.name.toLowerCase().includes(searchItem.toLowerCase())
-              : item && selectedCategory
-              ? item.category?.name === selectedCategory
-              : item
-          ) ?? []
-        }
-        title={"Products Table"}
-        renderActions={(item) => (
-          <>
-            {" "}
-            <div onClick={() => getToEditProduct(item)}>
+            "Category",
+          ]}
+          tableItems={
+            [
+              "id",
+              "name",
+              "description",
+              "price",
+              "stock",
+              "category",
+            ] as (keyof Product)[]
+          }
+          data={
+            data?.data.filter((item) =>
+              searchItem
+                ? item.name.toLowerCase().includes(searchItem.toLowerCase())
+                : item && selectedCategory
+                ? item.category?.name === selectedCategory
+                : item
+            ) ?? []
+          }
+          title={"Products Table"}
+          renderActions={(item) => (
+            <>
               {" "}
-              <IconButton
-                IconButton={PencilLine}
-                tooltip={"Edit Product"}
-                variant={"default"}
-              />{" "}
-            </div>{" "}
-            {/* delete icon */}{" "}
-            <div onClick={() => handleDeleteProduct(item.id)}>
-              {" "}
-              <IconButton
-                IconButton={Trash}
-                tooltip={"Delete User"}
-                variant={"destructive"}
-              />{" "}
-            </div>{" "}
-          </>
-        )}
-      ></TableComponent>
+              <div onClick={() => getToEditProduct(item)}>
+                {" "}
+                <IconButton
+                  IconButton={PencilLine}
+                  tooltip={"Edit Product"}
+                  variant={"default"}
+                />{" "}
+              </div>{" "}
+              {/* delete icon */}{" "}
+              <div onClick={() => handleDeleteProduct(item.id)}>
+                {" "}
+                <IconButton
+                  IconButton={Trash}
+                  tooltip={"Delete User"}
+                  variant={"destructive"}
+                />{" "}
+              </div>{" "}
+            </>
+          )}
+        ></TableComponent>
+      </Suspense>
 
       {/* next and prev pagination controls */}
       <PaginationControls data={data} setPage={setPage} page={page} />

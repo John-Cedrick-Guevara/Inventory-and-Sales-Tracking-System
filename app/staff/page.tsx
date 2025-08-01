@@ -13,7 +13,7 @@ import {
 
 import { fetcher } from "@/lib/fetcher";
 import { GetProduct, Product } from "@/lib/interfaces";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import useSWR from "swr";
 import IconButton from "@/components/IconButton";
 import axios from "axios";
@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import FilterBar from "@/components/FilterBar";
 import PaginationControls from "@/components/PaginationControls";
 import Image from "next/image";
+import Loading from "../admin/sales/Loading";
 
 const staffPage = () => {
   // user data
@@ -34,7 +35,7 @@ const staffPage = () => {
   // fetcher
   const { data, error, isLoading, mutate } = useSWR<GetProduct>(
     `/api/products?page=${page}&pageSize=${pageSize}`,
-    fetcher
+    fetcher, {suspense: true}
   );
   // data with converted image format
   const [itemsWithBase64, setItemsWithBase64] = useState<Product[]>([]);
@@ -173,6 +174,7 @@ const staffPage = () => {
       />
 
       {/* items container */}
+      <Suspense fallback={<Loading/>}>
       <div className="flex flex-wrap gap-2 items-center justify-center ">
         {itemsWithBase64
           .filter((item) =>
@@ -219,6 +221,7 @@ const staffPage = () => {
             </Card>
           ))}
       </div>
+      </Suspense>
 
       {/* cart */}
       <div className="sticky bottom-10 left-0 w-fit z-10">

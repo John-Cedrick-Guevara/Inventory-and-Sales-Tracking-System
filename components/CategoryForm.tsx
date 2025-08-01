@@ -9,7 +9,6 @@ import { CircleArrowLeft } from "lucide-react";
 import IconButton from "./IconButton";
 import {
   Categories,
-  editUserCredentials,
   UserCredentials,
 } from "@/lib/interfaces";
 import FormError from "./FormError";

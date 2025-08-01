@@ -9,8 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PencilLine, Trash } from "lucide-react";
-import IconButton from "./IconButton";
+
 
 interface Props<T> {
   // table head, datas, and title
