@@ -1,15 +1,7 @@
 "use client";
 import { Boxes, Moon } from "lucide-react";
 import React from "react";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -22,11 +14,11 @@ import { usePathname } from "next/navigation";
 
 const NavAdmin = () => {
   const path = usePathname().split("/").pop();
-
+  console.log(path);
   const navLinks = [
     {
       name: "Dashboard",
-      link: "admin",
+      link: "/admin",
       icon: LayoutDashboard,
     },
     {
@@ -46,7 +38,7 @@ const NavAdmin = () => {
     },
     {
       name: "Users",
-      link: "#",
+      link: "/admin/users",
       icon: Users,
     },
   ];
@@ -66,7 +58,7 @@ const NavAdmin = () => {
             <h1
               key={name}
               className={`text-sm font-medium transition-colors p-2 rounded-md ${
-                path === link
+                path === link.split("/").pop()
                   ? "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
               }`}

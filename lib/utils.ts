@@ -24,7 +24,7 @@ export function createToken(payload: { userId: number }) {
 
 export function verifyToken(token: string) {
   return jwt.verify(token, JWT_SECRET) as {
-    userId: string;
+    email: string;
     iat: number;
     exp: number;
   };

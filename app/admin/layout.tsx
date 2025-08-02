@@ -11,7 +11,7 @@ const layout = async ({
   const user = await getCurrentUser();
 
   if (!user || user.role !== "ADMIN") {
-    redirect("/unauthorized");
+    redirect("/");
   }
 
   return (

@@ -9,52 +9,6 @@ export interface Users {
   password: string;
 }
 
-export interface GetUser {
-  data: UserCredentials[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetProduct {
-  data: Product[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetSales {
-  data: Sale[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetSaleItems {
-  data: SaleItem[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-
-export interface UserCredentials {
-  action: string;
-  id?: number;
-  role?: string;
-  sales?: number;
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface ChangePassword {
-  action?: string;
-  id: number;
-  password: string;
-  newPassword: string;
-}
-
 export interface Categories {
   id?: number;
   name: string;
@@ -93,3 +47,53 @@ export interface SaleItem {
   sale: { createdAt: string; user: { name: string } };
   subtotal: number;
 }
+
+
+
+
+
+// export interface GetUser {
+//   data: UserCredentials[];
+//   currentPage: number;
+//   pageSize: number;
+//   totalItems: number;
+//   totalPages: number;
+// }
+// export interface GetProduct {
+//   data: Product[];
+//   currentPage: number;
+//   pageSize: number;
+//   totalItems: number;
+//   totalPages: number;
+// }
+// export interface GetSales {
+//   data: Sale[];
+//   currentPage: number;
+//   pageSize: number;
+//   totalItems: number;
+//   totalPages: number;
+// }
+// export interface GetSaleItems {
+//   data: SaleItem[];
+//   currentPage: number;
+//   pageSize: number;
+//   totalItems: number;
+//   totalPages: number;
+// }
+
+// export interface UserCredentials {
+//   action: string;
+//   id?: number;
+//   role?: string;
+//   sales?: number;
+//   email: string;
+//   password: string;
+//   name: string;
+// }
+
+// export interface ChangePassword {
+//   action?: string;
+//   id: number;
+//   password: string;
+//   newPassword: string;
+// }
