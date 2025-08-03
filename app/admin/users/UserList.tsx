@@ -38,6 +38,7 @@ import { signUpAction } from "@/app/actions/auth";
 import { updateUser } from "@/app/actions/user";
 import axios from "axios";
 import Link from "next/link";
+import RefreshButton from "@/components/RefreshButton";
 
 export function UserList({ users }: { users: Users[] }) {
   const [data, action, isPending] = useActionState(signUpAction, undefined);
@@ -46,6 +47,7 @@ export function UserList({ users }: { users: Users[] }) {
     undefined
   );
 
+  // handles delete user
   async function handleDeleteUser(id: number) {
     try {
       await axios.delete(`/api/users/${id}`);
@@ -112,13 +114,7 @@ export function UserList({ users }: { users: Users[] }) {
             </DialogContent>
           </Dialog>
           <Input className="max-w-sm" />
-          <Link href={"/admin/users"}>
-            <RefreshCcw
-              width={30}
-              height={30}
-              className="cursor-pointer bg-blue-700 text-white p-1 rounded-md"
-            />
-          </Link>
+          <RefreshButton />
         </div>
 
         {users.map((user, index) => (
@@ -223,7 +219,7 @@ export function UserList({ users }: { users: Users[] }) {
         ))}
       </section>
 
-      {/* create new user conetent */}
+      
     </>
   );
 }

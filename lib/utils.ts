@@ -29,3 +29,15 @@ export function verifyToken(token: string) {
     exp: number;
   };
 }
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string; // e.g. "data:image/avif;base64,...."
+      const b64 = result.split(",", 2)[1];
+      resolve(b64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}

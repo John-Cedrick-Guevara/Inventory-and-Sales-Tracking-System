@@ -28,12 +28,12 @@ const NavAdmin = () => {
     },
     {
       name: "Products",
-      link: "#",
+      link: "/admin/products",
       icon: Package,
     },
     {
       name: "Categories",
-      link: "#",
+      link: "/admin/categories",
       icon: Tags,
     },
     {

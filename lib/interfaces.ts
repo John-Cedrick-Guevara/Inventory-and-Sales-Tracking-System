@@ -19,11 +19,11 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  stock?: number;
-  image?: any;
-  createdAt?: string;
-  quantity?: number;
-  total?: number;
+  stock: number;
+  image: any;
+  createdAt: string;
+  quantity: number;
+  total: number;
   category?: Categories;
 }
 

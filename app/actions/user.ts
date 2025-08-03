@@ -29,7 +29,6 @@ export async function updateUser(prevState: unknown, formData: FormData) {
     return null;
   }
 
-  console.log(password);
 
   const updatedUser = await prisma.user.update({
     where: {
