@@ -4,10 +4,11 @@ import ProductList from "./ProductList";
 
 const page = async () => {
   const products: any = await prisma.product.findMany();
+  const categories: any = await prisma.category.findMany();
 
   return (
     <Suspense fallback={<>Loading....</>}>
-      <ProductList products={products} />
+      <ProductList categories={categories} products={products} />
     </Suspense>
   );
 };

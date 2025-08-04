@@ -1,6 +1,6 @@
 "use client";
 import { Categories } from "@/lib/interfaces";
-import React, { useActionState } from "react";
+import React, { useActionState, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,15 +30,22 @@ import { Label } from "@/components/ui/label";
 import { unknown } from "zod/v4";
 import { addCategory, editCategory } from "@/app/actions/category";
 import axios from "axios";
+import ListHeader from "@/components/ListHeader";
+import { AddCategory, EditCategory } from "./CategoryDialog";
+
+export const filterSearch = (search: string, list: any) => {
+  if (!search) return list;
+  return list.filter((item: any) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+};
 
 const CategoryList = ({ categories }: { categories: Categories[] }) => {
-  const [addData, addAction, addIsPending] = useActionState(
-    addCategory,
-    undefined
-  );
-  const [editData, editAction, editIsPending] = useActionState(
-    editCategory,
-    undefined
+  const [searchCategory, setSearchCategory] = useState("");
+
+  const filtered: Categories[] = useMemo(
+    () => filterSearch(searchCategory, categories),
+    [searchCategory, categories]
   );
 
   async function handleDeleteCategory(id: number | undefined) {
@@ -51,148 +58,69 @@ const CategoryList = ({ categories }: { categories: Categories[] }) => {
   }
 
   return (
-    <section className="rounded-xl border-gray-300 shadow-sm">
+    <section>
       {/* header */}
-      <div className="flex items-center justify-between px-4 py-2 gap-2">
-        <h1 className="font-medium text-2xl">Users List</h1>
+      <ListHeader
+        searchQuery={searchCategory}
+        setSearchQuery={setSearchCategory}
+        title={"Category"}
+        AddDialog={<AddCategory />}
+      />
 
-        {/* create new user */}
-        <Dialog>
-          <DialogTrigger asChild className="ml-auto">
-            <Button
-              variant="outline"
-              className="text-white bg-blue-600 hover:none"
-            >
-              <Plus />
-              Create new category
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create new category</DialogTitle>
-              <DialogDescription>
-                Create new category here. Click submit when you&apos;re done.
-              </DialogDescription>
-            </DialogHeader>
-            <form className="grid gap-4" action={addAction}>
-              <div className="grid gap-3">
-                <Label htmlFor="name">Name</Label>
-                <Input required id="name" name="name" />
-              </div>
-
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button
-                  className="bg-blue-700 text-white hover:bg-blue-600"
-                  type="submit"
-                >
-                  {addIsPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Submit"
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-        <Input className="max-w-sm" />
-        <RefreshButton />
-      </div>
-
-      {categories.map((category, index) => (
-        <div
-          key={index}
-          className="border-t p-2 px-4 border-t-gray-200 grid grid-rows-[1fr_auto] grid-cols-[30px_1fr_auto]"
-        >
-          <h1 className="text-md  row-span-2 self-center ">{category.id}</h1>
-          <h1 className="text-md  row-span-2 self-center ">{category.name}</h1>
-
-          <div className="flex gap-2 self-center row-span-2">
-            {/* edit user dialog */}
-            <Dialog>
-              <DialogTrigger className="ml-auto">
-                <PencilLineIcon
-                  width={35}
-                  height={35}
-                  className="bg-blue-100 text-blue-700 p-1 rounded-md cursor-pointer"
-                />
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit category</DialogTitle>
-                  <DialogDescription>
-                    Edit category's credentials here. Only change the fields to
-                    be edited. Click save when you&apos;re done.
-                  </DialogDescription>
-                </DialogHeader>
-                <form className="grid gap-4" action={editAction}>
-                  <Input
-                    required
-                    id="id"
-                    name="id"
-                    type="hidden"
-                    value={category.id}
-                  />
-                  <div className="grid gap-3">
-                    <Label htmlFor="name">New name</Label>
-                    <Input id="name" name="new-name" />
-                  </div>
-
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button
-                      className="bg-blue-700 text-white hover:bg-blue-600"
-                      type="submit"
-                    >
-                      {editIsPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Save"
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-
-            {/* delete user dialog */}
-            <AlertDialog>
-              <AlertDialogTrigger>
-                <Trash2
-                  width={35}
-                  height={35}
-                  className="bg-red-100 text-red-700 p-1 rounded-md cursor-pointer"
-                />
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you absolutely sure to delete {category.name}?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    {category.name}'s account and remove data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-red-700 text-white hover:bg-red-800"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+      {/* list */}
+      <div className="rounded-xl border border-gray-200 shadow-sm mt-8 ">
+        <div className="p-2 px-4">
+          <h1 className="text-lg font-medium">Categories</h1>
         </div>
-      ))}
+        {filtered?.map((category, index) => (
+          <div
+            key={index}
+            className="border-t p-2 px-4 border-t-gray-200 grid grid-rows-[1fr_auto] grid-cols-[30px_1fr_auto]"
+          >
+            <h1 className="text-md  row-span-2 self-center ">{category.id}</h1>
+            <h1 className="text-md  row-span-2 self-center ">
+              {category.name}
+            </h1>
+
+            <div className="flex gap-2 self-center row-span-2">
+              {/* edit category dialog */}
+              <EditCategory id={category.id} />
+
+              {/* delete user dialog */}
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Trash2
+                    width={35}
+                    height={35}
+                    className="bg-red-100 text-red-700 p-1 rounded-md cursor-pointer"
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure to delete {category.name}?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      {category.name}'s account and remove data from our
+                      servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-700 text-white hover:bg-red-800"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
