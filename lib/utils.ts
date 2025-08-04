@@ -42,3 +42,9 @@ export function fileToBase64(file: File): Promise<string> {
   });
 }
 
+export const filterSearch = (search: string, list: any) => {
+  if (!search) return list;
+  return list.filter((item: any) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+};

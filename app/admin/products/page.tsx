@@ -3,7 +3,11 @@ import React, { Suspense } from "react";
 import ProductList from "./ProductList";
 
 const page = async () => {
-  const products: any = await prisma.product.findMany();
+  const products: any = await prisma.product.findMany({
+    include: {
+      category: true,
+    },
+  });
   const categories: any = await prisma.category.findMany();
 
   return (

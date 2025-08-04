@@ -32,18 +32,14 @@ import { addCategory, editCategory } from "@/app/actions/category";
 import axios from "axios";
 import ListHeader from "@/components/ListHeader";
 import { AddCategory, EditCategory } from "./CategoryDialog";
+import { filterSearch } from "@/lib/utils";
 
-export const filterSearch = (search: string, list: any) => {
-  if (!search) return list;
-  return list.filter((item: any) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
-};
+
 
 const CategoryList = ({ categories }: { categories: Categories[] }) => {
   const [searchCategory, setSearchCategory] = useState("");
 
-  const filtered: Categories[] = useMemo(
+  const filteredCategories: Categories[] = useMemo(
     () => filterSearch(searchCategory, categories),
     [searchCategory, categories]
   );
@@ -56,6 +52,8 @@ const CategoryList = ({ categories }: { categories: Categories[] }) => {
       console.log(error);
     }
   }
+
+
 
   return (
     <section>
@@ -72,7 +70,7 @@ const CategoryList = ({ categories }: { categories: Categories[] }) => {
         <div className="p-2 px-4">
           <h1 className="text-lg font-medium">Categories</h1>
         </div>
-        {filtered?.map((category, index) => (
+        {filteredCategories?.map((category, index) => (
           <div
             key={index}
             className="border-t p-2 px-4 border-t-gray-200 grid grid-rows-[1fr_auto] grid-cols-[30px_1fr_auto]"
