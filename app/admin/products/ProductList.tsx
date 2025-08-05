@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import axios from "axios";
+import AlertDeleteDialog from "@/components/AlertDialog";
 
 const ProductList = ({
   products,
@@ -32,8 +33,6 @@ const ProductList = ({
   categories: Categories[];
 }) => {
   const [searchProduct, setSearchProduct] = useState("");
-
-  console.log(products);
 
   const filteredProducts: Product[] = useMemo(
     () => filterSearch(searchProduct, products),
@@ -66,6 +65,7 @@ const ProductList = ({
               <TableHead className="w-[320px] text-left">Products</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Price</TableHead>
+              <TableHead>Stock</TableHead>
               <TableHead>Total Sales</TableHead>
               <TableHead>Revenue</TableHead>
               <TableHead>Created At</TableHead>
@@ -83,7 +83,7 @@ const ProductList = ({
                     <img
                       src={dataUrl}
                       alt="product-image"
-                      className="object-fill row-span-2 aspect-square w-14 border"
+                      className="object-contain row-span-2 aspect-square w-14 border"
                     />
                     <h1 className="self-center text-lg">{product.name}</h1>
                     <h3 className="self-center text-sm text-gray-500 bg-gray-100 w-fit rounded-md p-1">
@@ -104,6 +104,7 @@ const ProductList = ({
                     </h1>
                   </TableCell>
                   <TableCell>{product.price}</TableCell>
+                  <TableCell>{product.stock}</TableCell>
                   <TableCell>-</TableCell>
                   <TableCell>-</TableCell>
                   <TableCell>
@@ -124,11 +125,15 @@ const ProductList = ({
                             id={product.id}
                           />
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onSelect={() => handleDeleteProduct(product.id)}
-                          className="hover:bg-red-100 hover:text-red-700"
-                        >
-                          Delete
+                        <DropdownMenuItem asChild>
+                          <AlertDeleteDialog
+                            className="hover:bg-red-100 hover:text-red-700 w-full"
+                            label={"Delete"}
+                            name={product.name}
+                            deleteFunction={() =>
+                              handleDeleteProduct(product.id)
+                            }
+                          />
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

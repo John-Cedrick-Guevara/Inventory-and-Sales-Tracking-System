@@ -1,40 +1,12 @@
 "use client";
 import { Categories } from "@/lib/interfaces";
-import React, { useActionState, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import RefreshButton from "@/components/RefreshButton";
-import { Plus, Loader2, PencilLineIcon, Trash2 } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { unknown } from "zod/v4";
-import { addCategory, editCategory } from "@/app/actions/category";
+import React, { useMemo, useState } from "react";
 import axios from "axios";
 import ListHeader from "@/components/ListHeader";
 import { AddCategory, EditCategory } from "./CategoryDialog";
 import { filterSearch } from "@/lib/utils";
-
-
+import AlertDeleteDialog from "@/components/AlertDialog";
+import { Trash2 } from "lucide-react";
 
 const CategoryList = ({ categories }: { categories: Categories[] }) => {
   const [searchCategory, setSearchCategory] = useState("");
@@ -52,8 +24,6 @@ const CategoryList = ({ categories }: { categories: Categories[] }) => {
       console.log(error);
     }
   }
-
-
 
   return (
     <section>
@@ -85,36 +55,17 @@ const CategoryList = ({ categories }: { categories: Categories[] }) => {
               <EditCategory id={category.id} />
 
               {/* delete user dialog */}
-              <AlertDialog>
-                <AlertDialogTrigger>
+              <AlertDeleteDialog
+                label={
                   <Trash2
                     width={35}
                     height={35}
                     className="bg-red-100 text-red-700 p-1 rounded-md cursor-pointer"
                   />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure to delete {category.name}?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      {category.name}'s account and remove data from our
-                      servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      className="bg-red-700 text-white hover:bg-red-800"
-                      onClick={() => handleDeleteCategory(category.id)}
-                    >
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                }
+                name={category.name}
+                deleteFunction={() => handleDeleteCategory(category.id)}
+              />
             </div>
           </div>
         ))}
