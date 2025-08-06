@@ -10,15 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { addProduct, editProduct } from "@/app/actions/products";
@@ -27,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Categories } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
+import DropdownCategory from "@/components/DropdownCategory";
 
 export const AddProduct = ({ categories }: { categories: Categories[] }) => {
   const [category, setCategory] = useState("");
@@ -88,39 +81,17 @@ export const AddProduct = ({ categories }: { categories: Categories[] }) => {
               type="file"
             />
           </div>
+
+          {/* categories */}
           <div className="grid w-full max-w-sm items-center gap-1 ">
             <Label htmlFor="picture">Select Category</Label>
             <Input required value={category} name="category" type="hidden" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {category
-                    ? categories.find((item) => item.id === Number(category))
-                        ?.name
-                    : "Categories"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Categories</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={String(category)}
-                  onValueChange={setCategory}
-                >
-                  {categories.map((category, index) => (
-                    <DropdownMenuRadioItem
-                      key={index}
-                      value={String(category.id)}
-                    >
-                      {category.name}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <DropdownCategory
+              categories={categories}
+              category={category}
+              setCategory={setCategory}
+            />
           </div>
-
-          {/* categories */}
 
           {/* product description */}
           <div className="grid gap-1 col-span-2">
@@ -154,13 +125,13 @@ export const AddProduct = ({ categories }: { categories: Categories[] }) => {
 };
 
 export const EditProduct = ({
-  categories,
   id,
   className,
+  categories,
 }: {
-  categories: Categories[];
   id: number | undefined;
   className: string;
+  categories: Categories[];
 }) => {
   const [category, setCategory] = useState("");
   const [editData, editAction, editIsPending] = useActionState(
@@ -211,39 +182,17 @@ export const EditProduct = ({
             <Label htmlFor="picture">Picture</Label>
             <Input name="image" accept="image/" id="picture" type="file" />
           </div>
+
+          {/* categories */}
           <div className="grid w-full max-w-sm items-center gap-1 ">
             <Label htmlFor="picture">Select Category</Label>
             <Input required value={category} name="category" type="hidden" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {category
-                    ? categories.find((item) => item.id === Number(category))
-                        ?.name
-                    : "Categories"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Categories</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={String(category)}
-                  onValueChange={setCategory}
-                >
-                  {categories.map((category, index) => (
-                    <DropdownMenuRadioItem
-                      key={index}
-                      value={String(category.id)}
-                    >
-                      {category.name}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <DropdownCategory
+              categories={categories}
+              category={category}
+              setCategory={setCategory}
+            />
           </div>
-
-          {/* categories */}
 
           {/* product description */}
           <div className="grid gap-1 col-span-2">

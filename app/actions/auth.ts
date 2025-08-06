@@ -20,7 +20,7 @@ export async function signInAction(prevState: unknown, formData: FormData) {
 
   const valid = await verifyPassword(password, user.password);
   if (!valid) {
-    throw new Error("Invalid credentials.");
+    return { success: false, error: "Invalid credentials." };
   }
 
   const token = createToken({ userId: user.id }); // ensure this signs with secret + expiry
@@ -63,8 +63,13 @@ export async function signUpAction(prevState: unknown, formData: FormData) {
     data: {
       name: name,
       email: email,
-      password: password,
+      password: hashed,
     },
   });
   return user;
+}
+
+export async function signOutAction() {
+  (await cookies()).delete("auth_token"); // Remove the auth token cookie
+  redirect("/"); // Or whatever your login page is
 }

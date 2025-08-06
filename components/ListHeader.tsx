@@ -10,7 +10,7 @@ interface Props {
 
   title: string;
 
-  AddDialog: React.ReactElement;
+  AddDialog?: React.ReactElement;
 }
 
 export const useDebounced = (value: string, delay: number) => {
@@ -42,14 +42,14 @@ const ListHeader = ({
     <div className="flex items-center justify-between px-4 py-2 gap-2">
       <h1 className="font-medium text-2xl">{title} List</h1>
 
-      {AddDialog}
-      <div className="relative">
+      {AddDialog && AddDialog}
+      <div className={`relative ${!AddDialog && "ml-auto"}`}>
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={`Search ${title}....`}
-          className="max-w-sm pl-8"
+          className="max-w-sm pl-8 "
         />
       </div>
       <RefreshButton />

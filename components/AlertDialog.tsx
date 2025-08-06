@@ -28,9 +28,7 @@ const AlertDeleteDialog = ({
 }: Props) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger className={className ? className : ""}>
-        {label}
-      </AlertDialogTrigger>
+      <AlertDialogTrigger className={className}>{label}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

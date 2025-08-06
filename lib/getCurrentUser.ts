@@ -1,4 +1,3 @@
-// lib/getCurrentUser.ts
 import prisma from "@/lib/prisma";
 import { verifyToken } from "@/lib/utils"; // returns payload or throws
 import { cookies } from "next/headers";
@@ -13,6 +12,8 @@ export async function getCurrentUser() {
       where: { id: payload.userId },
       select: {
         role: true,
+        name: true,
+        id: true,
       },
     });
     return user;

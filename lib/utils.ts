@@ -48,3 +48,10 @@ export const filterSearch = (search: string, list: any) => {
     item.name.toLowerCase().includes(search.toLowerCase())
   );
 };
+
+export const categorizedFilter = (search: string, list: any) => {
+  if (!search) return list;
+  return list.filter(
+    (item: any) => Number(item.category.id) === Number(search)
+  );
+};

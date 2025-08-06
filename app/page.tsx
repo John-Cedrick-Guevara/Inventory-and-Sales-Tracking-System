@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { signInAction } from "./actions/auth";
+import { useFormState } from "react-dom";
 
 const page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [data, action, isPending] = useActionState(signInAction, undefined);
 
+  console.log(data);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="max-w-md w-full space-y-8">
@@ -41,12 +43,6 @@ const page = () => {
             />
           </div>
 
-          {/* {errors.email && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.email.message}
-                </p>
-              )} */}
-
           <div>
             <Label htmlFor="password">Password:</Label>
 
@@ -71,20 +67,15 @@ const page = () => {
                 )}
               </button>
             </div>
-            {/* {errors.password && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
-              )} */}
           </div>
 
-          {/* {errors.root && (
-              <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
-                <p className="text-sm text-red-800 dark:text-red-200">
-                  {errors.root.message}
-                </p>
-              </div>
-            )} */}
+          {data?.error && (
+            <div className="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
+              <p className="text-sm text-red-800 dark:text-red-200">
+                {data?.error}
+              </p>
+            </div>
+          )}
 
           <button
             type="submit"
