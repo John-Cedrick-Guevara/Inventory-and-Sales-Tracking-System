@@ -41,16 +41,24 @@ export interface Sale {
 }
 
 export interface SaleItem {
-  image: string;
+  id: number
   product: { name: string; image: string; price: number };
+  productId: number
   quantity: number;
-  sale: { createdAt: string; user: { name: string } };
+  sale: { createdAt: string; };
+  saleId: number
   subtotal: number;
 }
 
-
-
-
+export interface AddSaleQueItem {
+  id: number | unknown
+  name: string;
+  price: number;
+  quantity: number;
+  subTotal: number
+  image: any;
+  category?: Categories;
+}
 
 // export interface GetUser {
 //   data: UserCredentials[];

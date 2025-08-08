@@ -17,7 +17,6 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 
   const arrayBuffer = await image.arrayBuffer();
   const convertedImage = Buffer.from(arrayBuffer); //Uint8Array<ArrayBufferLike>
-  console.log(category);
   const newProduct = await prisma.product.create({
     data: {
       name,
@@ -38,19 +37,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 
 export async function editProduct(prevState: unknown, formData: FormData) {
   const id = formData.get("id");
-  // const name = formData.get("product-name") as string;
-  // const description = formData.get("product-description") as string;
-  // const price = formData.get("product-price");
-  // const stock = formData.get("product-stock") as string;
-  // const image = formData.get("product-image") as File;
-  // const category = formData.get("category");
 
-  // if (!id) throw new Error("Id is required");
-
-  // const arrayBuffer = await image.arrayBuffer();
-  // const convertedImage = Buffer.from(arrayBuffer); //Uint8Array<ArrayBufferLike>
-
-  // console.log(formData);
   const data: Record<string, any> = {};
   for (const [rawKey, value] of formData.entries()) {
     if (rawKey === "id") continue;
@@ -70,7 +57,6 @@ export async function editProduct(prevState: unknown, formData: FormData) {
     }
   }
 
-  console.log("data", data, id);
 
   if (!data) {
     throw new Error("NO fields to update");

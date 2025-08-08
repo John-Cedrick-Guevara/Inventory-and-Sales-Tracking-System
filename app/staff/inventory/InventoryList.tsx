@@ -1,10 +1,11 @@
 "use client";
 import ListHeader from "@/components/ListHeader";
 import ProductTable from "@/components/ProductTable";
-import { Categories, Product } from "@/lib/interfaces";
+import { AddSaleQueItem, Categories, Product } from "@/lib/interfaces";
 import { categorizedFilter, filterSearch } from "@/lib/utils";
 import React, { useMemo, useState } from "react";
 import StaffProductRow from "./StaffProductRow";
+import AddSaleDialog from "./AddSaleDialog";
 
 const InventoryList = ({
   products,
@@ -15,18 +16,18 @@ const InventoryList = ({
 }) => {
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [addSaleQue, setAddSaleQue] = useState<AddSaleQueItem[]>([]);
 
   const categorizedProducts: Product[] = useMemo(
     () => categorizedFilter(selectedCategory, products),
     [selectedCategory, categories]
   );
 
-  console.log(categorizedProducts);
-
   const filteredProducts: Product[] = useMemo(
     () => filterSearch(searchProduct, categorizedProducts),
     [searchProduct, categorizedProducts]
   );
+
   return (
     <>
       {/* header */}
@@ -35,26 +36,30 @@ const InventoryList = ({
         setSearchQuery={setSearchProduct}
         title={"Product"}
       />
-
-      {/* Product List */}
-      <ProductTable
-        products={filteredProducts}
-        tableHeads={[
-          "Product",
-          "Category",
-          "Price",
-          "Stock",
-          "Date Created",
-          "Actions",
-        ]}
-        tableRow={(product: Product, index: number) => (
-          <StaffProductRow
-            key={index}
-            product={product}
-            categories={categories}
-          />
-        )}
-      />
+      <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto">
+        {/* add sale dialog */}
+        <AddSaleDialog setSaleQue={setAddSaleQue} saleQue={addSaleQue} />
+        {/* Product List */}
+        <ProductTable
+          products={filteredProducts}
+          tableHeads={[
+            "Product",
+            "Category",
+            "Price",
+            "Stock",
+            "Date Created",
+            "Actions",
+          ]}
+          tableRow={(product: Product, index: number) => (
+            <StaffProductRow
+              saleQue={addSaleQue}
+              setSaleQue={setAddSaleQue}
+              key={index}
+              product={product}
+            />
+          )}
+        />
+      </div>
     </>
   );
 };

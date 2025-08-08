@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import React from "react";
 import { EditProduct } from "./ProductDialog";
@@ -21,8 +21,6 @@ export function AdminProductRow({
   product: Product;
   categories: Categories[];
 }) {
-  const base64 = Buffer.from(product.image).toString("base64");
-  const dataUrl = `data:image/png;base64,${base64}`;
   const status = "Published";
 
   async function handleDeleteProduct(id: number | undefined) {
@@ -36,7 +34,7 @@ export function AdminProductRow({
     <TableRow>
       <TableCell className="font-medium grid gap-1 grid-rows-2 grid-cols-[auto_1fr] text-left">
         <img
-          src={dataUrl}
+          src={product.image}
           alt="product-image"
           className="object-contain row-span-2 aspect-square w-14 border"
         />

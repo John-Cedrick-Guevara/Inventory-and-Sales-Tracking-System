@@ -15,7 +15,7 @@ export async function signInAction(prevState: unknown, formData: FormData) {
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    throw new Error("Invalid credentials.");
+    return { success: false, error: "User not found." };
   }
 
   const valid = await verifyPassword(password, user.password);

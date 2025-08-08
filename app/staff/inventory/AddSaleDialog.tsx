@@ -1,4 +1,5 @@
-import React, { useActionState, useState } from "react";
+"use client";
+import React, { useActionState, useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -9,95 +10,159 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Minus, Plus } from "lucide-react";
-import { editProduct } from "@/app/actions/products";
+import { BaggageClaim, CloudFog, Loader2, Minus, Plus, X } from "lucide-react";
+import { useUser } from "@/app/Context/UserContext";
+import { AddSaleQueItem } from "@/lib/interfaces";
+import axios from "axios";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
 const AddSaleDialog = ({
-  className,
-  id,
-  name,
-  price,
+  saleQue,
+  setSaleQue,
 }: {
-  className: string;
-  id: number | undefined;
-  name: string;
-  price: number;
+  saleQue: AddSaleQueItem[];
+  setSaleQue: React.Dispatch<React.SetStateAction<AddSaleQueItem[]>>;
 }) => {
-  const [quantity, setQuantity] = useState(0);
-  const [editData, editAction, editIsPending] = useActionState(
-    editProduct,
-    undefined
-  );
+  const userData: any = useUser();
+  const [addIsPending, setAddIsPending] = useState(false);
+
+  // gets the total amount of sale
+  const saleTotal = useMemo(() => {
+    return saleQue.reduce(
+      (total, currntSubtotal) => total + currntSubtotal.subTotal,
+      0
+    );
+  }, [saleQue]);
+
+  // submits sale
+  async function submitSale(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    console.log(saleQue);
+
+    if (saleQue.length === 0) alert("bobo mag lagay ka ng item");
+    else {
+      setAddIsPending(true);
+      try {
+        const newSale = await axios.post("/api/sales", {
+          userId: userData.id,
+          total: saleTotal,
+          saleItems: saleQue,
+        });
+
+        setSaleQue([]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setAddIsPending(false);
+      }
+    }
+  }
+
   return (
     <div>
       <Dialog>
-        <DialogTrigger
-          className={cn(
-            "flex items-center cursor-pointer gap-2 p-1 rounded-md transition-colors", // base styles
-            className // incoming from parent (e.g., hover:bg-blue-100 etc.)
-          )}
-        >
-          Add Sale
+        <DialogTrigger className="flex items-center cursor-pointer gap-2 px-2 py-1 rounded-md transition-colors border bg-blue-700 text-blue-100">
+          Add sale que
+          <BaggageClaim width={20} height={20} />
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit product</DialogTitle>
+            <DialogTitle>Add Sale</DialogTitle>
             <DialogDescription>
-              Edit product here. Fill the fields to be edited only. Click submit
+              Add sale here. Change quantity field as you want. Click submit
               when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
-          <form className="grid grid-cols-2 gap-4" action={editAction}>
-            {/* product id */}
-            <Input type="hidden" value={id} id="product-id" name="id" />
+          <form
+            className="flex flex-col gap-4 transition-all"
+            onSubmit={submitSale}
+          >
+            {/* added item list */}
+            <div className="flex flex-col gap-1 h-auto max-h-52 overflow-auto">
+              {saleQue.map((item, index) => (
+                <div
+                  className="grid space-x-2 grid-cols-[auto_1fr_1fr_auto] grid-rows-[repeat(2,_auto)] bg-gray-100 py-1 px-2 rounded-xl"
+                  key={index}
+                >
+                  <img
+                    src={item.image}
+                    className="object-cover aspect-square w-12 row-span-2"
+                    alt=""
+                  />
 
-            {/* product name */}
-            <div className="grid gap-1 col-span-2">
-              <Label htmlFor="product-name">Product name</Label>
-              <Input
-                id="product-name"
-                name="name"
-                defaultValue={name}
-                disabled
-              />
+                  {/* product name */}
+                  <h1 className="text-md font-semibold">{item.name}</h1>
+
+                  {/* product quantity */}
+                  <Input
+                    className="py-1 px-2 w-fit ml-auto mr-0"
+                    min={0}
+                    max={20}
+                    type="number"
+                    id="quantity"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      setSaleQue(() =>
+                        saleQue.map((saleItem) => {
+                          if (saleItem.id === item.id) {
+                            const newQuantity = Number(e.target.value);
+                            return {
+                              ...saleItem,
+                              quantity: newQuantity,
+                              subTotal: newQuantity * saleItem.price,
+                            };
+                          }
+                          return saleItem;
+                        })
+                      )
+                    }
+                    placeholder="Quantity"
+                  />
+
+                  <X
+                    onClick={() =>
+                      setSaleQue((prev) =>
+                        prev.filter((saleItem) => saleItem.id !== item.id)
+                      )
+                    }
+                    className="row-span-2 self-center mr-0 ml-2 cursor-pointer"
+                    width={15}
+                  />
+
+                  {/* product category */}
+                  <h1 className="text-sm text-slate-500 font-semibold">
+                    {item.category?.name}
+                  </h1>
+
+                  {/* quantity */}
+                  <input
+                    type="hidden"
+                    defaultValue={item.quantity * item.price}
+                    name="subtotal"
+                    required
+                  />
+
+                  {/* total amount */}
+                  <h1 className=" text-blue-700 font-semibold h-fit text-right text-sm">
+                    Subtotal: P{item.subTotal.toLocaleString()}
+                  </h1>
+                </div>
+              ))}
+              <hr className="my-2" />
+              <h1 className=" text-right font-semibold text-md p-2 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-between">
+                Total: <span>P{saleTotal.toLocaleString()}</span>{" "}
+              </h1>
             </div>
-
-            {/* quantity */}
-            <div className="gap-2">
-              <div className="grid gap-2 w-full">
-                <Label htmlFor="quantity">Quantity Sold</Label>
-
-                <Input
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  min={0}
-                  max={100}
-                  id="quantity"
-                  name="quantity"
-                  type="number"
-                />
-              </div>
-            </div>
-
-            {/* total amount */}
-            <h1 className="bg-blue-100 text-blue-700 font-semibold h-fit p-2 rounded-lg w-full self-end text-center">
-              Total Price: P{quantity * price}
-            </h1>
-
-            {/* sale remakrs*/}
-            <div className="grid gap-1 col-span-2">
-              <Label htmlFor="sale-remarks">Remarks (Optional)</Label>
-              <Textarea
-                id="sale-remarks"
-                name="sale-remarks"
-                placeholder="Add any notes about about this sale..."
-              />
-            </div>
-
             <DialogFooter className="col-start-2">
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
@@ -106,7 +171,7 @@ const AddSaleDialog = ({
                 className="bg-blue-700 text-white hover:bg-blue-600"
                 type="submit"
               >
-                {editIsPending ? (
+                {addIsPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   "Add Sale"

@@ -2,6 +2,7 @@ import NavAdmin from "@/components/NavAdmin";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import { redirect } from "next/navigation";
 import React from "react";
+import UserProvider from "../Context/UserProvider";
 
 const layout = async ({
   children,
@@ -9,9 +10,8 @@ const layout = async ({
   children: React.ReactNode;
 }>) => {
   const user = await getCurrentUser();
-  console.log(user);
   if (!user || user.role !== "STAFF") {
-    redirect("/unauthorized");
+    redirect("/");
   }
 
   const navLinks = [
@@ -27,16 +27,16 @@ const layout = async ({
     },
     {
       name: "Sales History",
-      link: "/staff/sales-history",
+      link: "/staff/sale-history",
       icon: "History",
     },
   ];
 
   return (
-    <>
+    <UserProvider user={user}>
       <NavAdmin navLinks={navLinks} />
       <main className="p-6">{children}</main>
-    </>
+    </UserProvider>
   );
 };
 

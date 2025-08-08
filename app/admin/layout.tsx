@@ -43,7 +43,7 @@ const layout = async ({
       icon: "Tags",
     },
     {
-      name: "Users",
+      name: "Staffs",
       link: "/admin/users",
       icon: "Users",
     },

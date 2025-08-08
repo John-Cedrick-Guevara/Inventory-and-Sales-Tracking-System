@@ -1,35 +1,45 @@
-import AlertDeleteDialog from "@/components/AlertDialog";
 import { TableRow, TableCell } from "@/components/ui/table";
-import { Categories, Product } from "@/lib/interfaces";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Ellipsis } from "lucide-react";
+import { AddSaleQueItem, Categories, Product } from "@/lib/interfaces";
+
 import React from "react";
-import { Button } from "@/components/ui/button";
-import AddSaleDialog from "./AddSaleDialog";
 
 const StaffProductRow = ({
   product,
-  categories,
+  saleQue,
+  setSaleQue,
 }: {
   product: Product;
-  categories: Categories[];
+  saleQue: AddSaleQueItem[];
+  setSaleQue: React.Dispatch<React.SetStateAction<AddSaleQueItem[]>>;
 }) => {
-  const base64 = Buffer.from(product.image).toString("base64");
-  const dataUrl = `data:image/png;base64,${base64}`;
-  const status = "Published";
+  function addToSaleQue(product: AddSaleQueItem) {
+    setSaleQue((prev) => {
+      const existing = prev?.find((item) => item.id === product.id);
+
+      if (!existing) {
+        return [...prev, { ...product }];
+      } else {
+        return prev.map((item) => {
+          if (item.id === product.id) {
+            const newQuantity = (item.quantity ?? 1) + 1;
+            return {
+              ...item,
+              quantity: newQuantity,
+              subTotal: newQuantity * item.price, 
+            };
+          }
+          return item;
+        });
+      }
+    });
+    console.log(saleQue);
+  }
 
   return (
     <TableRow>
       <TableCell className="font-medium  text-left flex items-center gap-2">
         <img
-          src={dataUrl}
+          src={product.image}
           alt="product-image"
           className="object-contain row-span-2 aspect-square w-14 border"
         />
@@ -44,13 +54,23 @@ const StaffProductRow = ({
       <TableCell>{product.stock}</TableCell>
 
       <TableCell>{new Date(product.createdAt).toLocaleDateString()}</TableCell>
-      <TableCell>
-        <AddSaleDialog
-          className={"bg-blue-100 text-blue-700 p-2 hover:bg-blue-200 mx-auto"}
-          id={product.id}
-          name={product.name}
-          price={product.price}
-        />
+      <TableCell
+        onClick={() => {
+          const { id, name, price, category, image } = product;
+          addToSaleQue({
+            id,
+            name,
+            price,
+            category,
+            image,
+            subTotal: price,
+            quantity: 1,
+          });
+        }}
+      >
+        <h1 className="bg-blue-100 text-blue-700 w-fit p-2 rounded-md mx-auto hover:bg-blue-200 hover: hover:text-blue-800 cursor-pointer">
+          Add to sale que
+        </h1>
       </TableCell>
     </TableRow>
   );

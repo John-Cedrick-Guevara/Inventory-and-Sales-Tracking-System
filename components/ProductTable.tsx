@@ -8,22 +8,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Product } from "@/lib/interfaces";
 
-interface Props {
-  products: Product[];
+
+interface Props<T> {
+  products: T[];
   tableHeads: string[];
-  tableRow: (product: Product, index: number) => React.ReactNode;
+  tableRow: (item: T, index: number) => React.ReactNode;
 }
 
-const ProductTable = ({ products, tableHeads, tableRow }: Props) => {
+const ProductTable = <T,>({ products, tableHeads, tableRow }: Props<T>) => {
   return (
-    <div >
-      <Table >
+    <div>
+      <Table>
         <TableHeader>
           <TableRow>
             {tableHeads.map((item, index) => {
-              console.log(item, index);
               return (
                 <TableHead
                   key={index}
