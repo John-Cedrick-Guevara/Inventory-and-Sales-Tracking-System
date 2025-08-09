@@ -21,8 +21,8 @@ const layout = async ({
       icon: "LayoutDashboard",
     },
     {
-      name: "Inventory",
-      link: "/staff/inventory",
+      name: "Products",
+      link: "/staff/products",
       icon: "Boxes",
     },
     {

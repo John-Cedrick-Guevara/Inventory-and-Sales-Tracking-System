@@ -71,7 +71,7 @@ const AddSaleDialog = ({
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="flex items-center cursor-pointer gap-2 px-2 py-1 rounded-md transition-colors border bg-blue-700 text-blue-100">
+        <DialogTrigger className="flex items-center cursor-pointer gap-2 px-2 pr-4 py-1 rounded-md transition-colors border bg-blue-700 text-blue-100">
           Add sale que
           <BaggageClaim width={20} height={20} />
         </DialogTrigger>

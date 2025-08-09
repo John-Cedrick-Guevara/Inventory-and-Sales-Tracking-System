@@ -9,27 +9,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SaleHistoryListRow from "./SaleHistoryListRow";
+import StaffSaleHistoryListRow from "./StaffSaleHistoryListRow";
+import SalesHistoryTable from "@/components/SaleHistoryTable";
 
-const SaleHistoryList = ({ saleHistoy }: { saleHistoy: SaleItem[] }) => {
+const SaleHistoryList = ({ saleHistory }: { saleHistory: SaleItem[] }) => {
   return (
-      <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">id</TableHead>
-            <TableHead>Product</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Total Price</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {saleHistoy.map((item, index) => (
-            <SaleHistoryListRow key={index} saleHistoy={item} />
-          ))}
-        </TableBody>
-      </Table>
+    <>
+      <SalesHistoryTable
+        sales={saleHistory}
+        tableHeads={["Id", "Product", "Quantity", "Price", "Date"]}
+        tableRow={(sale: SaleItem, index) => (
+          <StaffSaleHistoryListRow sale={sale} key={index} />
+        )}
+      />
+    </>
   );
 };
 

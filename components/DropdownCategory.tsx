@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Categories } from "@/lib/interfaces";
-import prisma from "@/lib/prisma";
+
 
 interface Props {
   categories: Categories[];

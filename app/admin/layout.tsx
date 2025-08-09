@@ -29,12 +29,12 @@ const layout = async ({
     },
     {
       name: "Sales",
-      link: "#",
+      link: "/admin/sales",
       icon: "ShoppingCart",
     },
     {
-      name: "Products",
-      link: "/admin/products",
+      name: "Inventory",
+      link: "/admin/inventory",
       icon: "Package",
     },
     {

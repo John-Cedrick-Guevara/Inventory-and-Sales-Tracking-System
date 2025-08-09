@@ -9,7 +9,7 @@ const page = async () => {
   return (
     <main>
       <h1 className="text-3xl font-bold">Today's summary</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+      <div className="flex flex-wrap justify-center items-center gap-4 mt-10">
         {/* quantity sold for the day */}
         <DashBoardCard
           title="Today's Quantity Sold"

@@ -38,7 +38,14 @@ const InventoryList = ({
       />
       <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto">
         {/* add sale dialog */}
-        <AddSaleDialog setSaleQue={setAddSaleQue} saleQue={addSaleQue} />
+        {addSaleQue.length > 0 && (
+          <div className="relative w-fit">
+            <h1 className="absolute -right-2 -top-2 border border-white bg-blue-800 text-white text-sm font-semibold rounded-2xl px-2 pb-1 h-6">
+              {addSaleQue.length}
+            </h1>
+            <AddSaleDialog setSaleQue={setAddSaleQue} saleQue={addSaleQue} />
+          </div>
+        )}
         {/* Product List */}
         <ProductTable
           products={filteredProducts}

@@ -1,11 +1,12 @@
 import prisma from "./prisma";
 
 export interface DashboardStats {
-  totalSales: number;
+  totalSalesToday: number;
   totalProducts: number;
   totalUsers: number;
   recentSales: number;
   sevenDayRevenue: number;
+  totalRevenueToday: number;
 }
 
 export async function getAdminDashboardStats(): Promise<DashboardStats> {
@@ -20,7 +21,7 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
 
     // Fetch all data in parallel for better performance
-    const [sales, products, users] = await Promise.all([
+    const [sales, products, users, saleItem] = await Promise.all([
       // Total sales for today
       prisma.sale.aggregate({
         where: {
@@ -37,14 +38,27 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
       prisma.product.count(),
       // Total users count
       prisma.user.count(),
+      // total quantity sold
+      prisma.saleItem.count({
+        where: {
+          sale: {
+            createdAt: {
+              gte: startOfDay,
+              lt: endOfDay,
+            },
+          },
+        },
+      }),
     ]);
 
     // Get recent sales count (last 7 days)
     const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const recentSales = await prisma.sale.count({
+    const recentSales = await prisma.saleItem.count({
       where: {
-        createdAt: {
-          gte: sevenDaysAgo,
+        sale: {
+          createdAt: {
+            gte: sevenDaysAgo,
+          },
         },
       },
     });
@@ -62,7 +76,8 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
     });
 
     return {
-      totalSales: sales._sum.total || 0,
+      totalRevenueToday: sales._sum.total || 0,
+      totalSalesToday: saleItem,
       totalProducts: products,
       totalUsers: users,
       recentSales,
@@ -72,7 +87,8 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
     console.error("Error fetching dashboard stats:", error);
     // Return default values on error
     return {
-      totalSales: 0,
+      totalRevenueToday: 0,
+      totalSalesToday: 0,
       totalProducts: 0,
       totalUsers: 0,
       recentSales: 0,

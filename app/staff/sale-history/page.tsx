@@ -34,7 +34,7 @@ const page = async () => {
 
   return (
     <Suspense fallback={<>Wait lang</>}>
-      <SaleHistoryList saleHistoy={saleItems} />
+      <SaleHistoryList saleHistory={saleItems} />
     </Suspense>
   );
 };
