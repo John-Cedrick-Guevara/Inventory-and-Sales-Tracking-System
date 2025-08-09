@@ -5,7 +5,7 @@ import { SaleItem } from "@/lib/interfaces";
 const SaleHistoryListRow = ({ saleHistoy }: { saleHistoy: SaleItem }) => {
   return (
     <TableRow>
-      <TableCell className="font-medium">{saleHistoy.id}</TableCell>
+      <TableCell className="font-medium">{saleHistoy.sale.id}</TableCell>
       <TableCell>{saleHistoy.product.name}</TableCell>
       <TableCell>{saleHistoy.quantity}</TableCell>
       <TableCell>{saleHistoy.subtotal}</TableCell>

@@ -44,14 +44,38 @@ export function fileToBase64(file: File): Promise<string> {
 
 export const filterSearch = (search: string, list: any) => {
   if (!search) return list;
-  return list.filter((item: any) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
+  console.log("filterSearch called with:", {
+    search,
+    listLength: list?.length,
+  });
+  try {
+    const result = list.filter(
+      (item: any) =>
+        item.name && item.name.toLowerCase().includes(search.toLowerCase())
+    );
+    console.log("filterSearch result:", result.length);
+    return result;
+  } catch (error) {
+    console.error("Error in filterSearch:", error);
+    return list;
+  }
 };
 
 export const categorizedFilter = (search: string, list: any) => {
   if (!search) return list;
-  return list.filter(
-    (item: any) => Number(item.category.id) === Number(search)
-  );
+  console.log("categorizedFilter called with:", {
+    search,
+    listLength: list?.length,
+  });
+  try {
+    const result = list.filter(
+      (item: any) =>
+        item.category && Number(item.category.id) === Number(search)
+    );
+    console.log("categorizedFilter result:", result.length);
+    return result;
+  } catch (error) {
+    console.error("Error in categorizedFilter:", error);
+    return list;
+  }
 };

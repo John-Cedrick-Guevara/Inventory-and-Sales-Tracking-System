@@ -23,6 +23,22 @@ export function AdminProductRow({
 }) {
   const status = "Published";
 
+  // Debug logging
+  console.log(product);
+
+  // Safety check for product
+  if (!product) {
+    return (
+      <TableRow>
+        <TableCell colSpan={8} className="text-center text-gray-500">
+          Invalid product data
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  // console.log(product)
+
   async function handleDeleteProduct(id: number | undefined) {
     try {
       await axios.delete(`/api/products/${id}`);
@@ -34,13 +50,18 @@ export function AdminProductRow({
     <TableRow>
       <TableCell className="font-medium grid gap-1 grid-rows-2 grid-cols-[auto_1fr] text-left">
         <img
-          src={product.image}
+          src={product.image || "/placeholder-image.png"}
           alt="product-image"
           className="object-contain row-span-2 aspect-square w-14 border"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder-image.png";
+          }}
         />
-        <h1 className="self-center text-lg">{product.name}</h1>
+        <h1 className="self-center text-lg">
+          {product.name || "Unnamed Product"}
+        </h1>
         <h3 className="self-center text-sm text-gray-500 bg-gray-100 w-fit rounded-md p-1">
-          {product.category?.name}
+          {product.category?.name || "No Category"}
         </h3>
       </TableCell>
       <TableCell>
@@ -56,11 +77,15 @@ export function AdminProductRow({
           {status}
         </h1>
       </TableCell>
-      <TableCell>{product.price}</TableCell>
-      <TableCell>{product.stock}</TableCell>
+      <TableCell>{product.price || 0}</TableCell>
+      <TableCell>{product.stock || 0}</TableCell>
       <TableCell>-</TableCell>
       <TableCell>-</TableCell>
-      <TableCell>{new Date(product.createdAt).toLocaleDateString()}</TableCell>
+      <TableCell>
+        {product.createdAt
+          ? new Date(product.createdAt).toLocaleDateString()
+          : "N/A"}
+      </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger>

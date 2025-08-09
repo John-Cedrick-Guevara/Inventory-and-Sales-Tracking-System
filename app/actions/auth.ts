@@ -13,6 +13,7 @@ export async function signInAction(prevState: unknown, formData: FormData) {
     throw new Error("Email and password are required.");
   }
 
+
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return { success: false, error: "User not found." };

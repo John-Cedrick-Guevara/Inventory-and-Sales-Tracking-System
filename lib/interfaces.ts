@@ -41,21 +41,21 @@ export interface Sale {
 }
 
 export interface SaleItem {
-  id: number
+  id: number;
   product: { name: string; image: string; price: number };
-  productId: number
+  productId: number;
   quantity: number;
-  sale: { createdAt: string; };
-  saleId: number
+  sale: { createdAt: string; id: number };
+  saleId: number;
   subtotal: number;
 }
 
 export interface AddSaleQueItem {
-  id: number | unknown
+  id: number | unknown;
   name: string;
   price: number;
   quantity: number;
-  subTotal: number
+  subTotal: number;
   image: any;
   category?: Categories;
 }

@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 interface Props<T> {
   products: T[];
   tableHeads: string[];
@@ -37,7 +36,18 @@ const ProductTable = <T,>({ products, tableHeads, tableRow }: Props<T>) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product, index) => tableRow(product, index))}
+          {products && products.length > 0 ? (
+            products.map((product, index) => tableRow(product, index))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={tableHeads.length}
+                className="text-center py-8 text-gray-500"
+              >
+                No products found
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

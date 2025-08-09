@@ -17,11 +17,18 @@ const page = async () => {
       product: true,
       sale: {
         select: {
+          id: true,
           createdAt: true,
         },
       },
     },
+    orderBy: {
+      sale: {
+        createdAt: "desc",
+      },
+    },
   });
+
 
   console.log(saleItems);
 
