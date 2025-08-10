@@ -25,6 +25,7 @@ export interface Product {
   quantity: number;
   total: number;
   category?: Categories;
+  saleItems?: SaleItem[]
 }
 
 export interface Sale {

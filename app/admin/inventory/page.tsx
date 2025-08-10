@@ -6,6 +6,7 @@ const page = async () => {
   const rawProducts: any = await prisma.product.findMany({
     include: {
       category: true,
+      saleItems :true
     },
   });
   const categories: any = await prisma.category.findMany();
@@ -19,6 +20,7 @@ const page = async () => {
       category: product.category,
     };
   });
+
   return (
     <Suspense fallback={<>Loading....</>}>
       <ProductList categories={categories} products={convertedProducts} />

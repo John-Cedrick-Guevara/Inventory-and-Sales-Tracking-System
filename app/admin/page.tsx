@@ -1,13 +1,34 @@
+
 import DashBoardCard from "@/components/DashBoardCard";
 import { getAdminDashboardStats } from "@/lib/adminDashboardData";
-import { Store, TrendingUp, Package, DollarSign, User, BoxesIcon } from "lucide-react";
+import prisma from "@/lib/prisma";
+import {
+  Store,
+  TrendingUp,
+  Package,
+  DollarSign,
+  User,
+  BoxesIcon,
+} from "lucide-react";
 import React from "react";
+import ChartContainer from "./ChartContainer";
 
 const page = async () => {
   const stats = await getAdminDashboardStats();
 
+  const sales = await prisma.sale.findMany({
+    include: {
+      saleItems: true,
+    },
+  });
+
   return (
-    <main>
+    <>
+    <div>
+      <ChartContainer/>
+    </div>
+
+    <main className="hidden">
       <h1 className="text-3xl font-bold">Today's summary</h1>
       <div className="flex flex-wrap justify-center items-center gap-4 mt-10">
         {/* totals sales revenue*/}
@@ -48,7 +69,7 @@ const page = async () => {
           subtitle="Total products in your inventory"
           icon={BoxesIcon}
         />
- 
+
         {/* total staff */}
         <DashBoardCard
           title="Number of Staffs"
@@ -58,6 +79,8 @@ const page = async () => {
         />
       </div>
     </main>
+    </>
+
   );
 };
 

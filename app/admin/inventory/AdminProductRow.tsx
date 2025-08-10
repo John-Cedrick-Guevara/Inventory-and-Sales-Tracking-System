@@ -37,8 +37,6 @@ export function AdminProductRow({
     );
   }
 
-  // console.log(product)
-
   async function handleDeleteProduct(id: number | undefined) {
     try {
       await axios.delete(`/api/products/${id}`);
@@ -79,8 +77,13 @@ export function AdminProductRow({
       </TableCell>
       <TableCell>{product.price || 0}</TableCell>
       <TableCell>{product.stock || 0}</TableCell>
-      <TableCell>-</TableCell>
-      <TableCell>-</TableCell>
+      <TableCell>{product.saleItems?.length}</TableCell>
+      <TableCell>
+        ${product.saleItems?.reduce(
+          (total, current) => total + current.subtotal,
+          0
+        ).toLocaleString()}
+      </TableCell>
       <TableCell>
         {product.createdAt
           ? new Date(product.createdAt).toLocaleDateString()
