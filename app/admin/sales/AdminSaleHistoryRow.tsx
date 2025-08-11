@@ -22,6 +22,9 @@ const AdminSaleHistoryRow = ({ sale }: { sale: SaleItem }) => {
       <TableCell>{sale.product.name || "Product not found"}</TableCell>
       <TableCell>${sale.product.price.toLocaleString() || 0}</TableCell>
       <TableCell>{sale.quantity}</TableCell>
+      <TableCell>
+        {new Date(sale.sale.createdAt).toLocaleDateString()}
+      </TableCell>
       <TableCell>${sale.subtotal.toLocaleString()}</TableCell>
       <TableCell>{sale.sale.user.name}</TableCell>
     </TableRow>

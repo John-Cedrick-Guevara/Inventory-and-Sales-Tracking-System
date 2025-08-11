@@ -15,6 +15,7 @@ const ProductList = ({
   products: Product[];
   categories: Categories[];
 }) => {
+  // search parameters
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -22,8 +23,6 @@ const ProductList = ({
   const safeProducts = products || [];
   const safeCategories = categories || [];
 
-  // Debug logging
-  console.log(products);
 
   const categorizedProducts: Product[] = useMemo(() => {
     try {

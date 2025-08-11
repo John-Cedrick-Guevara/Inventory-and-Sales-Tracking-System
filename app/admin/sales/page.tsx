@@ -12,6 +12,7 @@ const page = async () => {
         select: {
           name: true,
           price: true,
+          category: true
         },
       },
       sale: {

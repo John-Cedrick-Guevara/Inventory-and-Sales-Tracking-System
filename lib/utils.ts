@@ -53,7 +53,7 @@ export const filterSearch = (search: string, list: any) => {
       (item: any) =>
         item.name && item.name.toLowerCase().includes(search.toLowerCase())
     );
-    console.log("filterSearch result:", result.length);
+    console.log("filterSearch result:", result);
     return result;
   } catch (error) {
     console.error("Error in filterSearch:", error);

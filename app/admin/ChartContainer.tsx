@@ -1,16 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 import RevenueChart from "./RevenueChart";
-import { ChevronDownIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Label } from "@/components/ui/label";
+
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import axios from "axios";
+import DatePicker from "@/components/DatePicker";
+import { defaultEndDate, defaultStartDate } from "@/lib/constants";
 
 interface RevenueData {
   date: string;
@@ -19,30 +21,41 @@ interface RevenueData {
 }
 
 const ChartContainer = () => {
-  const defaultEndDate = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 7);
-    return d;
-  })();
-
+  // chart data
   const [data, setData] = useState<RevenueData[]>([]);
-  const [period, setPeriod] = useState<"day" | "week" | "month">("week");
+
+  // period(time span)
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">(
+    "weekly"
+  );
+
+  // selected month(for weekly data)
+  const [month, setMonth] = useState("");
+
+  // loading and error handling
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // popover triggers
   const [openStartDate, setOpenStartDate] = React.useState(false);
   const [openEndDate, setOpenEndDate] = React.useState(false);
+
+  // start and end dates for span
   const [startDate, setStartDate] = React.useState<Date | undefined>(
+    defaultStartDate
+  );
+  const [endDate, setEndDate] = React.useState<Date | undefined>(
     defaultEndDate
   );
-  const [endDate, setEndDate] = React.useState<Date | undefined>(new Date());
 
-  const getData = async (selectedPeriod: "day" | "week" | "month") => {
+  // fetcher
+  const getData = async (selectedPeriod: "daily" | "weekly" | "monthly") => {
     try {
       setLoading(true);
       setError(null);
 
       const res = await axios.get<RevenueData[]>(
-        `/api/stats?period=${selectedPeriod}&startDate=${startDate}&endDate=${endDate}`
+        `/api/stats?period=${selectedPeriod}&startDate=${startDate}&endDate=${endDate}&month=${month}`
       );
 
       setData(res.data);
@@ -54,24 +67,10 @@ const ChartContainer = () => {
     }
   };
 
-  const handlePeriodChange = (newPeriod: "day" | "week" | "month") => {
-    setPeriod(newPeriod);
-  };
-
+  // calls fetcher
   useEffect(() => {
     getData(period);
-  }, [period, endDate, startDate]);
-
-  // if (loading) {
-  //   return (
-  //     <div className="bg-white rounded-lg shadow-md p-6">
-  //       <div className="animate-pulse">
-  //         <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-  //         <div className="h-64 bg-gray-200 rounded"></div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  }, [period, endDate, startDate, month]);
 
   if (error) {
     return (
@@ -92,115 +91,35 @@ const ChartContainer = () => {
     );
   }
 
-  console.log(data);
-
   return (
-    <>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        {/* day, week, month */}
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Revenue Chart</h3>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => handlePeriodChange("day")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                period === "day"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Day
-            </button>
-            <button
-              onClick={() => handlePeriodChange("week")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                period === "week"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Week
-            </button>
-            <button
-              onClick={() => handlePeriodChange("month")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                period === "month"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Month
-            </button>
-          </div>
-        </div>
+    <div>
+      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        {/* filter bar */}
+        <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
+          <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">
+            Revenue Chart
+          </h3>
 
-        {/* date picker */}
-        <div>
-          {/* start date */}
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="date" className="px-1">
-              Select start date:
-            </Label>
-            <Popover open={openStartDate} onOpenChange={setOpenStartDate}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  className="w-48 justify-between font-normal"
-                >
-                  {startDate ? startDate.toLocaleDateString() : "Select date"}
-                  <ChevronDownIcon />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    setStartDate(date);
-                    setOpenStartDate(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+          {period === "daily" ? (
+            // date picker
+            <DatePicker
+              openStartDate={openStartDate}
+              setOpenStartDate={setOpenStartDate}
+              startDate={startDate}
+              setStartDate={setStartDate}
+              openEndDate={openEndDate}
+              setOpenEndDate={setOpenEndDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+            />
+          ) : (
+            period === "weekly" && (
+              <MonthDropdown month={month} setMonth={setMonth} />
+            )
+          )}
 
-          {/* end date */}
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="date" className="px-1">
-              Select end date:
-            </Label>
-            <Popover open={openEndDate} onOpenChange={setOpenEndDate}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  className="w-48 justify-between font-normal"
-                >
-                  {endDate ? endDate.toLocaleDateString() : "Select date"}
-                  <ChevronDownIcon />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={endDate}
-                  captionLayout="dropdown"
-                  onSelect={(date) => {
-                    setEndDate(date);
-                    setOpenEndDate(false);
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+          {/* day, week, month */}
+          <PeriodDropDown period={period} setPeriod={setPeriod} />
         </div>
 
         {data.length === 0 ? (
@@ -209,12 +128,88 @@ const ChartContainer = () => {
               No revenue data available for the selected period.
             </p>
           </div>
+        ) : loading ? (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="animate-pulse">
+              <div className="h-64 bg-gray-200 rounded"></div>
+            </div>
+          </div>
         ) : (
-          <div><RevenueChart dataChart={data}/></div>
+          <div className="mt-8  overflow-auto ">
+            <RevenueChart dataChart={data} />
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
 export default ChartContainer;
+
+export function MonthDropdown({
+  month,
+  setMonth,
+}: {
+  month: string;
+  setMonth: Dispatch<React.SetStateAction<string>>;
+}) {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  return (
+    <Select value={month} onValueChange={(item: any) => setMonth(item)}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select month" />
+      </SelectTrigger>
+      <SelectContent>
+        {months.map((month, index) => (
+          <SelectItem
+            key={index}
+            value={index.toString()} // month number as value
+          >
+            {month}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+export function PeriodDropDown({
+  period,
+  setPeriod,
+}: {
+  period: "daily" | "weekly" | "monthly";
+  setPeriod: Dispatch<React.SetStateAction<"daily" | "weekly" | "monthly">>;
+}) {
+  console.log(period);
+  return (
+    <Select value={period} onValueChange={(item: any) => setPeriod(item)}>
+      <SelectTrigger className="w-[110px]">
+        <SelectValue placeholder="Select period " />
+      </SelectTrigger>
+      <SelectContent>
+        {["daily", "weekly", "monthly"].map((item, index) => (
+          <SelectItem
+            key={index}
+            value={item} // month number as value
+          >
+            {item.slice(0, 1).toUpperCase() + item.slice(1)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}

@@ -18,21 +18,12 @@ interface Props<T> {
 
 const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
   return (
-    <div>
+    <>
       <Table>
         <TableHeader>
           <TableRow>
             {tableHeads.map((item, index) => {
-              return (
-                <TableHead
-                  key={index}
-                  className={`${
-                    index === 0 ? "w-[320px] text-left" : "text-center"
-                  } `}
-                >
-                  {item}
-                </TableHead>
-              );
+              return <TableHead key={index}>{item}</TableHead>;
             })}
           </TableRow>
         </TableHeader>
@@ -51,7 +42,7 @@ const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
           )}
         </TableBody>
       </Table>
-    </div>
+    </>
   );
 };
 

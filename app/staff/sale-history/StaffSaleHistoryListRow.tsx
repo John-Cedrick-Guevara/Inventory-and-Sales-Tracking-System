@@ -3,7 +3,6 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { SaleItem } from "@/lib/interfaces";
 
 const StaffSaleHistoryListRow = ({ sale }: { sale: SaleItem }) => {
-
   if (!sale) {
     return (
       <TableRow>
@@ -18,6 +17,7 @@ const StaffSaleHistoryListRow = ({ sale }: { sale: SaleItem }) => {
     <TableRow>
       <TableCell className="font-medium">{sale.sale.id}</TableCell>
       <TableCell>{sale.product.name}</TableCell>
+      <TableCell>{sale.quantity}</TableCell>
       <TableCell>{sale.quantity}</TableCell>
       <TableCell>{sale.subtotal}</TableCell>
       <TableCell>
