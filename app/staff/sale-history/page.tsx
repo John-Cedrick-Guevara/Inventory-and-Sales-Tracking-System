@@ -1,40 +1,20 @@
 import { useUser } from "@/app/Context/UserContext";
+import SalesHistory from "@/components/SalesHistoryList";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import prisma from "@/lib/prisma";
 import React, { Suspense } from "react";
 import { includes } from "zod/v4";
-import SaleHistoryList from "./SaleHistoryList";
 
 const page = async () => {
-  const user = await getCurrentUser();
-  const saleItems: any = await prisma.saleItem.findMany({
-    where: {
-      sale: {
-        userId: user?.id,
-      },
-    },
-    include: {
-      product: true,
-      sale: {
-        select: {
-          id: true,
-          createdAt: true,
-        },
-      },
-    },
-    orderBy: {
-      sale: {
-        createdAt: "desc",
-      },
-    },
-  });
-
-
-  console.log(saleItems);
+  const user: any = await getCurrentUser();
 
   return (
     <Suspense fallback={<>Wait lang</>}>
-      <SaleHistoryList saleHistory={saleItems} />
+      <h1 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center w-fit">
+        {user.name.slice(0, 1).toUpperCase() + user.name.slice(1)}'s sales
+        history
+      </h1>
+      <SalesHistory user={user} />
     </Suspense>
   );
 };

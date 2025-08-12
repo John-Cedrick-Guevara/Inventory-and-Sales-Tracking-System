@@ -18,7 +18,6 @@ const StaffSaleHistoryListRow = ({ sale }: { sale: SaleItem }) => {
       <TableCell className="font-medium">{sale.sale.id}</TableCell>
       <TableCell>{sale.product.name}</TableCell>
       <TableCell>{sale.quantity}</TableCell>
-      <TableCell>{sale.quantity}</TableCell>
       <TableCell>{sale.subtotal}</TableCell>
       <TableCell>
         {new Date(sale.sale.createdAt).toLocaleDateString()}

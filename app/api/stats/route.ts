@@ -109,6 +109,7 @@ export async function GET(req: NextRequest) {
         groupedSales = weeklyFilter(sales);
     }
 
+    // convertion of record into array for chart
     const chartData = Object.entries(groupedSales).map(([date, data]) => ({
       date,
       revenue: data.revenue,

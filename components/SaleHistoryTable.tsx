@@ -19,7 +19,7 @@ interface Props<T> {
 const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
   return (
     <>
-      <Table>
+      <Table className="mt-8 shadow-none ">
         <TableHeader>
           <TableRow>
             {tableHeads.map((item, index) => {

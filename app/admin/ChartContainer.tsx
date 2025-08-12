@@ -13,6 +13,9 @@ import {
 import axios from "axios";
 import DatePicker from "@/components/DatePicker";
 import { defaultEndDate, defaultStartDate } from "@/lib/constants";
+import DashBoardCard from "@/components/DashBoardCard";
+import { DollarSign, Package, BoxesIcon, User } from "lucide-react";
+import { DashboardStats } from "@/lib/adminDashboardData";
 
 interface RevenueData {
   date: string;
@@ -20,17 +23,15 @@ interface RevenueData {
   sales: number;
 }
 
-const ChartContainer = () => {
+const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
   // chart data
   const [data, setData] = useState<RevenueData[]>([]);
 
   // period(time span)
-  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">(
-    "weekly"
-  );
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
 
   // selected month(for weekly data)
-  const [month, setMonth] = useState("");
+  const [month, setMonth] = useState("7");
 
   // loading and error handling
   const [loading, setLoading] = useState(true);
@@ -93,7 +94,46 @@ const ChartContainer = () => {
 
   return (
     <div>
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      {/* summary cards */}
+
+      <h1 className="text-3xl font-bold">Today's summary</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-4 mt-10">
+        {/* total sales revenue for the last 7 days */}
+        <DashBoardCard
+          title="Recent 7 days"
+          value={`$${stats.sevenDayRevenue.toLocaleString()}`}
+          subtitle="Total revenue for the last 7 days"
+          icon={DollarSign}
+        />
+
+        {/* sales quantity sold for the last 7 days */}
+        <DashBoardCard
+          title="Recent 7 days"
+          value={`${stats.recentSales}`}
+          subtitle="Total quantity sold for the last 7 days"
+          icon={Package}
+        />
+
+        {/* total products in inventory */}
+        <DashBoardCard
+          title="Total Products"
+          value={`${stats.totalProducts}`}
+          subtitle="Total products in your inventory"
+          icon={BoxesIcon}
+        />
+
+        {/* total staff */}
+        <DashBoardCard
+          title="Number of Staffs"
+          value={`${stats.totalUsers}`}
+          subtitle="Total number of staff"
+          icon={User}
+        />
+      </div>
+
+      {/* revenue chart */}
+      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mt-10">
         {/* filter bar */}
         <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
           <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">
