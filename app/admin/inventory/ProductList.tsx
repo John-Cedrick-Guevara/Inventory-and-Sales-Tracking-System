@@ -1,29 +1,50 @@
 "use client";
 import { Categories, Product } from "@/lib/interfaces";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ListHeader from "@/components/ListHeader";
 import { AddProduct, EditProduct } from "./ProductDialog";
 import { categorizedFilter, filterSearch } from "@/lib/utils";
 import DropdownCategory from "@/components/DropdownCategory";
 import ProductTable from "@/components/ProductTable";
 import AdminProductRow from "./AdminProductRow";
+import axios from "axios";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const ProductList = ({
-  products,
-  categories,
-}: {
-  products: Product[];
-  categories: Categories[];
-}) => {
+const ProductList = () => {
   // search parameters
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  // query data and loading state
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Categories[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Safety check for products and categories
   const safeProducts = products || [];
   const safeCategories = categories || [];
 
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
 
+        const resProduct = await axios.get("/api/products");
+        const resCategories = await axios.get("/api/categories");
+
+        setProducts(resProduct.data);
+        setCategories(resCategories.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  // filter product based on selected category
   const categorizedProducts: Product[] = useMemo(() => {
     try {
       return categorizedFilter(selectedCategory, safeProducts);
@@ -33,6 +54,7 @@ const ProductList = ({
     }
   }, [selectedCategory, safeProducts]);
 
+  // filter product based on search
   const filteredProducts: Product[] = useMemo(() => {
     try {
       return filterSearch(searchProduct, categorizedProducts);
@@ -54,35 +76,54 @@ const ProductList = ({
         />
 
         {/* list */}
-        <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto">
-          {/* categories */}
-          <DropdownCategory
-            className="bg-gray-100 text-gray-700 "
-            title="Filter by category"
-            categories={safeCategories}
-            category={selectedCategory}
-            setCategory={setSelectedCategory}
-          />
-          <ProductTable
-            products={filteredProducts}
-            tableHeads={[
-              "Product",
-              "Status",
-              "Price",
-              "Stock",
-              "Total Sales",
-              "Revenue",
-              "Created At",
-              "Settings",
-            ]}
-            tableRow={(product: Product, index: number) => (
-              <AdminProductRow
-                key={index}
-                product={product}
+        <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto card">
+          {loading ? (
+            <>
+              {/* Dropdown skeleton */}
+              <Skeleton className="h-10 w-60 bg-gray-200" />
+
+              {/* Table skeleton */}
+              <div className="mt-4">
+                {/* Table head skeleton */}
+                <div className="flex gap-4 border-b pb-2">
+                  <Skeleton className="h-40 w-full bg-gray-200" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* categories */}
+              <DropdownCategory
+                className="bg-gray-100 text-gray-700 "
+                title="Filter by category"
                 categories={safeCategories}
+                category={selectedCategory}
+                setCategory={setSelectedCategory}
               />
-            )}
-          />
+
+              {/* product table */}
+              <ProductTable
+                products={filteredProducts}
+                tableHeads={[
+                  "Product",
+                  "Status",
+                  "Price",
+                  "Stock",
+                  "Total Sales",
+                  "Revenue",
+                  "Created At",
+                  "Settings",
+                ]}
+                tableRow={(product: Product, index: number) => (
+                  <AdminProductRow
+                    key={index}
+                    product={product}
+                    categories={safeCategories}
+                  />
+                )}
+              />
+            </>
+          )}
         </div>
       </section>
     );

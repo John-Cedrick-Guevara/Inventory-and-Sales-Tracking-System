@@ -5,11 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
   console.log(user);
   const { userId, total, saleItems } = body;
 
   try {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // adds the sale to the database
     const newSale = await prisma.sale.create({
       data: {

@@ -16,6 +16,7 @@ import { defaultEndDate, defaultStartDate } from "@/lib/constants";
 import DashBoardCard from "@/components/DashBoardCard";
 import { DollarSign, Package, BoxesIcon, User } from "lucide-react";
 import { DashboardStats } from "@/lib/adminDashboardData";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface RevenueData {
   date: string;
@@ -133,7 +134,7 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
       </div>
 
       {/* revenue chart */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mt-10">
+      <div className="card  mt-10">
         {/* filter bar */}
         <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
           <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">
@@ -162,20 +163,16 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
           <PeriodDropDown period={period} setPeriod={setPeriod} />
         </div>
 
-        {data.length === 0 ? (
+        {data.length === 0 && !loading ? (
           <div className="text-center py-12">
             <p className="text-gray-500">
               No revenue data available for the selected period.
             </p>
           </div>
         ) : loading ? (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="animate-pulse">
-              <div className="h-64 bg-gray-200 rounded"></div>
-            </div>
-          </div>
+          <Skeleton className="h-64 bg-gray-200 rounded  mt-8"></Skeleton>
         ) : (
-          <div className="mt-8  overflow-auto ">
+          <div className="mt-8  overflow-x-auto ">
             <RevenueChart dataChart={data} />
           </div>
         )}

@@ -9,13 +9,13 @@ const page = async () => {
   const user: any = await getCurrentUser();
 
   return (
-    <Suspense fallback={<>Wait lang</>}>
+    <>
       <h1 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center w-fit">
         {user.name.slice(0, 1).toUpperCase() + user.name.slice(1)}'s sales
         history
       </h1>
       <SalesHistory user={user} />
-    </Suspense>
+    </>
   );
 };
 

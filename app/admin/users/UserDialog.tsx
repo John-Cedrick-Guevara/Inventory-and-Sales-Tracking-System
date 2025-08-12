@@ -16,6 +16,19 @@ import { Loader2, PencilLineIcon, Plus } from "lucide-react";
 import { signUpAction } from "@/app/actions/auth";
 import { Input } from "@/components/ui/input";
 import { updateUser } from "@/app/actions/user";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
+import axios from "axios";
 
 export const AddUser = () => {
   const [data, action, isPending] = useActionState(signUpAction, undefined);
@@ -124,5 +137,56 @@ export const EditUser = ({ id }: { id: number }) => {
         </form>
       </DialogContent>
     </Dialog>
+  );
+};
+
+export const DelteAlertDialog = ({
+  id,
+  name,
+}: {
+  id: number;
+  name: string;
+}) => {
+  // handles delete user
+  async function handleDeleteUser(id: number) {
+    try {
+      await axios.delete(`/api/users/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return (
+    <>
+      {/* delete user dialog */}
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <Trash2
+            width={35}
+            height={35}
+            className="bg-red-100 text-red-700 p-1 rounded-md cursor-pointer"
+          />
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you absolutely sure to delete {name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete
+              {name}'s account and remove data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-700 text-white hover:bg-red-800"
+              onClick={() => handleDeleteUser(id)}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };

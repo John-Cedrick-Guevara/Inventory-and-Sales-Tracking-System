@@ -3,21 +3,45 @@ import ListHeader from "@/components/ListHeader";
 import ProductTable from "@/components/ProductTable";
 import { AddSaleQueItem, Categories, Product } from "@/lib/interfaces";
 import { categorizedFilter, filterSearch } from "@/lib/utils";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import StaffProductRow from "./StaffProductRow";
 import AddSaleDialog from "./AddSaleDialog";
+import DropdownCategory from "@/components/DropdownCategory";
+import axios from "axios";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const InventoryList = ({
-  products,
-  categories,
-}: {
-  products: Product[];
-  categories: Categories[];
-}) => {
+const InventoryList = () => {
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [addSaleQue, setAddSaleQue] = useState<AddSaleQueItem[]>([]);
+  // query data and loading state
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Categories[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Safety check for products and categories
+  const safeProducts = products || [];
+  const safeCategories = categories || [];
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+
+        const resProduct = await axios.get("/api/products");
+        const resCategories = await axios.get("/api/categories");
+
+        setProducts(resProduct.data);
+        setCategories(resCategories.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
   const categorizedProducts: Product[] = useMemo(
     () => categorizedFilter(selectedCategory, products),
     [selectedCategory, categories]
@@ -46,26 +70,53 @@ const InventoryList = ({
             <AddSaleDialog setSaleQue={setAddSaleQue} saleQue={addSaleQue} />
           </div>
         )}
-        {/* Product List */}
-        <ProductTable
-          products={filteredProducts}
-          tableHeads={[
-            "Product",
-            "Category",
-            "Price",
-            "Stock",
-            "Date Created",
-            "Actions",
-          ]}
-          tableRow={(product: Product, index: number) => (
-            <StaffProductRow
-              saleQue={addSaleQue}
-              setSaleQue={setAddSaleQue}
-              key={index}
-              product={product}
+
+        {/* list */}
+        {loading ? (
+          <>
+            {/* Dropdown skeleton */}
+            <Skeleton className="h-10 w-60 bg-gray-200" />
+
+            {/* Table skeleton */}
+            <div className="mt-4">
+              {/* Table head skeleton */}
+              <div className="flex gap-4 border-b pb-2">
+                <Skeleton className="h-40 w-full bg-gray-200" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* categories */}
+            <DropdownCategory
+              className="bg-gray-100 text-gray-700 "
+              title="Filter by category"
+              categories={safeCategories}
+              category={selectedCategory}
+              setCategory={setSelectedCategory}
             />
-          )}
-        />
+            {/* Product List */}
+            <ProductTable
+              products={filteredProducts}
+              tableHeads={[
+                "Product",
+                "Category",
+                "Price",
+                "Stock",
+                "Date Created",
+                "Actions",
+              ]}
+              tableRow={(product: Product, index: number) => (
+                <StaffProductRow
+                  saleQue={addSaleQue}
+                  setSaleQue={setAddSaleQue}
+                  key={index}
+                  product={product}
+                />
+              )}
+            />
+          </>
+        )}
       </div>
     </>
   );

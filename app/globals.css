@@ -3,7 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -119,6 +118,10 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .card {
+    @apply rounded-lg shadow p-4 border border-gray-200;
   }
 }
 

@@ -11,6 +11,7 @@ import StaffSaleHistoryListRow from "@/app/staff/sale-history/StaffSaleHistoryLi
 import DatePicker from "@/components/DatePicker";
 import { defaultEndDate, defaultStartDate } from "@/lib/constants";
 import axios from "axios";
+import { Skeleton } from "./ui/skeleton";
 
 const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   // salesItems data
@@ -60,7 +61,7 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   }, [startDate, endDate]);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mt-10">
+    <div className="bg-white card mt-10">
       <DatePicker
         openStartDate={openStartDate}
         setOpenStartDate={setOpenStartDate}
@@ -71,30 +72,33 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
         endDate={endDate}
         setEndDate={setEndDate}
       />
-
-      <SalesHistoryTable
-        sales={saleHistory}
-        tableHeads={
-          user.role === "ADMIN"
-            ? [
-                "Sale Id",
-                "Product",
-                "Price",
-                "Quantity",
-                "Date created",
-                "Subtotal",
-                "User",
-              ]
-            : ["Id", "Product", "Quantity", "Price", "Date"]
-        }
-        tableRow={(sale: SaleItem, index) =>
-          user.role === "ADMIN" ? (
-            <AdminSaleHistoryRow sale={sale} key={index} />
-          ) : (
-            <StaffSaleHistoryListRow sale={sale} key={index} />
-          )
-        }
-      />
+      {loading ? (
+        <Skeleton className="h-70 bg-gray-200 rounded  mt-8"></Skeleton>
+      ) : (
+        <SalesHistoryTable
+          sales={saleHistory}
+          tableHeads={
+            user.role === "ADMIN"
+              ? [
+                  "Sale Id",
+                  "Product",
+                  "Price",
+                  "Quantity",
+                  "Date created",
+                  "Subtotal",
+                  "User",
+                ]
+              : ["Id", "Product", "Quantity", "Price", "Date"]
+          }
+          tableRow={(sale: SaleItem, index) =>
+            user.role === "ADMIN" ? (
+              <AdminSaleHistoryRow sale={sale} key={index} />
+            ) : (
+              <StaffSaleHistoryListRow sale={sale} key={index} />
+            )
+          }
+        />
+      )}
     </div>
   );
 };

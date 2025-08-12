@@ -17,9 +17,7 @@ const page = async () => {
 
   return (
     <>
-      <div>
-        <ChartContainer stats={stats} />
-      </div>
+      <ChartContainer stats={stats} />
     </>
   );
 };

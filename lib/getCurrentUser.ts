@@ -16,6 +16,8 @@ export async function getCurrentUser() {
         id: true,
       },
     });
+
+    console.log(user);
     return user;
   } catch {
     return null;
