@@ -66,7 +66,7 @@ const ProductList = () => {
 
   try {
     return (
-      <section>
+      <section className="h-[100vh]">
         {/* header */}
         <ListHeader
           searchQuery={searchProduct}

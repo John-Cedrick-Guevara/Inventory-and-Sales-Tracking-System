@@ -20,14 +20,14 @@ const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
   return (
     <>
       <Table className="mt-8 shadow-none ">
-        <TableHeader>
+        <TableHeader className="dark:bg-gray-800">
           <TableRow>
             {tableHeads.map((item, index) => {
               return <TableHead key={index}>{item}</TableHead>;
             })}
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-none">
           {sales && sales.length > 0 ? (
             sales.map((sale, index) => tableRow(sale, index))
           ) : (

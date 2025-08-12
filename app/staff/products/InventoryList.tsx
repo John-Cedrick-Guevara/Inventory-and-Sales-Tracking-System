@@ -53,7 +53,7 @@ const InventoryList = () => {
   );
 
   return (
-    <>
+    <section className="h-[100vh]">
       {/* header */}
       <ListHeader
         searchQuery={searchProduct}
@@ -118,7 +118,7 @@ const InventoryList = () => {
           </>
         )}
       </div>
-    </>
+    </section>
   );
 };
 

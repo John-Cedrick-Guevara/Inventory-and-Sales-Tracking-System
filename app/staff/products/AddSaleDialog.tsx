@@ -88,10 +88,10 @@ const AddSaleDialog = ({
             onSubmit={submitSale}
           >
             {/* added item list */}
-            <div className="flex flex-col gap-1 h-auto max-h-52 overflow-auto">
+            <div className="flex flex-col gap-1 h-auto max-h-52 overflow-auto ">
               {saleQue.map((item, index) => (
                 <div
-                  className="grid space-x-2 grid-cols-[auto_1fr_1fr_auto] grid-rows-[repeat(2,_auto)] bg-gray-100 py-1 px-2 rounded-xl"
+                  className="dark:bg-gray-700 dark:border-gray-600 border grid space-x-2 grid-cols-[auto_1fr_1fr_auto] grid-rows-[repeat(2,_auto)] bg-gray-100 py-1 px-2 rounded-xl"
                   key={index}
                 >
                   <img
@@ -140,7 +140,7 @@ const AddSaleDialog = ({
                   />
 
                   {/* product category */}
-                  <h1 className="text-sm text-slate-500 font-semibold">
+                  <h1 className="text-sm text-slate-500 dark:text-slate-400 font-semibold">
                     {item.category?.name}
                   </h1>
 
@@ -153,13 +153,13 @@ const AddSaleDialog = ({
                   />
 
                   {/* total amount */}
-                  <h1 className=" text-blue-700 font-semibold h-fit text-right text-sm">
+                  <h1 className=" text-blue-700 dark:text-blue-300 font-semibold h-fit text-right text-sm">
                     Subtotal: P{item.subTotal.toLocaleString()}
                   </h1>
                 </div>
               ))}
               <hr className="my-2" />
-              <h1 className=" text-right font-semibold text-md p-2 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-between">
+              <h1 className=" text-right font-semibold text-md p-2 rounded-lg bg-blue-100 dark:bg-gray-600 dark:text-blue-300  text-blue-700 flex items-center justify-between">
                 Total: <span>P{saleTotal.toLocaleString()}</span>{" "}
               </h1>
             </div>

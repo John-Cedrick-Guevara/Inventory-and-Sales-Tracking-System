@@ -134,7 +134,7 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
       </div>
 
       {/* revenue chart */}
-      <div className="card  mt-10">
+      <div className="card  mt-10 dark:bg-gray-800 dark:border-gray-500">
         {/* filter bar */}
         <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
           <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">

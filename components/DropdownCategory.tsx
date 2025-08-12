@@ -30,7 +30,7 @@ const DropdownCategory = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={className} asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="dark:bg-gray-700 dark:text-white">
           {category
             ? categories.find((item) => item.id === Number(category))?.name
             : title}

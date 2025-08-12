@@ -35,7 +35,7 @@ export const AddProduct = ({ categories }: { categories: Categories[] }) => {
           Create new Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <DialogTitle>Create new product</DialogTitle>
           <DialogDescription>

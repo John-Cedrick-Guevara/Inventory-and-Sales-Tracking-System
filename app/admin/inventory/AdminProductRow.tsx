@@ -13,6 +13,7 @@ import { Ellipsis } from "lucide-react";
 import React from "react";
 import { EditProduct } from "./ProductDialog";
 import axios from "axios";
+import { toast } from "sonner";
 
 export function AdminProductRow({
   product,
@@ -35,6 +36,16 @@ export function AdminProductRow({
         </TableCell>
       </TableRow>
     );
+  }
+
+  if (product.stock > 6) {
+    toast(`Product ${product.name} is low on stock!`, {
+      style: {
+        background: "#fee2e2", // red-100
+        color: "#b91c1c", // red-700
+        border: "1px solid #fecaca", // red-200
+      },
+    });
   }
 
   async function handleDeleteProduct(id: number | undefined) {
@@ -76,13 +87,25 @@ export function AdminProductRow({
         </h1>
       </TableCell>
       <TableCell>{product.price || 0}</TableCell>
-      <TableCell>{product.stock || 0}</TableCell>
+      <TableCell>
+        <h1
+          className={`py-1 px-3 mx-auto font-semibold w-fit rounded-xl ${
+            product.stock >= 10
+              ? "bg-green-100 text-green-700"
+              : product.stock <= 5
+              ? "bg-yellow-100 text-yellow-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {product.stock || 0}
+        </h1>
+      </TableCell>
       <TableCell>{product.saleItems?.length}</TableCell>
       <TableCell>
-        ${product.saleItems?.reduce(
-          (total, current) => total + current.subtotal,
-          0
-        ).toLocaleString()}
+        $
+        {product.saleItems
+          ?.reduce((total, current) => total + current.subtotal, 0)
+          .toLocaleString()}
       </TableCell>
       <TableCell>
         {product.createdAt

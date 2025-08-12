@@ -32,7 +32,7 @@ const DatePicker = ({
   setEndDate,
 }: DatePicker) => {
   return (
-    <div className="flex items-center gap-2 max-md:flex-wrap">
+    <div className="flex items-center gap-2 max-md:flex-wrap ">
       {/* start date */}
       <div className="flex flex-col gap-1">
         <Label htmlFor="date" className="px-1">

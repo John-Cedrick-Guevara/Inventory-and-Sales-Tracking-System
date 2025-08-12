@@ -30,8 +30,7 @@ const page = () => {
         {/* main form */}
         <form className="mt-8 space-y-6" action={action}>
           {/* email */}
-
-          <div>
+          <div className="grid gap-1">
             <Label htmlFor="email">Email:</Label>
             <Input
               required
@@ -42,7 +41,7 @@ const page = () => {
             />
           </div>
 
-          <div>
+          <div className="grid gap-1">
             <Label htmlFor="password">Password:</Label>
 
             <div className="mt-1 relative">

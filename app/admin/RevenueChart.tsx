@@ -44,22 +44,36 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ dataChart }) => {
   };
 
   return (
-    <div className="w-full min-w-4xl h-96">
-      <ResponsiveContainer width="100%" height="100%" className={"overflow-auto"}>
+    <div className="w-full min-w-4xl h-96 ">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        className={"overflow-auto"}
+      >
         <BarChart
           barSize={50}
           data={dataChart}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" angle={-45} textAnchor="end" height={80} />
+
+          <XAxis
+            dataKey="date"
+            angle={-45}
+            textAnchor="end"
+            height={80}
+            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
+          />
           <YAxis
+            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
             yAxisId="left"
             tickFormatter={(value) => `$${value.toLocaleString()}`}
           />
           <YAxis
+            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
             yAxisId="right"
             orientation="right"
+            
             tickFormatter={(value) => value.toLocaleString()}
           />
           <Tooltip content={<CustomTooltip />} />

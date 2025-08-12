@@ -1,5 +1,6 @@
 "use server";
 
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import prisma from "@/lib/prisma";
 import { createToken, hashPassword, verifyPassword } from "@/lib/utils";
 import { cookies } from "next/headers";
@@ -10,9 +11,8 @@ export async function signInAction(prevState: unknown, formData: FormData) {
   const password = formData.get("password") as string;
 
   if (!email || !password) {
-    throw new Error("Email and password are required.");
+    return { success: false, error: "Email and password are required." };
   }
-
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
@@ -51,12 +51,12 @@ export async function signUpAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
 
   if (!email || !password) {
-    throw new Error("Email and password are required.");
+    return { success: false, error: "Email and password are required." };
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    throw new Error("Email already in use.");
+    return { success: false, error: "Email already in use." };
   }
 
   const hashed = await hashPassword(password);
@@ -73,4 +73,34 @@ export async function signUpAction(prevState: unknown, formData: FormData) {
 export async function signOutAction() {
   (await cookies()).delete("auth_token"); // Remove the auth token cookie
   redirect("/"); // Or whatever your login page is
+}
+
+export async function changePassword(prevState: unknown, formData: FormData) {
+  const password = formData.get("password") as string;
+  const password2 = formData.get("password2") as string;
+  const user = await getCurrentUser();
+  console.log(password, password2);
+
+  if (!password || !password2) {
+    return { success: false, error: "Please fill out the field" };
+  }
+
+  if (password.trim() !== password2.trim()) {
+    console.log("tie");
+    return { success: false, error: "Passwords don't match" };
+  }
+
+  const hashed = await hashPassword(password2);
+
+  const userNewPass = await prisma.user.update({
+    where: {
+      id: user?.id,
+    },
+    data: {
+      password: hashed,
+    },
+  });
+
+  return { success: true, error: "Password changed" };
+
 }

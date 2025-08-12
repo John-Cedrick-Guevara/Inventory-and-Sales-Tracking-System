@@ -35,7 +35,7 @@ const layout = async ({
   return (
     <UserProvider user={user}>
       <NavAdmin navLinks={navLinks} />
-      <main className="p-6">{children}</main>
+      <main className="p-6 dark:bg-gray-900">{children}</main>
     </UserProvider>
   );
 };

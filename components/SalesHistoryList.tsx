@@ -61,7 +61,7 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   }, [startDate, endDate]);
 
   return (
-    <div className="bg-white card mt-10">
+    <div className="bg-white card mt-10 dark:bg-gray-800 dark:border-gray-600">
       <DatePicker
         openStartDate={openStartDate}
         setOpenStartDate={setOpenStartDate}

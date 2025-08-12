@@ -35,7 +35,7 @@ export function UserList() {
   );
 
   return (
-    <section>
+    <section className="h-[100vh]">
       {/* header */}
       <ListHeader
         searchQuery={searchUser}
@@ -44,7 +44,7 @@ export function UserList() {
         AddDialog={<AddUser />}
       />
 
-      <div className="rounded-xl border border-gray-200 shadow-sm mt-8 ">
+      <div className="rounded-xl border border-gray-200 shadow-sm mt-8 dark:bg-gray-800">
         <div className="p-2 px-4">
           <h1 className="text-lg font-medium">Staffs</h1>
         </div>

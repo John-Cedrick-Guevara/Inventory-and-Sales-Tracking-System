@@ -124,7 +124,6 @@
     @apply rounded-lg shadow p-4 border border-gray-200;
   }
 }
-
 :root {
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);

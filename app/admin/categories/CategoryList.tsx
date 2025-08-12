@@ -30,7 +30,7 @@ export const CategoryList = () => {
   );
 
   return (
-    <section>
+    <section className="h-[100vh]">
       {/* header */}
       <ListHeader
         searchQuery={searchCategory}
@@ -40,7 +40,7 @@ export const CategoryList = () => {
       />
 
       {/* list */}
-      <div className="rounded-xl border border-gray-200 shadow-sm mt-8 ">
+      <div className="rounded-xl border border-gray-200 shadow-sm mt-8 dark:bg-gray-800">
         {/* title */}
         <div className="p-2 px-4">
           <h1 className="text-lg font-medium">Categories</h1>
