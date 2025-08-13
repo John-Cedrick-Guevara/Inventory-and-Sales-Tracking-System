@@ -36,16 +36,6 @@ export function AdminProductRow({
     );
   }
 
-  if (product.stock < 6) {
-    toast(`Product ${product.name} is low on stock!`, {
-      style: {
-        background: "#fee2e2", // red-100
-        color: "#b91c1c", // red-700
-        border: "1px solid #fecaca", // red-200
-      },
-    });
-  }
-
   async function handleDeleteProduct(id: number | undefined) {
     try {
       await axios.delete(`/api/products/${id}`);
@@ -54,7 +44,7 @@ export function AdminProductRow({
     }
   }
   return (
-    <TableRow >
+    <TableRow>
       <TableCell className="font-medium grid gap-1 grid-rows-2 grid-cols-[auto_1fr] text-left">
         <img
           src={product.image || "/placeholder-image.png"}
