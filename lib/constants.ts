@@ -7,3 +7,5 @@ export const defaultStartDate = (() => {
 
 // default date(6days ago)
 export const defaultEndDate = new Date();
+
+export const pageLimit = 10;

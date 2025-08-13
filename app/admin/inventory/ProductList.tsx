@@ -9,11 +9,17 @@ import ProductTable from "@/components/ProductTable";
 import AdminProductRow from "./AdminProductRow";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+import PaginationControl from "@/components/PaginationControl";
+import { pageLimit } from "@/lib/constants";
 
 const ProductList = () => {
   // search parameters
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  // pagination current page and total pages
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   // query data and loading state
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,25 +30,28 @@ const ProductList = () => {
   const safeProducts = products || [];
   const safeCategories = categories || [];
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        setLoading(true);
+  async function fetchProducts() {
+    try {
+      setLoading(true);
 
-        const resProduct = await axios.get("/api/products");
-        const resCategories = await axios.get("/api/categories");
+      const resProduct = await axios.get(
+        `/api/products?limit=${pageLimit}&page=${page}`
+      );
+      const resCategories = await axios.get("/api/categories");
 
-        setProducts(resProduct.data);
-        setCategories(resCategories.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+      setProducts(resProduct.data.data);
+      setTotalPage(resProduct.data.totalPage)
+      setCategories(resCategories.data.categories);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
 
   // filter product based on selected category
   const categorizedProducts: Product[] = useMemo(() => {
@@ -66,7 +75,7 @@ const ProductList = () => {
 
   try {
     return (
-      <section className="h-[100vh]">
+      <section className="h-[100vh] ">
         {/* header */}
         <ListHeader
           searchQuery={searchProduct}
@@ -76,7 +85,7 @@ const ProductList = () => {
         />
 
         {/* list */}
-        <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto card">
+        <div className="space-y-2 mt-8 w-full max-w-8xl mx-auto card dark:border-gray-600">
           {loading ? (
             <>
               {/* Dropdown skeleton */}
@@ -125,6 +134,8 @@ const ProductList = () => {
             </>
           )}
         </div>
+
+        <PaginationControl toalPage={totalPage} page={page} setPage={setPage} />
       </section>
     );
   } catch (error) {

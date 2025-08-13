@@ -37,9 +37,13 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
       // Total products count
       prisma.product.count(),
       // Total users count
-      prisma.user.count(),
+      prisma.user.count({
+        where: {
+          role: "STAFF",
+        },
+      }),
       // total quantity sold
-      prisma.saleItem.count({
+      prisma.saleitem.count({
         where: {
           sale: {
             createdAt: {
@@ -53,7 +57,7 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
 
     // Get recent sales count (last 7 days)
     const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const recentSales = await prisma.saleItem.count({
+    const recentSales = await prisma.saleitem.count({
       where: {
         sale: {
           createdAt: {

@@ -15,6 +15,7 @@ export interface Categories {
 }
 
 export interface Product {
+  status: string;
   id?: number;
   name: string;
   description: string;
@@ -25,7 +26,7 @@ export interface Product {
   quantity: number;
   total: number;
   category?: Categories;
-  saleItems?: SaleItem[]
+  saleItems?: SaleItem[];
 }
 
 export interface Sale {
@@ -58,5 +59,6 @@ export interface AddSaleQueItem {
   quantity: number;
   subTotal: number;
   image: any;
+  productStock: number;
   category?: Categories;
 }

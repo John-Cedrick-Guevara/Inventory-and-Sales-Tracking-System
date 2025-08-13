@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SaleItem } from "@/lib/generated/prisma";
 
 interface Props<T> {
   sales: T[];
@@ -18,10 +17,10 @@ interface Props<T> {
 
 const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
   return (
-    <>
-      <Table className="mt-8 shadow-none ">
+    <section className="min-h-60">
+      <Table className="mt-8 shadow-none table-auto">
         <TableHeader className="dark:bg-gray-800">
-          <TableRow>
+          <TableRow >
             {tableHeads.map((item, index) => {
               return <TableHead key={index}>{item}</TableHead>;
             })}
@@ -42,7 +41,7 @@ const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
           )}
         </TableBody>
       </Table>
-    </>
+    </section>
   );
 };
 

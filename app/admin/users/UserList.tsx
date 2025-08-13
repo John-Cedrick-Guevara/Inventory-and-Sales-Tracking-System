@@ -7,27 +7,38 @@ import { AddUser, DelteAlertDialog, EditUser } from "./UserDialog";
 import ListHeader from "@/components/ListHeader";
 import { filterSearch } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pageLimit } from "@/lib/constants";
+import PaginationControl from "@/components/PaginationControl";
 
 export function UserList() {
+  // search parameters
   const [searchUser, setSearchUser] = useState("");
 
+  // data and loading state
   const [staff, setStaff] = useState<Users[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const res = await axios.get("/api/users");
-        setStaff(res.data);
-      } catch (err) {
-        console.error("Error fetching staff:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // pagination current page and total pages
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  
+  // fether
+  const fetchStaff = async () => {
+    try {
+      const res = await axios.get(`/api/users?limit=${pageLimit}&page=${page}`);
 
+      setStaff(res.data.data);
+      setTotalPage(res.data.totalPage);
+    } catch (err) {
+      console.error("Error fetching staff:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStaff();
-  }, []);
+  }, [page]);
 
   const filteredUsers: Users[] = useMemo(
     () => filterSearch(searchUser, staff),
@@ -58,6 +69,7 @@ export function UserList() {
           ))
         )}
       </div>
+      <PaginationControl toalPage={totalPage} page={page} setPage={setPage} />
     </section>
   );
 }

@@ -87,7 +87,7 @@ const NavAdmin = ({ navLinks }: NavProps) => {
             <DropdownMenuItem onClick={signOutAction}>Log Out</DropdownMenuItem>
             {/* dark mode toggle */}
             <DropdownMenuItem className="flex items-center justify-between">
-              <Label htmlFor="airplane-mode">Airplane Mode</Label>
+              <Label htmlFor="airplane-mode">Dark Mode</Label>
               <Switch
                 id="airplane-mode"
                 checked={dark}

@@ -9,13 +9,18 @@ import AdminSaleHistoryRow from "@/app/admin/sales/AdminSaleHistoryRow";
 import StaffSaleHistoryListRow from "@/app/staff/sale-history/StaffSaleHistoryListRow";
 
 import DatePicker from "@/components/DatePicker";
-import { defaultEndDate, defaultStartDate } from "@/lib/constants";
+import { defaultEndDate, defaultStartDate, pageLimit } from "@/lib/constants";
 import axios from "axios";
 import { Skeleton } from "./ui/skeleton";
+import PaginationControl from "./PaginationControl";
 
 const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   // salesItems data
   const [saleHistory, setSalesItem] = useState<SaleItem[]>([]);
+
+  // pagination current page and total pages
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   // popover triggers
   const [openStartDate, setOpenStartDate] = React.useState(false);
@@ -43,10 +48,11 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
       setError(null);
 
       const res = await axios.get(
-        `/api/sales?startSpanDate=${startDate}&endSpanDate=${endDate}`
+        `/api/sales?startSpanDate=${startDate}&endSpanDate=${endDate}&limit=${pageLimit}&page=${page}`
       );
 
-      setSalesItem(res.data);
+      setSalesItem(res.data.data);
+      setTotalPage(res.data.totalPage);
     } catch (error) {
       console.error("Error fetching revenue data:", error);
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -58,48 +64,52 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   // calls fetcher
   useEffect(() => {
     fetchSales(startDate, endDate);
-  }, [startDate, endDate]);
+  }, [startDate, endDate, page]);
 
   return (
-    <div className="bg-white card mt-10 dark:bg-gray-800 dark:border-gray-600">
-      <DatePicker
-        openStartDate={openStartDate}
-        setOpenStartDate={setOpenStartDate}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        openEndDate={openEndDate}
-        setOpenEndDate={setOpenEndDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-      />
-      {loading ? (
-        <Skeleton className="h-70 bg-gray-200 rounded  mt-8"></Skeleton>
-      ) : (
-        <SalesHistoryTable
-          sales={saleHistory}
-          tableHeads={
-            user.role === "ADMIN"
-              ? [
-                  "Sale Id",
-                  "Product",
-                  "Price",
-                  "Quantity",
-                  "Date created",
-                  "Subtotal",
-                  "User",
-                ]
-              : ["Id", "Product", "Quantity", "Price", "Date"]
-          }
-          tableRow={(sale: SaleItem, index) =>
-            user.role === "ADMIN" ? (
-              <AdminSaleHistoryRow sale={sale} key={index} />
-            ) : (
-              <StaffSaleHistoryListRow sale={sale} key={index} />
-            )
-          }
+    <>
+      <div className="bg-white card mt-10 dark:bg-gray-800 dark:border-gray-600">
+        <DatePicker
+          openStartDate={openStartDate}
+          setOpenStartDate={setOpenStartDate}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          openEndDate={openEndDate}
+          setOpenEndDate={setOpenEndDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
         />
-      )}
-    </div>
+        {loading ? (
+          <Skeleton className="h-50 bg-gray-200 rounded  mt-8"></Skeleton>
+        ) : (
+          <SalesHistoryTable
+            sales={saleHistory}
+            tableHeads={
+              user.role === "ADMIN"
+                ? [
+                    "Sale Id",
+                    "Product",
+                    "Price",
+                    "Quantity",
+                    "Date created",
+                    "Subtotal",
+                    "User",
+                  ]
+                : ["Id", "Product", "Quantity", "Price", "Date"]
+            }
+            tableRow={(sale: SaleItem, index) =>
+              user.role === "ADMIN" ? (
+                <AdminSaleHistoryRow sale={sale} key={index} />
+              ) : (
+                <StaffSaleHistoryListRow sale={sale} key={index} />
+              )
+            }
+          />
+        )}
+      </div>
+      {/* pagination */}
+      <PaginationControl toalPage={totalPage} page={page} setPage={setPage} />
+    </>
   );
 };
 

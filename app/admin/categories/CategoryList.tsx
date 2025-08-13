@@ -9,20 +9,37 @@ import AlertDeleteDialog from "@/components/AlertDialog";
 import { Trash2 } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pageLimit } from "@/lib/constants";
+import { Pagination } from "@/components/ui/pagination";
+import PaginationControl from "@/components/PaginationControl";
 
 export const CategoryList = () => {
+  // search parameters
   const [searchCategory, setSearchCategory] = useState("");
+
+  // date
   const [categories, setCategories] = useState([]);
+
+  // loading query
   const [loading, setLoading] = useState(true);
 
+  // pagination current page and total pages
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+
+  const fetchCategories = async () => {
+    const res = await axios.get(
+      `/api/categories?limit=${pageLimit}&page=${page}`
+    );
+
+    setCategories(res.data.data);
+    setTotalPage(res.data.totalPage);
+    setLoading(false);
+  };
+  
   useEffect(() => {
-    const fetchCategories = async () => {
-      const res = await axios.get("/api/categories");
-      setCategories(res.data);
-      setLoading(false);
-    };
     fetchCategories();
-  }, []);
+  }, [page]);
 
   const filteredCategories: Categories[] = useMemo(
     () => filterSearch(searchCategory, categories),
@@ -55,6 +72,8 @@ export const CategoryList = () => {
           ))
         )}
       </div>
+
+      <PaginationControl toalPage={totalPage} page={page} setPage={setPage} />
     </section>
   );
 };

@@ -62,15 +62,15 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ dataChart }) => {
             angle={-45}
             textAnchor="end"
             height={80}
-            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
+            tick={{ fill: "#3B82F6", fontSize: 15, fontWeight: 500 }}
           />
           <YAxis
-            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
+            tick={{ fill: "#3B82F6", fontSize: 15, fontWeight: 500 }}
             yAxisId="left"
             tickFormatter={(value) => `$${value.toLocaleString()}`}
           />
           <YAxis
-            tick={{ fill: "white", fontSize: 15, fontWeight: 500 }}
+            tick={{ fill: "#3B82F6", fontSize: 15, fontWeight: 500 }}
             yAxisId="right"
             orientation="right"
             

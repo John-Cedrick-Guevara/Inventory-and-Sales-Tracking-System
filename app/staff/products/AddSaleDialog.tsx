@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { BaggageClaim, CloudFog, Loader2, Minus, Plus, X } from "lucide-react";
+import { BaggageClaim, Loader2, X } from "lucide-react";
 import { useUser } from "@/app/Context/UserContext";
 import { AddSaleQueItem } from "@/lib/interfaces";
 import axios from "axios";
@@ -107,7 +107,7 @@ const AddSaleDialog = ({
                   <Input
                     className="py-1 px-2 w-fit ml-auto mr-0"
                     min={0}
-                    max={20}
+                    max={item.productStock}
                     type="number"
                     id="quantity"
                     value={item.quantity}

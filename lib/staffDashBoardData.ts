@@ -6,7 +6,6 @@ export interface StaffDashboardStats {
   todaysSales: number;
   sevenDayRevenue: number;
   sevenDaySales: number;
-  
 }
 
 export async function getStaffDashboardStats(): Promise<StaffDashboardStats> {
@@ -31,29 +30,34 @@ export async function getStaffDashboardStats(): Promise<StaffDashboardStats> {
           id: user?.id,
         },
       },
+
       _sum: {
         total: true,
       },
     });
 
-    // gets staff sales for today
-    const todaysSales = await prisma.sale.count({
+    // gets staff quantity sold for today
+    const todaysSales = await prisma.saleitem.count({
       where: {
-        userId: user?.id,
-        createdAt: {
-          gte: startOfDay,
-          lt: endOfDay,
+        sale: {
+          createdAt: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+          userId: user?.id,
         },
       },
     });
 
     // Get recent sales count (last 7 days) of staff
     const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const recentSales = await prisma.sale.count({
+    const recentSales = await prisma.saleitem.count({
       where: {
-        userId: user?.id,
-        createdAt: {
-          gte: sevenDaysAgo,
+        sale: {
+          userId: user?.id,
+          createdAt: {
+            gte: sevenDaysAgo,
+          },
         },
       },
     });

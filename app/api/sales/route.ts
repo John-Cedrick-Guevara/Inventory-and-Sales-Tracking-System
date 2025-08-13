@@ -10,8 +10,6 @@ export async function POST(req: NextRequest) {
   const { userId, total, saleItems } = body;
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     // adds the sale to the database
     const newSale = await prisma.sale.create({
       data: {
@@ -59,8 +57,16 @@ export async function GET(req: NextRequest) {
     const startSpanDate = new Date(searchParams.get("startSpanDate") as string);
     const endSpanDate = new Date(searchParams.get("endSpanDate") as string);
 
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    const skip = (page - 1) * pageLimit;
+
     // data query
-    const saleHistory = await prisma.saleItem.findMany({
+    const saleHistory = await prisma.saleitem.findMany({
+      skip,
+      take: pageLimit,
       where: {
         sale: {
           createdAt: {
@@ -92,7 +98,12 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(saleHistory, { status: 200 });
+    const totalpage = await prisma.saleitem.count();
+
+    return NextResponse.json(
+      { data: saleHistory, totalPage: Math.ceil(totalpage / pageLimit) },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching data" },

@@ -22,8 +22,6 @@ export function AdminProductRow({
   product: Product;
   categories: Categories[];
 }) {
-  const status = "Published";
-
   // Debug logging
   console.log(product);
 
@@ -38,7 +36,7 @@ export function AdminProductRow({
     );
   }
 
-  if (product.stock > 6) {
+  if (product.stock < 6) {
     toast(`Product ${product.name} is low on stock!`, {
       style: {
         background: "#fee2e2", // red-100
@@ -56,7 +54,7 @@ export function AdminProductRow({
     }
   }
   return (
-    <TableRow>
+    <TableRow >
       <TableCell className="font-medium grid gap-1 grid-rows-2 grid-cols-[auto_1fr] text-left">
         <img
           src={product.image || "/placeholder-image.png"}
@@ -69,21 +67,21 @@ export function AdminProductRow({
         <h1 className="self-center text-lg">
           {product.name || "Unnamed Product"}
         </h1>
-        <h3 className="self-center text-sm text-gray-500 bg-gray-100 w-fit rounded-md p-1">
+        <h3 className="self-center text-xs text-gray-500 bg-gray-100 w-fit rounded-md p-1">
           {product.category?.name || "No Category"}
         </h3>
       </TableCell>
       <TableCell>
         <h1
           className={`mx-auto h-fit w-fit p-2 rounded-md ${
-            status === "Published"
+            product.status === "published"
               ? "bg-green-100 text-green-600"
-              : status === "Pending"
+              : product.status === "pending"
               ? "bg-yellow-100 text-yellow-600"
               : "bg-red-100 text-red-600"
           } `}
         >
-          {status}
+          {product.status}
         </h1>
       </TableCell>
       <TableCell>{product.price || 0}</TableCell>

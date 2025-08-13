@@ -1,11 +1,23 @@
 // app/api/products/route.ts
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    const skip = (page - 1) * pageLimit;
+
+    console.log(page);
+
     // Fetch products with related category and sale items
     const products = await prisma.product.findMany({
+      skip,
+      take: pageLimit,
       include: {
         category: true,
         saleItems: true,
@@ -27,7 +39,12 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json(convertedProducts);
+    const totalpage = await prisma.product.count();
+
+    return NextResponse.json(
+      { data: convertedProducts, totalPage: Math.ceil(totalpage / pageLimit) },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(

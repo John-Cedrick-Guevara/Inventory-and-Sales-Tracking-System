@@ -1,9 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    const skip = (page - 1) * pageLimit;
+
     const staff = await prisma.user.findMany({
+      skip,
+      take: pageLimit,
       where: { role: "STAFF" },
       include: {
         sales: {
@@ -14,7 +24,16 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(staff);
+    const totalpage = await prisma.user.count({
+      where: {
+        role: "STAFF",
+      },
+    });
+
+    return NextResponse.json(
+      { data: staff, totalPage: Math.ceil(totalpage / pageLimit) },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching staff:", error);
     return NextResponse.json(

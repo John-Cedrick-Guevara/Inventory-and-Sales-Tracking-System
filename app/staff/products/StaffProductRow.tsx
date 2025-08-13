@@ -22,7 +22,10 @@ const StaffProductRow = ({
       } else {
         return prev.map((item) => {
           if (item.id === product.id) {
-            const newQuantity = (item.quantity ?? 1) + 1;
+            const newQuantity =
+              item.productStock > item.quantity
+                ? (item.quantity ?? 1) + 1
+                : item.quantity;
             return {
               ...item,
               quantity: newQuantity,
@@ -33,7 +36,6 @@ const StaffProductRow = ({
         });
       }
     });
-    console.log(saleQue);
   }
 
   return (
@@ -51,7 +53,7 @@ const StaffProductRow = ({
           {product.category?.name}
         </h3>
       </TableCell>
-      <TableCell>{product.price}</TableCell>
+      <TableCell>${product.price.toLocaleString()}</TableCell>
       <TableCell>
         <h1
           className={`py-1 px-3 mx-auto font-semibold w-fit rounded-xl ${
@@ -69,9 +71,9 @@ const StaffProductRow = ({
       <TableCell>{new Date(product.createdAt).toLocaleDateString()}</TableCell>
       <TableCell>
         <Button
-        disabled={product.stock <=0}
+          disabled={product.stock <= 0}
           onClick={() => {
-            const { id, name, price, category, image } = product;
+            const { id, name, price, category, image, stock } = product;
             addToSaleQue({
               id,
               name,
@@ -80,6 +82,7 @@ const StaffProductRow = ({
               image,
               subTotal: price,
               quantity: 1,
+              productStock: stock,
             });
           }}
           className="bg-blue-100 text-blue-700 w-fit p-2 rounded-md mx-auto hover:bg-blue-200 hover: hover:text-blue-800 cursor-pointer"

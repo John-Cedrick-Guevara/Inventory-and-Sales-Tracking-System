@@ -52,7 +52,7 @@ const layout = async ({
   return (
     <>
       <NavAdmin navLinks={navLinks} />
-      <main className="p-6 dark:bg-gray-900">{children}</main>
+      <main className="p-6 dark:bg-gray-900  h-[100vh]">{children}</main>
     </>
   );
 };

@@ -137,7 +137,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   stock: 'stock',
   image: 'image',
   categoryId: 'categoryId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  status: 'status'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -178,7 +179,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   name: 'name',
-  description: 'description'
+  description: 'description',
+  status: 'status'
 };
 
 exports.Prisma.CategoryOrderByRelevanceFieldEnum = {

@@ -2381,6 +2381,7 @@ export namespace Prisma {
     image: Uint8Array | null
     categoryId: number | null
     createdAt: Date | null
+    status: string | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -2392,6 +2393,7 @@ export namespace Prisma {
     image: Uint8Array | null
     categoryId: number | null
     createdAt: Date | null
+    status: string | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -2403,6 +2405,7 @@ export namespace Prisma {
     image: number
     categoryId: number
     createdAt: number
+    status: number
     _all: number
   }
 
@@ -2430,6 +2433,7 @@ export namespace Prisma {
     image?: true
     categoryId?: true
     createdAt?: true
+    status?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -2441,6 +2445,7 @@ export namespace Prisma {
     image?: true
     categoryId?: true
     createdAt?: true
+    status?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -2452,6 +2457,7 @@ export namespace Prisma {
     image?: true
     categoryId?: true
     createdAt?: true
+    status?: true
     _all?: true
   }
 
@@ -2550,6 +2556,7 @@ export namespace Prisma {
     image: Uint8Array | null
     categoryId: number
     createdAt: Date
+    status: string | null
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -2580,6 +2587,7 @@ export namespace Prisma {
     image?: boolean
     categoryId?: boolean
     createdAt?: boolean
+    status?: boolean
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     saleItems?: boolean | Product$saleItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -2596,9 +2604,10 @@ export namespace Prisma {
     image?: boolean
     categoryId?: boolean
     createdAt?: boolean
+    status?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "image" | "categoryId" | "createdAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "image" | "categoryId" | "createdAt" | "status", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     saleItems?: boolean | Product$saleItemsArgs<ExtArgs>
@@ -2620,6 +2629,7 @@ export namespace Prisma {
       image: Uint8Array | null
       categoryId: number
       createdAt: Date
+      status: string | null
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -2999,6 +3009,7 @@ export namespace Prisma {
     readonly image: FieldRef<"Product", 'Bytes'>
     readonly categoryId: FieldRef<"Product", 'Int'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
+    readonly status: FieldRef<"Product", 'String'>
   }
     
 
@@ -6347,7 +6358,8 @@ export namespace Prisma {
     stock: 'stock',
     image: 'image',
     categoryId: 'categoryId',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    status: 'status'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -6409,7 +6421,8 @@ export namespace Prisma {
 
   export const ProductOrderByRelevanceFieldEnum: {
     name: 'name',
-    description: 'description'
+    description: 'description',
+    status: 'status'
   };
 
   export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFieldEnum)[keyof typeof ProductOrderByRelevanceFieldEnum]
@@ -6547,6 +6560,7 @@ export namespace Prisma {
     image?: BytesNullableFilter<"Product"> | Uint8Array | null
     categoryId?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    status?: StringNullableFilter<"Product"> | string | null
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     saleItems?: SaleItemListRelationFilter
   }
@@ -6560,6 +6574,7 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
+    status?: SortOrderInput | SortOrder
     category?: CategoryOrderByWithRelationInput
     saleItems?: SaleItemOrderByRelationAggregateInput
     _relevance?: ProductOrderByRelevanceInput
@@ -6577,6 +6592,7 @@ export namespace Prisma {
     image?: BytesNullableFilter<"Product"> | Uint8Array | null
     categoryId?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    status?: StringNullableFilter<"Product"> | string | null
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     saleItems?: SaleItemListRelationFilter
   }, "id">
@@ -6590,6 +6606,7 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
+    status?: SortOrderInput | SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -6609,6 +6626,7 @@ export namespace Prisma {
     image?: BytesNullableWithAggregatesFilter<"Product"> | Uint8Array | null
     categoryId?: IntWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    status?: StringNullableWithAggregatesFilter<"Product"> | string | null
   }
 
   export type CategoryWhereInput = {
@@ -6840,6 +6858,7 @@ export namespace Prisma {
     stock: number
     image?: Uint8Array | null
     createdAt?: Date | string
+    status?: string | null
     category: CategoryCreateNestedOneWithoutProductsInput
     saleItems?: SaleItemCreateNestedManyWithoutProductInput
   }
@@ -6853,6 +6872,7 @@ export namespace Prisma {
     image?: Uint8Array | null
     categoryId: number
     createdAt?: Date | string
+    status?: string | null
     saleItems?: SaleItemUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -6863,6 +6883,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     saleItems?: SaleItemUpdateManyWithoutProductNestedInput
   }
@@ -6876,6 +6897,7 @@ export namespace Prisma {
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     categoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     saleItems?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -6888,6 +6910,7 @@ export namespace Prisma {
     image?: Uint8Array | null
     categoryId: number
     createdAt?: Date | string
+    status?: string | null
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -6897,6 +6920,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -6908,6 +6932,7 @@ export namespace Prisma {
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     categoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CategoryCreateInput = {
@@ -7267,6 +7292,7 @@ export namespace Prisma {
     image?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
+    status?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -7285,6 +7311,7 @@ export namespace Prisma {
     image?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
+    status?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -7296,6 +7323,7 @@ export namespace Prisma {
     image?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
+    status?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -8066,6 +8094,7 @@ export namespace Prisma {
     stock: number
     image?: Uint8Array | null
     createdAt?: Date | string
+    status?: string | null
     saleItems?: SaleItemCreateNestedManyWithoutProductInput
   }
 
@@ -8077,6 +8106,7 @@ export namespace Prisma {
     stock: number
     image?: Uint8Array | null
     createdAt?: Date | string
+    status?: string | null
     saleItems?: SaleItemUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -8118,6 +8148,7 @@ export namespace Prisma {
     image?: BytesNullableFilter<"Product"> | Uint8Array | null
     categoryId?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    status?: StringNullableFilter<"Product"> | string | null
   }
 
   export type UserCreateWithoutSalesInput = {
@@ -8216,6 +8247,7 @@ export namespace Prisma {
     stock: number
     image?: Uint8Array | null
     createdAt?: Date | string
+    status?: string | null
     category: CategoryCreateNestedOneWithoutProductsInput
   }
 
@@ -8228,6 +8260,7 @@ export namespace Prisma {
     image?: Uint8Array | null
     categoryId: number
     createdAt?: Date | string
+    status?: string | null
   }
 
   export type ProductCreateOrConnectWithoutSaleItemsInput = {
@@ -8271,6 +8304,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -8283,6 +8317,7 @@ export namespace Prisma {
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     categoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SaleUpsertWithoutSaleItemsInput = {
@@ -8369,6 +8404,7 @@ export namespace Prisma {
     stock: number
     image?: Uint8Array | null
     createdAt?: Date | string
+    status?: string | null
   }
 
   export type ProductUpdateWithoutCategoryInput = {
@@ -8378,6 +8414,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     saleItems?: SaleItemUpdateManyWithoutProductNestedInput
   }
 
@@ -8389,6 +8426,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     saleItems?: SaleItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -8400,6 +8438,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     image?: NullableBytesFieldUpdateOperationsInput | Uint8Array | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SaleItemCreateManySaleInput = {

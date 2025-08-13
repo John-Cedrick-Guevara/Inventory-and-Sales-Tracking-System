@@ -2,7 +2,6 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -17,7 +16,7 @@ interface Props<T> {
 
 const ProductTable = <T,>({ products, tableHeads, tableRow }: Props<T>) => {
   return (
-    <div>
+    <section className="">
       <Table className="dark:bg-gray-800">
         <TableHeader className="dark:bg-gray-800">
           <TableRow>
@@ -50,7 +49,7 @@ const ProductTable = <T,>({ products, tableHeads, tableRow }: Props<T>) => {
           )}
         </TableBody>
       </Table>
-    </div>
+    </section>
   );
 };
 
