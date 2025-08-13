@@ -17,6 +17,9 @@ import DashBoardCard from "@/components/DashBoardCard";
 import { DollarSign, Package, BoxesIcon, User } from "lucide-react";
 import { DashboardStats } from "@/lib/adminDashboardData";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProductChart from "@/components/ProductChart";
+import TopProductsTable from "@/components/TopProductsTable";
+import LowStockTable from "@/components/LowStockTable";
 
 interface RevenueData {
   date: string;
@@ -94,55 +97,24 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
   }
 
   return (
-    <div>
-      {/* summary cards */}
-
+    <div className="h-[100vh] grid grid-cols-3 gap-4">
       <h1 className="text-3xl font-bold">Today's summary</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-4 mt-10">
-        {/* total sales revenue for the last 7 days */}
-        <DashBoardCard
-          title="Recent 7 days"
-          value={`$${stats.sevenDayRevenue.toLocaleString()}`}
-          subtitle="Total revenue for the last 7 days"
-          icon={DollarSign}
-        />
-
-        {/* sales quantity sold for the last 7 days */}
-        <DashBoardCard
-          title="Recent 7 days"
-          value={`${stats.recentSales}`}
-          subtitle="Total quantity sold for the last 7 days"
-          icon={Package}
-        />
-
-        {/* total products in inventory */}
-        <DashBoardCard
-          title="Total Products"
-          value={`${stats.totalProducts}`}
-          subtitle="Total products in your inventory"
-          icon={BoxesIcon}
-        />
-
-        {/* total staff */}
-        <DashBoardCard
-          title="Number of Staffs"
-          value={`${stats.totalUsers}`}
-          subtitle="Total number of staff"
-          icon={User}
-        />
+      {/* summary cards */}
+      <div className="col-span-3">
+        <DashBoardCards stats={stats} />
       </div>
 
       {/* revenue chart */}
-      <div className="card  mt-10 dark:bg-gray-800 dark:border-gray-500">
-        {/* filter bar */}
+      <div className="card col-span-3">
         <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
           <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">
             Revenue Chart
           </h3>
 
+          {/* filter bar */}
           {period === "daily" ? (
-            // date picker
+            // date picker(for daily chart)
             <DatePicker
               openStartDate={openStartDate}
               setOpenStartDate={setOpenStartDate}
@@ -154,6 +126,7 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
               setEndDate={setEndDate}
             />
           ) : (
+            // month picker(for weekly chart)
             period === "weekly" && (
               <MonthDropdown month={month} setMonth={setMonth} />
             )
@@ -164,12 +137,14 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
         </div>
 
         {data.length === 0 && !loading ? (
+          // fall back
           <div className="text-center py-12">
             <p className="text-gray-500">
               No revenue data available for the selected period.
             </p>
           </div>
         ) : loading ? (
+          // loading state
           <Skeleton className="h-64 bg-gray-200 rounded  mt-8"></Skeleton>
         ) : (
           <div className="mt-8  overflow-x-auto ">
@@ -177,11 +152,63 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
           </div>
         )}
       </div>
+
+      {/* product chart */}
+      <div className="card h-90">
+        <ProductChart dataChart={stats.productStats} />
+      </div>
+
+      {/* top products */}
+      <div className="card">
+        <TopProductsTable stats={stats} />
+      </div>
+      {/* Low stock products */}
+      <div className="card">
+        <LowStockTable stats={stats} />
+      </div>
     </div>
   );
 };
 
 export default ChartContainer;
+
+export function DashBoardCards({ stats }: { stats: DashboardStats }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-4 mt-10 place-items-center">
+      {/* total sales revenue for the last 7 days */}
+      <DashBoardCard
+        title="Recent 7 days"
+        value={`$${stats.sevenDayRevenue.toLocaleString()}`}
+        subtitle="Total revenue for the last 7 days"
+        icon={DollarSign}
+      />
+
+      {/* sales quantity sold for the last 7 days */}
+      <DashBoardCard
+        title="Recent 7 days"
+        value={`${stats.recentSales}`}
+        subtitle="Total quantity sold for the last 7 days"
+        icon={Package}
+      />
+
+      {/* total products in inventory */}
+      <DashBoardCard
+        title="Total Products"
+        value={`${stats.totalProducts}`}
+        subtitle="Total products in your inventory"
+        icon={BoxesIcon}
+      />
+
+      {/* total staff */}
+      <DashBoardCard
+        title="Number of Staffs"
+        value={`${stats.totalUsers}`}
+        subtitle="Total number of staff"
+        icon={User}
+      />
+    </div>
+  );
+}
 
 export function MonthDropdown({
   month,
@@ -234,7 +261,7 @@ export function PeriodDropDown({
   console.log(period);
   return (
     <Select value={period} onValueChange={(item: any) => setPeriod(item)}>
-      <SelectTrigger className="w-[110px]">
+      <SelectTrigger className="w-[110px] max-md:mr-auto">
         <SelectValue placeholder="Select period " />
       </SelectTrigger>
       <SelectContent>

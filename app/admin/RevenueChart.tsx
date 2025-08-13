@@ -1,3 +1,4 @@
+import { RevenueData } from "@/lib/interfaces";
 import React from "react";
 import {
   BarChart,
@@ -10,17 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface RevenueData {
-  date: string;
-  revenue: number;
-  sales: number;
-}
-
-interface RevenueChartProps {
-  dataChart: RevenueData[];
-}
-
-const RevenueChart: React.FC<RevenueChartProps> = ({ dataChart }) => {
+const RevenueChart = ({ dataChart }: { dataChart: RevenueData[] }) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -73,7 +64,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ dataChart }) => {
             tick={{ fill: "#3B82F6", fontSize: 15, fontWeight: 500 }}
             yAxisId="right"
             orientation="right"
-            
             tickFormatter={(value) => value.toLocaleString()}
           />
           <Tooltip content={<CustomTooltip />} />

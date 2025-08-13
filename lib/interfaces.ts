@@ -1,5 +1,11 @@
 import { CategoricalChartFunc } from "recharts/types/chart/types";
 
+export interface RevenueData {
+  nam?: string;
+  revenue: number;
+  sales: number;
+}
+
 export interface Users {
   id: number;
   name: string;

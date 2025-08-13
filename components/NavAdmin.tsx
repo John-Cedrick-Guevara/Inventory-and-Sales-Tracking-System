@@ -36,7 +36,6 @@ import { changePassword, signOutAction } from "@/app/actions/auth";
 import { LayoutDashboard, History } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useUser } from "@/app/Context/UserContext";
 
 interface NavProps {
   navLinks: {
@@ -66,7 +65,7 @@ const NavAdmin = ({ navLinks }: NavProps) => {
 
   return (
     <nav className="dark:bg-gray-900">
-      <div className="px-4 flex items-center justify-between h-18 gap-2 shadow-sm border-b border-gray-200 ">
+      <div className="px-4 flex items-center justify-between h-18 gap-2 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <Boxes className="text-blue-600 h-8 w-8" />
         <h1 className="mr-auto font-semibold text-2xl">Inventory Pro</h1>
 

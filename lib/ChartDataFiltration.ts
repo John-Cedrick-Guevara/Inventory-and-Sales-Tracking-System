@@ -9,11 +9,9 @@ export interface Sales {
 export function dailyFilter(sales: Sales[]) {
   let finalData: Record<string, { revenue: number; sales: number }> = {};
 
-  console.log("sales ", sales);
   sales.reduce((acc, sale) => {
     // gets the full date
     const dateKey = sale.createdAt.toISOString().split("T")[0];
-console.log(sale);
     // sets the date as ket if doesn't exist
     if (!finalData[dateKey]) {
       finalData[dateKey] = { revenue: 0, sales: 0 };
@@ -27,7 +25,7 @@ console.log(sale);
     );
 
     return acc;
-  },0);
+  }, 0);
 
   return finalData;
 }
@@ -77,7 +75,7 @@ export function monthlyFilter(sales: Sales[]) {
   let finalData: Record<string, { revenue: number; sales: number }> = {};
 
   sales.reduce((acc, sale) => {
-    const month = sale.createdAt.getMonth()
+    const month = sale.createdAt.getMonth();
     const monthName = new Date(2025, month).toLocaleDateString("default", {
       month: "long",
     });

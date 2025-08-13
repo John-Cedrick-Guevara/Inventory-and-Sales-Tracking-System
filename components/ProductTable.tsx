@@ -17,8 +17,8 @@ interface Props<T> {
 const ProductTable = <T,>({ products, tableHeads, tableRow }: Props<T>) => {
   return (
     <section className="">
-      <Table className="dark:bg-gray-800">
-        <TableHeader className="dark:bg-gray-800">
+      <Table className="dark:bg-gray-700">
+        <TableHeader className="dark:bg-gray-700">
           <TableRow>
             {tableHeads.map((item, index) => {
               return (

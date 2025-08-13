@@ -16,9 +16,9 @@ const page = async () => {
   const stats = await getAdminDashboardStats();
 
   return (
-    <>
+    <section className="h-[200vh]">
       <ChartContainer stats={stats} />
-    </>
+    </section>
   );
 };
 

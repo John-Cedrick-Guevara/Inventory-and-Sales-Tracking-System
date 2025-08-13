@@ -23,7 +23,7 @@ const DashBoardCard = ({
     orange: "bg-orange-50 text-orange-600 border-orange-200",
   };
   return (
-    <div className="bg-white dark:bg-gray-800  dark:border-gray-600 rounded-xl shadow-sm card p-6 hover:shadow-md transition-shadow w-full max-w-xl min-w-fit border-l-blue-500 dark:border-l-blue-800 border-l-6">
+    <div className="card rounded-xl shadow-sm card h-full p-6 hover:shadow-md transition-shadow w-full max-w-xl min-w-fit border-l-blue-500 dark:border-l-blue-800 border-l-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{title}</p>

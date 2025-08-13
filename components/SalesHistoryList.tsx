@@ -67,8 +67,8 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
   }, [startDate, endDate, page]);
 
   return (
-    <>
-      <div className="bg-white card mt-10 dark:bg-gray-800 dark:border-gray-600">
+    <section className="h-[100vh]">
+      <div className="bg-white card mt-10 dark:bg-gray-800 dark:border-gray-600 ">
         <DatePicker
           openStartDate={openStartDate}
           setOpenStartDate={setOpenStartDate}
@@ -109,7 +109,7 @@ const SalesHistory = ({ user }: { user: { role: string; name: string } }) => {
       </div>
       {/* pagination */}
       <PaginationControl toalPage={totalPage} page={page} setPage={setPage} />
-    </>
+    </section>
   );
 };
 

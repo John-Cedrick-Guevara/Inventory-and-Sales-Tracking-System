@@ -18,8 +18,8 @@ interface Props<T> {
 const SalesHistoryTable = <T,>({ sales, tableHeads, tableRow }: Props<T>) => {
   return (
     <section className="min-h-60">
-      <Table className="mt-8 shadow-none table-auto">
-        <TableHeader className="dark:bg-gray-800">
+      <Table className="mt-8 shadow-none table-auto dark:bg-gray-700" >
+        <TableHeader className="dark:bg-gray-700">
           <TableRow >
             {tableHeads.map((item, index) => {
               return <TableHead key={index}>{item}</TableHead>;
