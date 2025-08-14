@@ -1,33 +1,37 @@
+import { getCurrentUser } from "@/lib/getCurrentUser";
+import { AddSaleQueItem } from "@/lib/interfaces";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-// Sales
-
-// handles creation of sale
+// sale data creation
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { userId, total, items } = body;
-
   try {
-    const sale = await prisma.sale.create({
+
+    const body = await req.json();
+  const { userId, total, saleItems } = body;
+
+    // adds the sale to the database
+    const newSale = await prisma.sale.create({
       data: {
-        userId: userId,
-        total: total,
-        // add the items to saleItems table
+        userId,
+        total,
         saleItems: {
-          create: items.map((item: any) => ({
+// maps items sold
+          create: saleItems.map((item: AddSaleQueItem) => ({
             productId: item.id,
             quantity: item.quantity,
-            subtotal: item.subtotal,
+            subtotal: item.subTotal,
           })),
         },
       },
     });
 
-    // updates the stock in product table
-    for (const item of items) {
+    // updates the stock of sold items
+    for (const item of saleItems) {
       await prisma.product.update({
-        where: { id: item.id },
+        where: {
+          id: item.id,
+        },
         data: {
           stock: {
             decrement: item.quantity,
@@ -36,60 +40,76 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ message: "Sales added" }, { status: 201 });
+    return NextResponse.json({ message: "Sales added" }, { status: 200 });
   } catch (error) {
+    console.error("Sale creation failed:", error);
     return NextResponse.json(
-      { message: "Error adding sales" },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  
-  // user id to reference
-  const userId = req.nextUrl.searchParams.get("userId");
-  
-  // pagination essentials
-  const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "10");
-  const skip = (page - 1) * pageSize;
-
   try {
-    const [data, total] = await Promise.all([
-      prisma.sale.findMany({
-        skip,
-        take: pageSize,
-        orderBy: { createdAt: "desc" },
+    const { searchParams } = new URL(req.url);
 
-        where: {
-          userId: Number(userId),
+    // start and end date
+    const startSpanDate = new Date(searchParams.get("startSpanDate") as string);
+    const endSpanDate = new Date(searchParams.get("endSpanDate") as string);
+
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    // data to skip
+    const skip = (page - 1) * pageLimit;
+
+    // data query
+    const saleHistory = await prisma.saleitem.findMany({
+      skip,
+      take: pageLimit,
+      where: {
+        sale: {
+          createdAt: {
+            gte: startSpanDate,
+            lte: endSpanDate,
+          },
         },
-        // includes saleItems product, quntity and subtotal
-        include: {
-          saleItems: {
-            select: {
-              product: true,
-              quantity: true,
-              subtotal: true,
+      },
+      include: {
+        product: {
+          select: {
+            name: true,
+            price: true,
+            category: true,
+          },
+        },
+        sale: {
+          select: {
+            createdAt: true,
+            id: true,
+
+            user: {
+              select: {
+                name: true,
+              },
             },
           },
         },
-      }),
-      prisma.product.count(),
-    ]);
-
-    return NextResponse.json({
-      data,
-      currentPage: page,
-      totalPages: Math.ceil(total / pageSize),
-      pageSize,
-      totalItems: total,
+      },
     });
+
+    // total page
+    const totalpage = await prisma.saleitem.count();
+
+    return NextResponse.json(
+      { data: saleHistory, totalPage: Math.ceil(totalpage / pageLimit) },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
-      { message: "Error fetching sale history" },
+      { message: "Error fetching data" },
       { status: 500 }
     );
   }

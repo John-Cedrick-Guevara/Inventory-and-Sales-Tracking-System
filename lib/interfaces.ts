@@ -1,5 +1,11 @@
 import { CategoricalChartFunc } from "recharts/types/chart/types";
 
+export interface RevenueData {
+  name?: string;
+  revenue: number;
+  sales: number;
+}
+
 export interface Users {
   id: number;
   name: string;
@@ -9,68 +15,24 @@ export interface Users {
   password: string;
 }
 
-export interface GetUser {
-  data: UserCredentials[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetProduct {
-  data: Product[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetSales {
-  data: Sale[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-export interface GetSaleItems {
-  data: SaleItem[];
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-}
-
-export interface UserCredentials {
-  action: string;
-  id?: number;
-  role?: string;
-  sales?: number;
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface ChangePassword {
-  action?: string;
-  id: number;
-  password: string;
-  newPassword: string;
-}
-
 export interface Categories {
   id?: number;
   name: string;
 }
 
 export interface Product {
+  status: string;
   id?: number;
   name: string;
   description: string;
   price: number;
-  stock?: number;
-  image?: any;
-  createdAt?: string;
-  quantity?: number;
-  total?: number;
+  stock: number;
+  image: any;
+  createdAt: string;
+  quantity: number;
+  total: number;
   category?: Categories;
+  saleItems?: SaleItem[];
 }
 
 export interface Sale {
@@ -87,9 +49,22 @@ export interface Sale {
 }
 
 export interface SaleItem {
-  image: string;
-  product: { name: string; image: string; price: number };
+  id: number;
+  product: { name: string; price: number };
+  productId: number;
   quantity: number;
-  sale: { createdAt: string; user: { name: string } };
+  sale: { createdAt: string; id: number; user: { name: string } };
+  saleId: number;
   subtotal: number;
+}
+
+export interface AddSaleQueItem {
+  id: number | unknown;
+  name: string;
+  price: number;
+  quantity: number;
+  subTotal: number;
+  image: any;
+  productStock: number;
+  category?: Categories;
 }

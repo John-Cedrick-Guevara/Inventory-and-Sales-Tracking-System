@@ -1,35 +1,43 @@
-"use client"
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AuthProvider from "../Context/AuthContext";
-import { Box, History } from "lucide-react";
-export default function AdminLayout({
+import NavAdmin from "@/components/NavAdmin";
+import { getCurrentUser } from "@/lib/getCurrentUser";
+import { redirect } from "next/navigation";
+import React from "react";
+import UserProvider from "../Context/UserProvider";
+
+const layout = async ({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) => {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "STAFF") {
+    redirect("/");
+  }
+
   const navLinks = [
     {
-      title: "Products",
-      url: "/staff",
-      icon: Box,
+      name: "Dashboard",
+      link: "/staff",
+      icon: "LayoutDashboard",
     },
     {
-      title: "Sales History",
-      url: "/staff/saleHistory",
-      icon: History,
+      name: "Products",
+      link: "/staff/products",
+      icon: "Boxes",
+    },
+    {
+      name: "Sales History",
+      link: "/staff/sale-history",
+      icon: "History",
     },
   ];
 
   return (
-    <AuthProvider role={"STAFF"}>
-      <SidebarProvider>
-        <AppSidebar navLinks={navLinks} />
-        <div className="w-full p-6">
-          <SidebarTrigger />
-          {children}
-        </div>
-      </SidebarProvider>
-    </AuthProvider>
+    <UserProvider user={user}>
+      <NavAdmin navLinks={navLinks} />
+      <main className="p-6 dark:bg-gray-900">{children}</main>
+    </UserProvider>
   );
-}
+};
+
+export default layout;

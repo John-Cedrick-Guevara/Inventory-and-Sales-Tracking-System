@@ -1,71 +1,38 @@
 import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-// Categories
-
-// gets categories
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const cathegories = await prisma.category.findMany();
+    const { searchParams } = new URL(req.url);
 
-    return NextResponse.json(cathegories, { status: 200 });
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    // data to skip
+    const skip = (page - 1) * pageLimit;
+
+    const categories = await prisma.category.findMany({
+      skip,
+      take: pageLimit,
+    });
+
+    // total pages
+    const totalpage = await prisma.category.count();
+
+    return Response.json(
+      {
+        data: categories,
+        categories: categories,
+        totalPage: Math.ceil(totalpage / pageLimit),
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json(
-      { message: "Error fethcing cathegories" },
+    console.error("Error fetching categories:", error);
+    return Response.json(
+      { error: "Failed to fetch categories" },
       { status: 500 }
     );
-  }
-}
-
-// handles creation of new category
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { name } = body.data;
-  try {
-    const newCathegory = await prisma.category.create({
-      data: {
-        name: name,
-      },
-    });
-
-    return NextResponse.json(newCathegory, { status: 200 });
-  } catch (error) {
-    return NextResponse.json("failed to create new cathegory", { status: 500 });
-  }
-}
-
-// handles data edit of category
-export async function PUT(req: NextRequest) {
-  const body = await req.json();
-  const { name, id } = body.data;
-  try {
-    const editedCathegory = await prisma.category.update({
-      where: {
-        id: id,
-      },
-      data: {
-        name: name,
-      },
-    });
-
-    return NextResponse.json(editedCathegory, { status: 200 });
-  } catch (error) {
-    return NextResponse.json("failed to create new cathegory", { status: 500 });
-  }
-}
-// handles deletion of category
-export async function DELETE(req: NextRequest) {
-  const id = await req.json();
-
-  try {
-    const deletedCathegory = await prisma.category.delete({
-      where: {
-        id: id,
-      },
-    });
-
-    return NextResponse.json({ message: "Cathegory Deleted" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json("failed to create new cathegory", { status: 500 });
   }
 }

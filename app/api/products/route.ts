@@ -1,118 +1,55 @@
+// app/api/products/route.ts
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-// Products
-
-// handles creation of new product
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-
-  // pagination essentials
-  const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "10");
-  const skip = (page - 1) * pageSize;
-
   try {
-    const [data, total] = await Promise.all([
-      prisma.product.findMany({
-        skip,
-        take: pageSize,
-        orderBy: { createdAt: "desc" },
-        include: {
-          category: true,
-        },
-      }),
-      prisma.product.count(),
-    ]);
+    const { searchParams } = new URL(req.url);
 
-    return NextResponse.json({
-      data,
-      currentPage: page,
-      totalPages: Math.ceil(total / pageSize),
-      pageSize,
-      totalItems: total,
+    // pagination queries
+    const page = Number(searchParams.get("page"));
+    const pageLimit = Number(searchParams.get("limit"));
+
+    // data to skip
+    const skip = (page - 1) * pageLimit;
+
+    // Fetch products with related category and sale items
+    const products = await prisma.product.findMany({
+      skip,
+      take: pageLimit,
+      include: {
+        category: true,
+        saleItems: true,
+      },
     });
-  } catch (error) {
+
+    // Convert images to Base64 Data URLs
+    const convertedProducts = products.map((product) => {
+      let dataUrl: string | null = null;
+
+      if (product.image) {
+        const base64 = Buffer.from(product.image).toString("base64");
+        dataUrl = `data:image/png;base64,${base64}`;
+      }
+
+      return {
+        ...product,
+        image: dataUrl,
+      };
+    });
+
+    // total pages
+    const totalpage = await prisma.product.count();
+
     return NextResponse.json(
-      { message: "Error fetching products" },
+      { data: convertedProducts, totalPage: Math.ceil(totalpage / pageLimit) },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
       { status: 500 }
     );
-  }
-}
-
-// handles creation of new products
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { name, description, stock, price, image, category } = body;
-
-  try {
-    const productAdded = await prisma.product.create({
-      data: {
-        name: name,
-        description: description,
-        price: Number(price),
-        stock: Number(stock),
-        image: image,
-        // reference to the category table
-        category: {
-          connect: { id: Number(category) },
-        },
-      },
-    });
-
-    return NextResponse.json({ message: "Product uploaded" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Error uploading product" },
-      { status: 500 }
-    );
-  }
-}
-
-// handles data edit of product
-export async function PUT(req: NextRequest) {
-  const body = await req.json();
-  const { id, name, description, stock, price, image, category } = body;
-  try {
-    const productEdited = await prisma.product.update({
-      where: {
-        id: id,
-      },
-      data: {
-        name: name,
-        description: description,
-        price: Number(price),
-        stock: Number(stock),
-        image: image,
-        // reference to category table
-        category: {
-          connect: { id: Number(category) },
-        },
-      },
-    });
-
-    return NextResponse.json({ message: "Product Edited" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Error editing product" },
-      { status: 500 }
-    );
-  }
-}
-
-// handles deletion of data
-export async function DELETE(req: NextRequest) {
-  const id = await req.json();
-
-  try {
-    const deletedProduct = await prisma.product.delete({
-      where: {
-        id: id,
-      },
-    });
-
-    return NextResponse.json({ message: "Product Deleted" }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json("failed to delete cathegory", { status: 500 });
   }
 }

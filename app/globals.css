@@ -119,8 +119,11 @@
   body {
     @apply bg-background text-foreground;
   }
-}
 
+  .card {
+    @apply rounded-lg shadow p-4 border border-gray-200 dark:bg-gray-800 dark:border-gray-600;
+  }
+}
 :root {
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -130,6 +133,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  height: auto;
 }
 
 .dark {
