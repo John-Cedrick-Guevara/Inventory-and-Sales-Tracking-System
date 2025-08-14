@@ -6,7 +6,6 @@ Built with:
 
 - ⚡️ Next.js 14 (App Router)
 - 🧠 Prisma + MySQL
-- 🧪 SWR (data fetching)
 - 🎨 Tailwind CSS + shadcn/ui
 - 📈 Recharts (interactive charts)
 
@@ -15,7 +14,7 @@ Built with:
 ## 🚀 Features
 
 ✅ **Dashboard Overview**  
-Get a clear snapshot of revenue per product, per staff, and time-based breakdowns (daily, monthly, yearly).
+Get a clear snapshot of revenue per product, top prodcyst(daily, weekly, monthly), low stock products, and time-based breakdowns (daily, monthly, yearly).
 
 ✅ **Sales Management**  
 Track, record, and calculate total sales with detailed breakdowns per item.
@@ -41,7 +40,6 @@ Efficiently load and navigate large datasets (products, sales, etc.) using serve
 | **Next.js**  | Full-stack framework (App Router)   |
 | **Prisma**   | ORM for MySQL database              |
 | **MySQL**    | Relational database                 |
-| **SWR**      | React hook for remote data fetching |
 | **Tailwind** | Utility-first CSS framework         |
 | **shadcn/ui**| Modern, accessible UI components    |
 | **Recharts** | Data visualization (Bar, Pie, etc.) |
