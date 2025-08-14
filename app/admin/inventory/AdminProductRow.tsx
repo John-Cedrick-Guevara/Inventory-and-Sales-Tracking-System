@@ -13,7 +13,6 @@ import { Ellipsis } from "lucide-react";
 import React from "react";
 import { EditProduct } from "./ProductDialog";
 import axios from "axios";
-import { toast } from "sonner";
 
 export function AdminProductRow({
   product,
@@ -22,9 +21,6 @@ export function AdminProductRow({
   product: Product;
   categories: Categories[];
 }) {
-  // Debug logging
-  console.log(product);
-
   // Safety check for product
   if (!product) {
     return (
@@ -36,6 +32,7 @@ export function AdminProductRow({
     );
   }
 
+  // product delete
   async function handleDeleteProduct(id: number | undefined) {
     try {
       await axios.delete(`/api/products/${id}`);
@@ -45,22 +42,31 @@ export function AdminProductRow({
   }
   return (
     <TableRow>
+      {/* product image, name, category */}
       <TableCell className="font-medium grid gap-1 grid-rows-2 grid-cols-[auto_1fr] text-left">
+        {/* image */}
         <img
           src={product.image || "/placeholder-image.png"}
+          loading="lazy"
           alt="product-image"
           className="object-contain row-span-2 aspect-square w-14 border"
           onError={(e) => {
             e.currentTarget.src = "/placeholder-image.png";
           }}
         />
+
+        {/* name */}
         <h1 className="self-center text-lg">
           {product.name || "Unnamed Product"}
         </h1>
+        
+        {/* category */}
         <h3 className="self-center text-xs text-gray-500 bg-gray-100 w-fit rounded-md p-1">
           {product.category?.name || "No Category"}
         </h3>
       </TableCell>
+
+      {/* product status */}
       <TableCell>
         <h1
           className={`mx-auto h-fit w-fit p-2 rounded-md ${
@@ -74,7 +80,11 @@ export function AdminProductRow({
           {product.status}
         </h1>
       </TableCell>
+      
+      {/* product price */}
       <TableCell>{product.price || 0}</TableCell>
+
+      {/* product stock */}
       <TableCell>
         <h1
           className={`py-1 px-3 mx-auto font-semibold w-fit rounded-xl ${
@@ -88,18 +98,26 @@ export function AdminProductRow({
           {product.stock || 0}
         </h1>
       </TableCell>
+
+      {/* product quantity sold */}
       <TableCell>{product.saleItems?.length}</TableCell>
+
+      {/* product total revenue */}
       <TableCell>
         $
         {product.saleItems
           ?.reduce((total, current) => total + current.subtotal, 0)
           .toLocaleString()}
       </TableCell>
+
+      {/* product created date */}
       <TableCell>
         {product.createdAt
           ? new Date(product.createdAt).toLocaleDateString()
           : "N/A"}
       </TableCell>
+
+      {/* product action */}
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger>

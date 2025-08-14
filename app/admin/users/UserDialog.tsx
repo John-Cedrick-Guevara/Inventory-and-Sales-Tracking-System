@@ -107,14 +107,26 @@ export const EditUser = ({ id }: { id: number }) => {
         </DialogHeader>
         <form className="grid gap-4" action={actionUpdate}>
           <Input required id="id" name="id" type="hidden" value={id} />
+
+          {/* user name */}
           <div className="grid gap-3">
             <Label htmlFor="name">Username</Label>
-            <Input id="name" name="name" />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Staff name"
+              defaultValue={""}
+            />
           </div>
+
+          {/* email */}
           <div className="grid gap-3">
             <Label htmlFor="email">Email</Label>
             <Input type="email" id="email" name="email" />
           </div>
+
+          {/* password */}
           <div className="grid gap-3">
             <Label htmlFor="password">Password</Label>
             <Input id="password" name="password" type="password" />

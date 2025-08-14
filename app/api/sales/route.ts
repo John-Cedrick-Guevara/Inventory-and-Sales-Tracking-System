@@ -3,19 +3,20 @@ import { AddSaleQueItem } from "@/lib/interfaces";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+// sale data creation
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const user = await getCurrentUser();
-  console.log(user);
+  try {
+
+    const body = await req.json();
   const { userId, total, saleItems } = body;
 
-  try {
     // adds the sale to the database
     const newSale = await prisma.sale.create({
       data: {
         userId,
         total,
         saleItems: {
+// maps items sold
           create: saleItems.map((item: AddSaleQueItem) => ({
             productId: item.id,
             quantity: item.quantity,
@@ -61,6 +62,7 @@ export async function GET(req: NextRequest) {
     const page = Number(searchParams.get("page"));
     const pageLimit = Number(searchParams.get("limit"));
 
+    // data to skip
     const skip = (page - 1) * pageLimit;
 
     // data query
@@ -98,6 +100,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    // total page
     const totalpage = await prisma.saleitem.count();
 
     return NextResponse.json(

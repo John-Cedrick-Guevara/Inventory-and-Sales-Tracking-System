@@ -3,6 +3,7 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { SaleItem } from "@/lib/interfaces";
 
 const StaffSaleHistoryListRow = ({ sale }: { sale: SaleItem }) => {
+  // fallback
   if (!sale) {
     return (
       <TableRow>
@@ -13,6 +14,7 @@ const StaffSaleHistoryListRow = ({ sale }: { sale: SaleItem }) => {
     );
   }
 
+  // sale row
   return (
     <TableRow>
       <TableCell className="font-medium">{sale.sale.id}</TableCell>

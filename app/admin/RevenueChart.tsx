@@ -19,6 +19,7 @@ const RevenueChart = ({ dataChart }: { dataChart: RevenueData[] }) => {
     }).format(value);
   };
 
+  // hover tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (

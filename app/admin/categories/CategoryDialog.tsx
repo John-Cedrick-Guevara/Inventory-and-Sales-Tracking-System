@@ -17,10 +17,12 @@ import { Label } from "@radix-ui/react-label";
 import { addCategory, editCategory } from "@/app/actions/category";
 
 export const AddCategory = () => {
+  // form function
   const [addData, addAction, addIsPending] = useActionState(
     addCategory,
     undefined
   );
+
   return (
     <Dialog>
       <DialogTrigger asChild className="ml-auto">
@@ -37,6 +39,7 @@ export const AddCategory = () => {
           </DialogDescription>
         </DialogHeader>
         <form className="grid gap-4" action={addAction}>
+          {/* category name */}
           <div className="grid gap-3">
             <Label htmlFor="name">Name</Label>
             <Input required id="name" name="name" />
@@ -86,7 +89,10 @@ export const EditCategory = ({ id }: { id: number | undefined }) => {
           </DialogDescription>
         </DialogHeader>
         <form className="grid gap-4" action={editAction}>
+          {/* category id */}
           <Input required id="id" name="id" type="hidden" value={id} />
+          
+          {/* category name */}
           <div className="grid gap-3">
             <Label htmlFor="name">New name</Label>
             <Input id="name" name="new-name" />

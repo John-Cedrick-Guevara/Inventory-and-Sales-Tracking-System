@@ -9,34 +9,32 @@ import {
 import ProductTable from "./ProductTable";
 import { DashboardStats } from "@/lib/adminDashboardData";
 import { TableCell, TableRow } from "./ui/table";
+import ChartHeading from "./ChartHeading";
+import PeriodDropDown from "./SelectPeriod";
 const TopProductsTable = ({ stats }: { stats: DashboardStats }) => {
-  const [period, setPeriod] = useState("today");
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
 
   return (
-    <div>
-      <Select onValueChange={(item) => setPeriod(item)}>
-        <SelectTrigger className="w-[180px] mb-5">
-          <SelectValue placeholder="Period" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="today">Today</SelectItem>
-          <SelectItem value="week">Week</SelectItem>
-          <SelectItem value="month">Month</SelectItem>
-        </SelectContent>
-      </Select>
+    <div className="space-y-7">
+      <div className="flex items-center justify-between">
+        <ChartHeading>Top Products:</ChartHeading>
+
+        {/* select period */}
+        <PeriodDropDown period={period} setPeriod={setPeriod} />
+      </div>
 
       <ProductTable
         products={
-          period === "today"
+          period === "daily"
             ? stats.topToday
-            : period === "week"
+            : period === "weekly"
             ? stats.topWeek
             : stats.topMonth
         }
         tableHeads={["Product", "Quantity sold", "Total revenue"]}
         tableRow={(item: any, index: any) => (
           <TableRow key={index}>
-            <TableCell>{item.name}</TableCell>
+            <TableCell className="text-left">{item.name}</TableCell>
             <TableCell>{item.quantity}</TableCell>
             <TableCell>{item.subTotal}</TableCell>
           </TableRow>

@@ -29,6 +29,7 @@ const InventoryList = () => {
   const safeProducts = products || [];
   const safeCategories = categories || [];
 
+  // data fetcher
   async function fetchProducts() {
     try {
       setLoading(true);
@@ -51,11 +52,14 @@ const InventoryList = () => {
   useEffect(() => {
     fetchProducts();
   }, [page]);
+
+  // filter product based on category selected
   const categorizedProducts: Product[] = useMemo(
     () => categorizedFilter(selectedCategory, products),
     [selectedCategory, categories]
   );
 
+  // search product
   const filteredProducts: Product[] = useMemo(
     () => filterSearch(searchProduct, categorizedProducts),
     [searchProduct, categorizedProducts]
@@ -124,7 +128,6 @@ const InventoryList = () => {
                 ]}
                 tableRow={(product: Product, index: number) => (
                   <StaffProductRow
-                    saleQue={addSaleQue}
                     setSaleQue={setAddSaleQue}
                     key={index}
                     product={product}

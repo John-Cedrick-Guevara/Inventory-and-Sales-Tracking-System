@@ -4,11 +4,7 @@ import React, { Suspense, use } from "react";
 import { UserList } from "./UserList";
 
 const page = async () => {
-
-
-  return (
-      <UserList  />
-  );
+  return <UserList />;
 };
 
 export default page;

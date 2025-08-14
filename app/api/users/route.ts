@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
     const page = Number(searchParams.get("page"));
     const pageLimit = Number(searchParams.get("limit"));
 
+    // data to skip
     const skip = (page - 1) * pageLimit;
 
     const staff = await prisma.user.findMany({
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    // total pages of staffs data
     const totalpage = await prisma.user.count({
       where: {
         role: "STAFF",

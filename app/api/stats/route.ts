@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
 
       // sets the start and end date for the whole year
       case "monthly":
-        startSpanDate = new Date(2025, 1, 1);
-        endSpanDate = new Date(2025, 13, 0);
+        startSpanDate = new Date(dateNow.getFullYear(), 1, 1);
+        endSpanDate = new Date(dateNow.getFullYear(), 13, 0);
         break;
 
       // default 1 week span

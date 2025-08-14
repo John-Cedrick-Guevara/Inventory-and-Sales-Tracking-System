@@ -76,7 +76,7 @@ const ProductList = () => {
   try {
     return (
       <section className="h-[100vh]">
-        {/* header */}
+        {/* header (search and create dialog) */}
         <ListHeader
           searchQuery={searchProduct}
           setSearchQuery={setSearchProduct}

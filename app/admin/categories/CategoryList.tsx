@@ -7,10 +7,8 @@ import { AddCategory, EditCategory } from "./CategoryDialog";
 import { filterSearch } from "@/lib/utils";
 import AlertDeleteDialog from "@/components/AlertDialog";
 import { Trash2 } from "lucide-react";
-import prisma from "@/lib/prisma";
 import { Skeleton } from "@/components/ui/skeleton";
 import { pageLimit } from "@/lib/constants";
-import { Pagination } from "@/components/ui/pagination";
 import PaginationControl from "@/components/PaginationControl";
 
 export const CategoryList = () => {
@@ -27,6 +25,7 @@ export const CategoryList = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
 
+  // fetcher
   const fetchCategories = async () => {
     const res = await axios.get(
       `/api/categories?limit=${pageLimit}&page=${page}`
@@ -37,10 +36,12 @@ export const CategoryList = () => {
     setLoading(false);
   };
   
+  // fetcher call
   useEffect(() => {
     fetchCategories();
   }, [page]);
 
+  // data filtration
   const filteredCategories: Categories[] = useMemo(
     () => filterSearch(searchCategory, categories),
     [searchCategory, categories]
@@ -48,7 +49,7 @@ export const CategoryList = () => {
 
   return (
     <section className="h-[100vh]">
-      {/* header */}
+      {/* header(search and add dialog) */}
       <ListHeader
         searchQuery={searchCategory}
         setSearchQuery={setSearchCategory}
@@ -78,6 +79,7 @@ export const CategoryList = () => {
   );
 };
 
+// category row
 export function CategoryListRow({ category }: { category: Categories }) {
   // delete function
   async function handleDeleteCategory(id: number | undefined) {

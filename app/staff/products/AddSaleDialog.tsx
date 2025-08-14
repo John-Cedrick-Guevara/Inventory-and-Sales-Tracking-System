@@ -1,5 +1,5 @@
 "use client";
-import React, { useActionState, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -18,12 +18,6 @@ import { BaggageClaim, Loader2, X } from "lucide-react";
 import { useUser } from "@/app/Context/UserContext";
 import { AddSaleQueItem } from "@/lib/interfaces";
 import axios from "axios";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
 
 const AddSaleDialog = ({
   saleQue,
@@ -47,24 +41,19 @@ const AddSaleDialog = ({
   async function submitSale(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log(saleQue);
+    setAddIsPending(true);
+    try {
+      const newSale = await axios.post("/api/sales", {
+        userId: userData.id,
+        total: saleTotal,
+        saleItems: saleQue,
+      });
 
-    if (saleQue.length === 0) alert("bobo mag lagay ka ng item");
-    else {
-      setAddIsPending(true);
-      try {
-        const newSale = await axios.post("/api/sales", {
-          userId: userData.id,
-          total: saleTotal,
-          saleItems: saleQue,
-        });
-
-        setSaleQue([]);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setAddIsPending(false);
-      }
+      setSaleQue([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAddIsPending(false);
     }
   }
 
@@ -111,6 +100,7 @@ const AddSaleDialog = ({
                     type="number"
                     id="quantity"
                     value={item.quantity}
+                    // handles change of quantity per product
                     onChange={(e) =>
                       setSaleQue(() =>
                         saleQue.map((saleItem) => {
@@ -129,6 +119,7 @@ const AddSaleDialog = ({
                     placeholder="Quantity"
                   />
 
+                  {/* remove item icon and function */}
                   <X
                     onClick={() =>
                       setSaleQue((prev) =>
@@ -144,7 +135,7 @@ const AddSaleDialog = ({
                     {item.category?.name}
                   </h1>
 
-                  {/* quantity */}
+                  {/* subtotal */}
                   <input
                     type="hidden"
                     defaultValue={item.quantity * item.price}
@@ -152,15 +143,16 @@ const AddSaleDialog = ({
                     required
                   />
 
-                  {/* total amount */}
-                  <h1 className=" text-blue-700 dark:text-blue-300 font-semibold h-fit text-right text-sm">
-                    Subtotal: P{item.subTotal.toLocaleString()}
+                  {/* item subtotal amount */}
+                  <h1 className=" text-blue-700 dark:text-blue-300 font-semibold h-fit text-right text-sm mt-auto">
+                    Subtotal: ${item.subTotal.toLocaleString()}
                   </h1>
                 </div>
               ))}
               <hr className="my-2" />
+              {/* total amount */}
               <h1 className=" text-right font-semibold text-md p-2 rounded-lg bg-blue-100 dark:bg-gray-600 dark:text-blue-300  text-blue-700 flex items-center justify-between">
-                Total: <span>P{saleTotal.toLocaleString()}</span>{" "}
+                Total: <span>${saleTotal.toLocaleString()}</span>{" "}
               </h1>
             </div>
             <DialogFooter className="col-start-2">

@@ -10,8 +10,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 interface Props {
   label: string | ReactNode;

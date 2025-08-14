@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
     const page = Number(searchParams.get("page"));
     const pageLimit = Number(searchParams.get("limit"));
 
+    // data to skip
     const skip = (page - 1) * pageLimit;
 
     const categories = await prisma.category.findMany({
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
       take: pageLimit,
     });
 
+    // total pages
     const totalpage = await prisma.category.count();
 
     return Response.json(

@@ -21,7 +21,7 @@ export function UserList() {
   // pagination current page and total pages
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  
+
   // fether
   const fetchStaff = async () => {
     try {
@@ -47,7 +47,7 @@ export function UserList() {
 
   return (
     <section className="h-[100vh]">
-      {/* header */}
+      {/* header(search and crate dialog) */}
       <ListHeader
         searchQuery={searchUser}
         setSearchQuery={setSearchUser}
@@ -55,6 +55,7 @@ export function UserList() {
         AddDialog={<AddUser />}
       />
 
+      {/* list */}
       <div className="rounded-xl border border-gray-200 shadow-sm mt-8 dark:bg-gray-800">
         <div className="p-2 px-4">
           <h1 className="text-lg font-medium">Staffs</h1>
@@ -75,6 +76,16 @@ export function UserList() {
 }
 
 export function StaffRow({ user }: { user: Users }) {
+  // fallback
+  if (!user) {
+    return (
+      <div>
+        <div className="text-center w-full bg-gray-100 text-gray-500">
+          Invalid product data
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="border-t p-2 px-4 border-t-gray-200 grid grid-rows-[1fr_auto] grid-cols-[30px_1fr_auto]">
       <h1 className="text-md  row-span-2 self-center ">{user.id}</h1>

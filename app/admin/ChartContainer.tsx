@@ -20,6 +20,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProductChart from "@/components/ProductChart";
 import TopProductsTable from "@/components/TopProductsTable";
 import LowStockTable from "@/components/LowStockTable";
+import ChartHeading from "@/components/ChartHeading";
+import PeriodDropDown from "@/components/SelectPeriod";
 
 interface RevenueData {
   date: string;
@@ -108,9 +110,8 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
       {/* revenue chart */}
       <div className="card col-span-3">
         <div className="flex items-end justify-end gap-2 max-md:flex-wrap">
-          <h3 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center">
-            Revenue Chart
-          </h3>
+          {/* heading */}
+          <ChartHeading>Revenue:</ChartHeading>
 
           {/* filter bar */}
           {period === "daily" ? (
@@ -147,6 +148,7 @@ const ChartContainer = ({ stats }: { stats: DashboardStats }) => {
           // loading state
           <Skeleton className="h-64 bg-gray-200 rounded  mt-8"></Skeleton>
         ) : (
+          // revenue chart
           <div className="mt-8  overflow-x-auto ">
             <RevenueChart dataChart={data} />
           </div>
@@ -251,29 +253,3 @@ export function MonthDropdown({
   );
 }
 
-export function PeriodDropDown({
-  period,
-  setPeriod,
-}: {
-  period: "daily" | "weekly" | "monthly";
-  setPeriod: Dispatch<React.SetStateAction<"daily" | "weekly" | "monthly">>;
-}) {
-  console.log(period);
-  return (
-    <Select value={period} onValueChange={(item: any) => setPeriod(item)}>
-      <SelectTrigger className="w-[110px] max-md:mr-auto">
-        <SelectValue placeholder="Select period " />
-      </SelectTrigger>
-      <SelectContent>
-        {["daily", "weekly", "monthly"].map((item, index) => (
-          <SelectItem
-            key={index}
-            value={item} // month number as value
-          >
-            {item.slice(0, 1).toUpperCase() + item.slice(1)}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}

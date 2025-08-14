@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/utils";
 
@@ -8,27 +8,32 @@ export async function updateUser(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string;
   const id = Number(formData.get("id"));
 
-  if (!id) throw new Error("Id is required.");
+  // returns error if no id
+  if (!id) return { success: false, error: "Id is required." };
 
+  // fields to be updated
   const data: any = {};
-
-  if (email && email.trim() !== "") {
-    data.email = email.trim();
+  for (const [rawKey, value] of formData.entries()) {
+    if (rawKey === "id") continue; // skip id
+    if(typeof value === "string" ) {
+      if (value.trim() === "") continue; // skips the fields that is not edited
+        else {
+          if(rawKey === "password") {
+          data[rawKey] = await hashPassword(value);; // add the edited fields
+          }
+          else  {
+            data[rawKey] = value; // add the edited fields
+          }
+        }
+      }
   }
 
-  if (name && name.trim() !== "") {
-    data.name = name.trim();
-  }
-
-  if (password && password !== "") {
-    data.password = await hashPassword(password);
-  }
 
   if (Object.keys(data).length === 0) {
     // nothing to update
-    return null;
-  }
+      if (!id) return { success: false, error: "No received fields to be updated." };
 
+  }
 
   const updatedUser = await prisma.user.update({
     where: {

@@ -1,6 +1,7 @@
 import { RevenueData } from "@/lib/interfaces";
 import React from "react";
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import ChartHeading from "./ChartHeading";
 
 const ProductChart = ({ dataChart }: { dataChart: RevenueData[] }) => {
   const CustomTooltip = ({ active, payload }: any) => {
@@ -20,11 +21,11 @@ const ProductChart = ({ dataChart }: { dataChart: RevenueData[] }) => {
       );
     }
   };
+  const COLORS = ["#3B82F6", "#06B6D4", "#A855F7", "#F59E0B", "#10B981"];
+
   return (
     <div className="w-full h-full ">
-      <h1 className="text-xl font-bold text-gray-500 py-2 px-3 rounded-2xl bg-blue-100 mr-auto self-center w-fit">
-        Product:
-      </h1>
+      <ChartHeading>Product:</ChartHeading>
 
       <ResponsiveContainer width="100%" height="90%">
         <PieChart width={200} height={200}>
@@ -36,9 +37,15 @@ const ProductChart = ({ dataChart }: { dataChart: RevenueData[] }) => {
             cy="50%"
             innerRadius={70}
             outerRadius={90}
-            fill="#3B82F6 "
             label
-          />
+          >
+            {dataChart.map((entry, index) => (
+              <Cell
+                key={`cell-${entry.name}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
         </PieChart>
       </ResponsiveContainer>
     </div>
