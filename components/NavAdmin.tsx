@@ -48,7 +48,7 @@ interface NavProps {
 const NavAdmin = ({ navLinks }: NavProps) => {
   const path = usePathname().split("/").pop();
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
 
   const [data, action, isPending] = useActionState(changePassword, undefined);
   const iconMap: Record<string, LucideIcon> = {

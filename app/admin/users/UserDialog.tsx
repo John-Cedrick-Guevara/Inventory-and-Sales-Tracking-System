@@ -155,18 +155,13 @@ export const EditUser = ({ id }: { id: number }) => {
 export const DelteAlertDialog = ({
   id,
   name,
+  handleDeleteUser
 }: {
   id: number;
   name: string;
+  handleDeleteUser : (id: number | undefined) => void;
 }) => {
-  // handles delete user
-  async function handleDeleteUser(id: number) {
-    try {
-      await axios.delete(`/api/users/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
   return (
     <>
       {/* delete user dialog */}

@@ -45,6 +45,15 @@ export function UserList() {
     [searchUser, staff]
   );
 
+  // handles delete user
+  async function handleDeleteUser(id: number | undefined) {
+    try {
+      await axios.delete(`/api/users/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <section className="h-[100vh]">
       {/* header(search and crate dialog) */}
@@ -66,7 +75,11 @@ export function UserList() {
           </div>
         ) : (
           filteredUsers.map((user, index) => (
-            <StaffRow user={user} key={index} />
+            <StaffRow
+              user={user}
+              key={index}
+              handleDeleteUser={handleDeleteUser}
+            />
           ))
         )}
       </div>
@@ -75,7 +88,13 @@ export function UserList() {
   );
 }
 
-export function StaffRow({ user }: { user: Users }) {
+export function StaffRow({
+  user,
+  handleDeleteUser,
+}: {
+  user: Users;
+  handleDeleteUser: (id: number | undefined) => void;
+}) {
   // fallback
   if (!user) {
     return (
@@ -95,7 +114,11 @@ export function StaffRow({ user }: { user: Users }) {
         {/* edit user dialog */}
         <EditUser id={user.id} />
         {/* delete user */}
-        <DelteAlertDialog name={user.name} id={user.id} />
+        <DelteAlertDialog
+          name={user.name}
+          id={user.id}
+          handleDeleteUser={handleDeleteUser}
+        />
       </div>
 
       <h3 className="text-sm font-medium text-blue-400">{user.email}</h3>

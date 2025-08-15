@@ -40,7 +40,7 @@ const ProductList = () => {
       const resCategories = await axios.get("/api/categories");
 
       setProducts(resProduct.data.data);
-      setTotalPage(resProduct.data.totalPage)
+      setTotalPage(resProduct.data.totalPage);
       setCategories(resCategories.data.categories);
     } catch (error) {
       console.error(error);
@@ -72,6 +72,15 @@ const ProductList = () => {
       return categorizedProducts;
     }
   }, [searchProduct, categorizedProducts]);
+
+  // product delete
+  async function handleDeleteProduct(id: number | undefined) {
+    try {
+      await axios.delete(`/api/products/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   try {
     return (
@@ -128,6 +137,7 @@ const ProductList = () => {
                     key={index}
                     product={product}
                     categories={safeCategories}
+                    handleDeleteProduct={handleDeleteProduct}
                   />
                 )}
               />

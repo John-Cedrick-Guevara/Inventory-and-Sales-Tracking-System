@@ -47,6 +47,15 @@ export const CategoryList = () => {
     [searchCategory, categories]
   );
 
+  // delete function
+    async function handleDeleteCategory(id: number | undefined) {
+    try {
+      await axios.delete(`/api/categories/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <section className="h-[100vh]">
       {/* header(search and add dialog) */}
@@ -69,7 +78,7 @@ export const CategoryList = () => {
           </div>
         ) : (
           filteredCategories?.map((category, index) => (
-            <CategoryListRow category={category} key={index} />
+            <CategoryListRow category={category} key={index} handleDeleteCategory={handleDeleteCategory}/>
           ))
         )}
       </div>
@@ -80,15 +89,9 @@ export const CategoryList = () => {
 };
 
 // category row
-export function CategoryListRow({ category }: { category: Categories }) {
+export function CategoryListRow({ category, handleDeleteCategory }: { category: Categories; handleDeleteCategory : (id: number | undefined) => void }) {
   // delete function
-  async function handleDeleteCategory(id: number | undefined) {
-    try {
-      await axios.delete(`/api/categories/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
 
   return (
     <div className="border-t p-2 px-4 border-t-gray-200 grid grid-rows-[1fr_auto] grid-cols-[30px_1fr_auto]">

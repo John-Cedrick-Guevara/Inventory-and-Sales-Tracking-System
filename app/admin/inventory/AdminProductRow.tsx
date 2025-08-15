@@ -12,14 +12,15 @@ import {
 import { Ellipsis } from "lucide-react";
 import React from "react";
 import { EditProduct } from "./ProductDialog";
-import axios from "axios";
 
 export function AdminProductRow({
   product,
   categories,
+  handleDeleteProduct,
 }: {
   product: Product;
   categories: Categories[];
+  handleDeleteProduct: (id: number | undefined) => void;
 }) {
   // Safety check for product
   if (!product) {
@@ -32,14 +33,6 @@ export function AdminProductRow({
     );
   }
 
-  // product delete
-  async function handleDeleteProduct(id: number | undefined) {
-    try {
-      await axios.delete(`/api/products/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
-  }
   return (
     <TableRow>
       {/* product image, name, category */}
@@ -59,7 +52,7 @@ export function AdminProductRow({
         <h1 className="self-center text-lg">
           {product.name || "Unnamed Product"}
         </h1>
-        
+
         {/* category */}
         <h3 className="self-center text-xs text-gray-500 bg-gray-100 w-fit rounded-md p-1">
           {product.category?.name || "No Category"}
@@ -80,7 +73,7 @@ export function AdminProductRow({
           {product.status}
         </h1>
       </TableCell>
-      
+
       {/* product price */}
       <TableCell>{product.price || 0}</TableCell>
 

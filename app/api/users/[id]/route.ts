@@ -7,6 +7,8 @@ export async function DELETE(
 ) {
   const { id } = await params;
 
+  console.log(id);
+
   if (!id) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
